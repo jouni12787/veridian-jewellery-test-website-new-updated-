@@ -1,0 +1,1831 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ghandour Juwellery • Inventory Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/jpeg" href="../assets/logo-website-test.jpg">
+  <link rel="apple-touch-icon" href="../assets/logo-website-test.jpg">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#D4AF37">
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self' https://api.gold-api.com; child-src 'self' https://drive.google.com https://*.googleusercontent.com; frame-src 'self' https://drive.google.com https://*.googleusercontent.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
+  >
+  <script>if (sessionStorage.getItem('authenticated') !== 'true') { window.location.replace('../index.html'); }</script>
+  <style>
+    :root {
+      --pad: 18px;
+      --gold-primary: #D4AF37;
+      --gold-secondary: #FFD700;
+      --gold-dark: #B8860B;
+      --gold-light: #F5E6B3;
+      --ivory: #F8F8FF;
+      --charcoal: #2C2C2C;
+      --warm-gray: #8B7D6B;
+      --accent-gold: #C9A227;
+      --bg: radial-gradient(circle at 10% 0%, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 55%, #ffffff 100%);
+      --glass: rgba(255, 255, 255, 0.92);
+      --card-border: rgba(212, 175, 55, 0.3);
+      --accent: var(--gold-primary);
+      --accent-dark: var(--gold-dark);
+      --text: var(--charcoal);
+      --muted: var(--warm-gray);
+      --shadow: 0 18px 40px -24px rgba(212, 175, 55, 0.35);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: calc(var(--pad) * 1.2) var(--pad) calc(var(--pad) * 1.6);
+    }
+
+    .bismillah {
+      margin: 0 0 clamp(10px, 2vw, 18px);
+      font-family: 'Amiri', 'Scheherazade New', serif;
+      font-size: clamp(1.1rem, 2.6vw, 1.35rem);
+      color: var(--accent-dark);
+      letter-spacing: 0.02em;
+      text-align: center;
+      align-self: center;
+      direction: rtl;
+      font-weight: 600;
+    }
+
+    .page {
+      width: min(1100px, 100%);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(18px, 3vw, 28px);
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .brand-logo {
+      height: 56px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 16px rgba(212, 175, 55, 0.25));
+    }
+
+    .page-nav {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 253, 245, 0.78));
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      box-shadow: 0 18px 32px -22px rgba(212, 175, 55, 0.45);
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      backdrop-filter: blur(12px);
+    }
+
+    .page-nav::-webkit-scrollbar { display: none; }
+
+    .nav-link {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--accent-dark);
+      text-decoration: none;
+      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+      background: rgba(255, 255, 255, 0.82);
+      scroll-snap-align: center;
+      min-width: max-content;
+      box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.12);
+    }
+
+    .nav-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px -18px rgba(212, 175, 55, 0.45);
+    }
+
+    .nav-link:focus-visible {
+      outline: 2px solid rgba(212, 175, 55, 0.55);
+      outline-offset: 2px;
+    }
+
+    .nav-link:active {
+      transform: scale(0.98);
+    }
+
+    .nav-link.active {
+      background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+      color: #fff;
+      box-shadow: 0 14px 30px -18px rgba(212, 175, 55, 0.6);
+    }
+
+    .hero-title {
+      margin: 0;
+      font-family: 'Playfair Display', 'Times New Roman', serif;
+      font-size: clamp(1.6rem, 3.8vw, 2.4rem);
+      letter-spacing: 0.02em;
+      color: var(--text);
+    }
+
+    .hero-subtitle {
+      margin: 0;
+      font-size: clamp(0.95rem, 2vw, 1.05rem);
+      color: var(--muted);
+      max-width: 620px;
+    }
+
+    .glass-card {
+      background: var(--glass);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: clamp(20px, 4vw, 32px);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 25px 50px -12px rgba(212, 175, 55, 0.4);
+    }
+
+    .filter-card {
+      display: grid;
+      gap: 18px;
+    }
+
+    .filter-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .filter-group {
+      display: grid;
+      gap: 8px;
+    }
+
+    .sort-options {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      border: none;
+    }
+
+    .sort-options legend {
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: 'Playfair Display', serif;
+      color: var(--accent-dark);
+    }
+
+    .sort-slider {
+      display: grid;
+      gap: 12px;
+    }
+
+    .sort-slider input[type="range"] {
+      --progress: 25%;
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(
+        90deg,
+        var(--accent) 0%,
+        var(--accent) var(--progress),
+        rgba(212, 175, 55, 0.2) var(--progress),
+        rgba(212, 175, 55, 0.2) 100%
+      );
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+    }
+
+    .sort-slider input[type="range"]:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.35);
+    }
+
+    .sort-slider input[type="range"]::-webkit-slider-runnable-track {
+      height: 6px;
+      border-radius: 999px;
+      background: transparent;
+    }
+
+    .sort-slider input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid #fff;
+      box-shadow: 0 10px 25px -12px rgba(212, 175, 55, 0.8);
+      margin-top: -8px;
+      transition: transform 0.2s ease;
+    }
+
+    .sort-slider input[type="range"]:active::-webkit-slider-thumb {
+      transform: scale(1.05);
+    }
+
+    .sort-slider input[type="range"]::-moz-range-track {
+      height: 6px;
+      border-radius: 999px;
+      background: transparent;
+    }
+
+    .sort-slider input[type="range"]::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid #fff;
+      box-shadow: 0 10px 25px -12px rgba(212, 175, 55, 0.8);
+      transition: transform 0.2s ease;
+    }
+
+    .sort-slider input[type="range"]:active::-moz-range-thumb {
+      transform: scale(1.05);
+    }
+
+    .sort-slider__labels {
+      display: flex;
+      justify-content: space-between;
+      gap: 4px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .sort-slider__labels span {
+      flex: 1;
+      text-align: center;
+      position: relative;
+      padding-top: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .sort-slider__labels span::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, 0);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(212, 175, 55, 0.3);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .sort-slider__labels span.is-active {
+      color: var(--accent-dark);
+    }
+
+    .sort-slider__labels span.is-active::after {
+      transform: translate(-50%, -2px) scale(1.1);
+      background: var(--accent);
+    }
+
+    .sort-options__current {
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      font-family: 'Playfair Display', serif;
+    }
+
+    select,
+    button,
+    input {
+      font-family: inherit;
+      border-radius: 14px;
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      padding: 12px 14px;
+      font-size: 0.98rem;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4);
+      transition: transform 120ms ease, box-shadow 200ms ease, border-color 160ms ease;
+    }
+
+    select:focus,
+    button:focus,
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25);
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 2px solid var(--gold-primary);
+      outline-offset: 2px;
+    }
+
+    button {
+      background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+      color: #fff;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 14px 32px -18px rgba(212, 175, 55, 0.45);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+      background: rgba(212, 175, 55, 0.35);
+      box-shadow: none;
+    }
+
+    button:not(:disabled):hover {
+      transform: translateY(-1px);
+    }
+
+    .range-inputs {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      align-items: center;
+      gap: 8px;
+    }
+
+    .range-inputs input {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .range-inputs span {
+      font-weight: 600;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .view-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      box-shadow: 0 12px 24px -18px rgba(212, 175, 55, 0.35);
+      width: fit-content;
+    }
+
+    .toggle-pill {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .toggle-pill input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .toggle-pill__surface {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      transition: all 0.2s ease;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    }
+
+    .toggle-pill__label {
+      position: relative;
+      z-index: 1;
+      padding: 8px 18px;
+      color: var(--accent-dark);
+      white-space: nowrap;
+    }
+
+    .toggle-pill input:checked ~ .toggle-pill__surface {
+      background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+      box-shadow: 0 14px 30px -20px rgba(212, 175, 55, 0.55);
+    }
+
+    .toggle-pill input:checked ~ .toggle-pill__label {
+      color: #fff;
+    }
+
+    .status-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .status-row strong {
+      color: var(--accent-dark);
+    }
+
+    .results-card {
+      display: grid;
+      gap: 18px;
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .results-count {
+      font-weight: 600;
+      color: var(--accent-dark);
+      font-family: 'Playfair Display', serif;
+    }
+
+    .items-grid {
+      display: grid;
+      gap: clamp(16px, 2.5vw, 22px);
+    }
+
+    .items-grid[data-view="detailed"] {
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    }
+
+    .items-grid[data-view="compact"] {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .item-card {
+      display: grid;
+      gap: 16px;
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 18px 40px -24px rgba(212, 175, 55, 0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .item-card--compact {
+      grid-template-rows: auto 1fr;
+      padding: 14px;
+    }
+
+    .item-card--detailed {
+      grid-template-columns: minmax(0, 240px) 1fr;
+      align-items: stretch;
+    }
+
+    .item-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 25px 48px -20px rgba(212, 175, 55, 0.45);
+    }
+
+    .item-card__media {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(212, 175, 55, 0.08);
+      box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.12);
+    }
+
+    .item-card--compact .item-card__media {
+      aspect-ratio: 1;
+    }
+
+    .item-card--detailed .item-card__media {
+      min-height: 240px;
+      aspect-ratio: 3 / 4;
+    }
+
+    .item-card__photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .item-card__photo--placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .item-card__body {
+      display: grid;
+      gap: 16px;
+    }
+
+    .item-card--compact .item-card__body {
+      gap: 12px;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .item-card__header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .item-card--compact .item-card__header {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      gap: 6px;
+    }
+
+    .item-card--compact .item-card__title {
+      text-align: center;
+    }
+
+    .item-card__title {
+      display: grid;
+      gap: 4px;
+    }
+
+    .item-card__name {
+      margin: 0;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+    }
+
+    .item-card--compact .item-card__name {
+      font-size: 1rem;
+    }
+
+    .item-card__sku {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(212, 175, 55, 0.12);
+      color: var(--accent-dark);
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .item-card--compact .item-card__sku {
+      justify-content: center;
+      width: 100%;
+    }
+
+    .item-card__price {
+      display: grid;
+      gap: 4px;
+      text-align: right;
+    }
+
+    .item-card--compact .item-card__price {
+      text-align: center;
+      width: 100%;
+    }
+
+    .item-card__price span {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .item-card--compact .item-card__price span {
+      font-size: 0.8rem;
+    }
+
+    .item-card__price strong {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--accent-dark);
+    }
+
+    .item-card--compact .item-card__price strong {
+      font-size: 1.35rem;
+    }
+
+    .item-card__meta {
+      display: grid;
+      gap: 12px;
+      font-size: 0.95rem;
+      width: 100%;
+    }
+
+    .item-card__meta-row {
+      display: grid;
+      gap: 8px;
+    }
+
+    .item-card__meta-entry {
+      display: grid;
+      grid-template-columns: max-content minmax(0, 1fr);
+      gap: 8px;
+      align-items: baseline;
+      width: 100%;
+    }
+
+    .item-card__meta-label {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .item-card__meta-label::after {
+      content: ':';
+      margin-left: 4px;
+      color: rgba(139, 125, 107, 0.7);
+    }
+
+    .item-card__meta-value {
+      justify-self: start;
+      color: var(--accent-dark);
+      font-weight: 600;
+      text-align: left;
+      word-break: break-word;
+    }
+
+    .item-card--compact .item-card__meta {
+      justify-items: center;
+      text-align: left;
+    }
+
+    .item-card--compact .item-card__meta-entry {
+      margin: 0 auto;
+      max-width: 260px;
+    }
+
+    .item-card--compact .item-card__meta-value {
+      justify-self: start;
+    }
+
+    .item-card__description {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .item-card--compact .item-card__description {
+      display: none;
+    }
+
+    .item-card--compact .item-card__meta-row:not(:first-child) {
+      display: none;
+    }
+
+    .item-card__badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+
+    .item-card--compact .item-card__badge-row {
+      justify-content: center;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 253, 245, 0.85);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      color: var(--accent-dark);
+      font-weight: 600;
+    }
+
+    .empty-state {
+      margin: 0;
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px dashed rgba(212, 175, 55, 0.35);
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.98rem;
+    }
+
+    @media (max-width: 1100px) {
+      .items-grid[data-view="compact"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .item-card--detailed {
+        grid-template-columns: 1fr;
+      }
+
+      .item-card--detailed .item-card__media {
+        aspect-ratio: 4 / 3;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body { padding-top: 60px; }
+      header { text-align: center; align-items: center; }
+      .header-top {
+        width: 100%;
+        display: grid;
+        justify-items: center;
+      }
+      .page-nav {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      .brand-logo { height: 46px; }
+      .status-row { justify-content: center; }
+      .items-grid[data-view="compact"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .item-card--compact .item-card__header { align-items: center; }
+      .item-card--compact .item-card__price { text-align: center; }
+    }
+
+    @media (max-width: 360px) {
+      .items-grid[data-view="compact"] {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page" id="inventoryPage">
+    <p class="bismillah" lang="ar" dir="rtl">بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
+    <header>
+      <div class="header-top">
+        <img src="../assets/logo-website-test.jpg" alt="Ghandour Juwellery logo" class="brand-logo" />
+        <nav class="page-nav" aria-label="Workspace navigation">
+          <a class="nav-link" href="./index.html">Scanner</a>
+          <a class="nav-link active" href="./items.html" aria-current="page">Inventory</a>
+          <a class="nav-link" href="./sales.html">Sales log</a>
+          <a class="nav-link" href="./purchases.html">Purchase log</a>
+          <a class="nav-link" href="./statement.html">Gold statement</a>
+        </nav>
+      </div>
+      <h1 class="hero-title">Inventory explorer</h1>
+      <p class="hero-subtitle">Browse the current collection, refine by category and target price, and pick the layout that suits the conversation.</p>
+    </header>
+
+    <section class="glass-card filter-card" aria-label="Inventory filters">
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label for="categoryFilter">Category</label>
+          <select id="categoryFilter" name="category">
+            <option value="">All categories</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="priceMin">Price range</label>
+          <div class="range-inputs">
+            <input type="number" id="priceMin" placeholder="Min" min="0" step="0.01" inputmode="decimal">
+            <span>to</span>
+            <input type="number" id="priceMax" placeholder="Max" min="0" step="0.01" inputmode="decimal">
+          </div>
+        </div>
+      </div>
+      <fieldset class="sort-options">
+        <legend>Sort by</legend>
+        <div class="sort-slider">
+          <input
+            type="range"
+            id="sortBySlider"
+            name="sortBy"
+            min="0"
+            max="4"
+            step="1"
+            value="1"
+            list="sortOptionsList"
+            aria-label="Sort inventory by"
+            aria-describedby="sortSelection"
+          >
+          <div class="sort-slider__labels" aria-hidden="true">
+            <span data-sort-index="0">SKU</span>
+            <span data-sort-index="1">Price ↑</span>
+            <span data-sort-index="2">Price ↓</span>
+            <span data-sort-index="3">Weight ↑</span>
+            <span data-sort-index="4">Weight ↓</span>
+          </div>
+        </div>
+        <p class="sort-options__current" id="sortSelection" aria-live="polite">Sorting by Price (Low to High)</p>
+        <datalist id="sortOptionsList">
+          <option value="0" label="SKU"></option>
+          <option value="1" label="Price ↑"></option>
+          <option value="2" label="Price ↓"></option>
+          <option value="3" label="Weight ↑"></option>
+          <option value="4" label="Weight ↓"></option>
+        </datalist>
+      </fieldset>
+      <div class="view-toggle" role="radiogroup" aria-label="Display mode">
+        <label class="toggle-pill">
+          <input type="radio" name="viewMode" value="compact" checked>
+          <span class="toggle-pill__surface" aria-hidden="true"></span>
+          <span class="toggle-pill__label">Compact</span>
+        </label>
+        <label class="toggle-pill">
+          <input type="radio" name="viewMode" value="detailed">
+          <span class="toggle-pill__surface" aria-hidden="true"></span>
+          <span class="toggle-pill__label">Detailed</span>
+        </label>
+      </div>
+      <div class="status-row">
+        <div id="itemsStatus" aria-live="polite">Loading inventory…</div>
+        <div id="goldStatus" aria-live="polite"></div>
+      </div>
+      <div>
+        <button type="button" id="resetFilters">Reset filters</button>
+      </div>
+    </section>
+
+    <section class="glass-card results-card" aria-label="Inventory results">
+      <div class="results-header">
+        <h2>Items</h2>
+        <span class="results-count" id="resultsCount">0 items</span>
+      </div>
+      <div class="items-grid" id="itemsGrid" role="list" data-view="compact"></div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const DEFAULT_CONFIG = {
+        inventoryEndpoint: '/api/inventory',
+        authEndpoint: '/api/auth',
+        salesEndpoint: '/api/sales',
+        goldPriceUrl: 'https://api.gold-api.com/price/XAU'
+      };
+
+      const APP_CONFIG = Object.freeze({
+        ...DEFAULT_CONFIG,
+        ...(window.APP_CONFIG && typeof window.APP_CONFIG === 'object' ? window.APP_CONFIG : {})
+      });
+
+      const INVENTORY_ENDPOINT = APP_CONFIG.inventoryEndpoint;
+      const GOLD_API = APP_CONFIG.goldPriceUrl;
+      const PREMIUM = 30;
+      const OUNCE_GRAMS = 32;
+
+      const categorySelect = document.getElementById('categoryFilter');
+      const priceMinInput = document.getElementById('priceMin');
+      const priceMaxInput = document.getElementById('priceMax');
+      const resetFiltersBtn = document.getElementById('resetFilters');
+      const viewModeInputs = document.querySelectorAll('input[name="viewMode"]');
+      const sortSlider = document.getElementById('sortBySlider');
+      const sortSelection = document.getElementById('sortSelection');
+      const sortLabelNodes = document.querySelectorAll('[data-sort-index]');
+      const itemsGrid = document.getElementById('itemsGrid');
+      const resultsCount = document.getElementById('resultsCount');
+      const itemsStatus = document.getElementById('itemsStatus');
+      const goldStatus = document.getElementById('goldStatus');
+
+      const SORT_OPTIONS = Object.freeze([
+        { value: 'sku', label: 'SKU', shortLabel: 'SKU', announcement: 'SKU (ascending)' },
+        { value: 'price-asc', label: 'Price (Low to High)', shortLabel: 'Price ↑', announcement: 'Price low to high' },
+        { value: 'price-desc', label: 'Price (High to Low)', shortLabel: 'Price ↓', announcement: 'Price high to low' },
+        { value: 'weight-asc', label: 'Weight (Low to High)', shortLabel: 'Weight ↑', announcement: 'Weight low to high' },
+        { value: 'weight-desc', label: 'Weight (High to Low)', shortLabel: 'Weight ↓', announcement: 'Weight high to low' }
+      ]);
+      const DEFAULT_SORT_INDEX = SORT_OPTIONS.findIndex((option) => option.value === 'price-asc');
+      const RESOLVED_DEFAULT_SORT_INDEX = DEFAULT_SORT_INDEX >= 0 ? DEFAULT_SORT_INDEX : 0;
+
+      const state = {
+        rows: [],
+        filtered: [],
+        viewMode: 'compact',
+        sortBy: SORT_OPTIONS[RESOLVED_DEFAULT_SORT_INDEX]?.value ?? SORT_OPTIONS[0].value,
+        goldPrice: null,
+        goldUpdatedAt: '',
+        categoryKey: null
+      };
+
+      function normalizeDigits(value = '') {
+        return String(value ?? '')
+          .replace(/\u0660/g, '0').replace(/\u0661/g, '1').replace(/\u0662/g, '2')
+          .replace(/\u0663/g, '3').replace(/\u0664/g, '4').replace(/\u0665/g, '5')
+          .replace(/\u0666/g, '6').replace(/\u0667/g, '7').replace(/\u0668/g, '8')
+          .replace(/\u0669/g, '9')
+          .replace(/\u06F0/g, '0').replace(/\u06F1/g, '1').replace(/\u06F2/g, '2')
+          .replace(/\u06F3/g, '3').replace(/\u06F4/g, '4').replace(/\u06F5/g, '5')
+          .replace(/\u06F6/g, '6').replace(/\u06F7/g, '7').replace(/\u06F8/g, '8')
+          .replace(/\u06F9/g, '9')
+          .replace(/\u066B/g, '.').replace(/\u066C/g, ',');
+      }
+
+      function extractNumber(value) {
+        if (typeof value === 'number') {
+          return Number.isFinite(value) ? value : NaN;
+        }
+        const normalized = normalizeDigits(value);
+        const match = normalized.match(/-?\d+(?:[.,]\d+)?/);
+        if (!match) return NaN;
+        const token = match[0];
+        const formatted = token.includes(',') && !token.includes('.')
+          ? token.replace(',', '.')
+          : token.replace(/,/g, '');
+        const num = Number.parseFloat(formatted);
+        return Number.isFinite(num) ? num : NaN;
+      }
+
+      function sanitize(value) {
+        const div = document.createElement('div');
+        div.textContent = String(value ?? '');
+        return div.textContent;
+      }
+
+      function normalizePhotoUrl(value) {
+        const raw = String(value ?? '').trim();
+        if (!raw) return '';
+
+        if (raw.startsWith('data:')) {
+          return raw;
+        }
+
+        let token = raw.split(/\s+/)[0];
+
+        if (raw.startsWith('=')) {
+          const quotedUrl = raw.match(/["'](https?:\/\/[^"']+)["']/i);
+          if (quotedUrl && quotedUrl[1]) {
+            token = quotedUrl[1];
+          } else {
+            const bareUrl = raw.match(/https?:\/\/[^,\s)]+/i);
+            if (bareUrl && bareUrl[0]) {
+              token = bareUrl[0];
+            }
+          }
+        } else {
+          const inlineUrl = raw.match(/https?:\/\/[^\s"']+/i);
+          if (inlineUrl && inlineUrl[0]) {
+            token = inlineUrl[0];
+          }
+        }
+
+        if (!/^https?:/i.test(token)) {
+          if (/^drive\.google\.com/i.test(token)) {
+            token = `https://${token}`;
+          }
+        }
+
+        let url;
+        try {
+          url = new URL(token);
+        } catch (error) {
+          try {
+            url = new URL(token, window.location.origin);
+          } catch (nestedError) {
+            return '';
+          }
+        }
+
+        if (!['http:', 'https:'].includes(url.protocol)) {
+          return '';
+        }
+
+        if (url.hostname.includes('drive.google.com')) {
+          const match = url.pathname.match(/\/file\/d\/([^/]+)/);
+          const id = match ? match[1] : url.searchParams.get('id');
+          const resourceKey = url.searchParams.get('resourcekey');
+
+          if (id) {
+            const params = new URLSearchParams({ export: 'view', id });
+            if (resourceKey) {
+              params.set('resourcekey', resourceKey);
+            }
+            return `https://drive.google.com/uc?${params.toString()}`;
+          }
+
+          if (url.pathname.startsWith('/uc')) {
+            const params = new URLSearchParams(url.search);
+            if (resourceKey && !params.get('resourcekey')) {
+              params.set('resourcekey', resourceKey);
+              return `https://drive.google.com${url.pathname}?${params.toString()}`;
+            }
+          }
+        }
+
+        return url.href;
+      }
+
+      function loadImageWithTimeout(imgElement, src, timeout = 5000) {
+        return new Promise((resolve, reject) => {
+          let settled = false;
+
+          const cleanup = () => {
+            imgElement.onload = null;
+            imgElement.onerror = null;
+          };
+
+          const timer = setTimeout(() => {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            reject(new Error('Image load timeout'));
+          }, timeout);
+
+          imgElement.onload = () => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            cleanup();
+            resolve();
+          };
+
+          imgElement.onerror = () => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            cleanup();
+            reject(new Error('Image load failed'));
+          };
+
+          imgElement.src = src;
+        });
+      }
+
+      function getDriveId(url = '') {
+        const s = String(url).trim();
+        if (!s) return null;
+
+        const patterns = [
+          /[?&]id=([A-Za-z0-9_-]+)/,
+          /\/file\/d\/([A-Za-z0-9_-]+)/,
+          /\/uc\?export=(?:download|view)&id=([A-Za-z0-9_-]+)/,
+          /\/d\/([A-Za-z0-9_-]+)/,
+          /\/view\?usp=sharing&id=([A-Za-z0-9_-]+)/,
+          /drive\.google\.com\/file\/d\/([A-Za-z0-9_-]+)/
+        ];
+
+        for (const pattern of patterns) {
+          const match = s.match(pattern);
+          if (match && match[1]) {
+            return match[1];
+          }
+        }
+
+        if (/\.(jpg|jpeg|png|gif|webp)(\?.*)?$/i.test(s)) {
+          return null;
+        }
+
+        return null;
+      }
+
+      function buildPhotoCandidateUrls(rawUrl) {
+        const trimmed = String(rawUrl ?? '').trim();
+        if (!trimmed) return [];
+
+        const candidates = [];
+        const seen = new Set();
+
+        const pushCandidate = (candidate) => {
+          const normalized = String(candidate ?? '').trim();
+          if (!normalized || seen.has(normalized)) return;
+          seen.add(normalized);
+          candidates.push(normalized);
+        };
+
+        pushCandidate(trimmed);
+
+        const driveId = getDriveId(trimmed);
+        if (driveId) {
+          let resourceKey = '';
+          try {
+            const parsed = new URL(trimmed);
+            resourceKey = parsed.searchParams.get('resourcekey') || '';
+          } catch (error) {
+            resourceKey = '';
+          }
+
+          const suffix = resourceKey ? `&resourcekey=${encodeURIComponent(resourceKey)}` : '';
+
+          pushCandidate(`https://drive.google.com/uc?export=view&id=${driveId}${suffix}`);
+          pushCandidate(`https://drive.google.com/thumbnail?id=${driveId}&sz=s1600${suffix}`);
+          pushCandidate(`https://lh3.googleusercontent.com/d/${driveId}=s1600`);
+        }
+
+        return candidates;
+      }
+
+      function normalizeRowKeys(row) {
+        const out = {};
+        let laborFeeRaw;
+        let profitFeeRaw;
+
+        for (const key of Object.keys(row || {})) {
+          const value = row[key];
+          const lower = key.trim().toLowerCase();
+
+          out[key] = value;
+          out[lower] = value;
+
+          if (lower.includes('sku')) out.sku = value;
+          if (lower.includes('timestamp')) out.timestamp = value;
+          if (lower.includes('type')) out.type = value;
+          if (lower.includes('status') || lower.includes('حالة')) out.availability = value;
+          if (lower.includes('piece type') || lower.includes('نوع القطعة')) out.name = value;
+          if (lower.includes('weight') || lower.includes('وزن')) out.weight = value;
+          if (lower.includes('karat') || lower.includes('carat') || lower.includes('عيار')) out.karat = value;
+          if (lower.includes('making fee') || lower.includes('أجور')) out.fees = value;
+          if (lower.includes('اجور بالغرام')) laborFeeRaw = value;
+          if (lower.includes('ربح لكل غرام')) profitFeeRaw = value;
+          if (lower.includes('description') || lower.includes('وصف')) out.description = value;
+          if (lower.includes('photo') || lower.includes('video') || lower.includes('image')) out.photo = value;
+          if (lower.includes('أسم البائع')) out.soldby = value;
+          if (lower.includes('تاريخ المبيع')) out.solddate = value;
+          if (
+            lower.includes('مبلغ البيع') ||
+            lower.includes('sold price') ||
+            lower.includes('sell price') ||
+            lower.includes('sale price') ||
+            lower.includes('sold amount') ||
+            lower.includes('sale amount')
+          ) {
+            out.soldprice = value;
+          }
+          if (lower.includes('ملاحظات')) out.notes = value;
+        }
+
+        const hasLaborFee = typeof laborFeeRaw !== 'undefined' && String(laborFeeRaw ?? '').trim() !== '';
+        const hasProfitFee = typeof profitFeeRaw !== 'undefined' && String(profitFeeRaw ?? '').trim() !== '';
+
+        if (hasLaborFee || hasProfitFee) {
+          const parseFeeComponent = (raw) => {
+            const normalized = String(raw ?? '').trim();
+            if (!normalized) return 0;
+            const numeric = Number(normalized.replace(/[^0-9.,-]/g, '').replace(',', '.'));
+            return Number.isFinite(numeric) ? numeric : 0;
+          };
+
+          const laborFee = parseFeeComponent(laborFeeRaw);
+          const profitFee = parseFeeComponent(profitFeeRaw);
+          const totalFees = laborFee + profitFee;
+
+          if (Number.isFinite(totalFees)) {
+            const formattedTotal = totalFees
+              .toFixed(4)
+              .replace(/\.0+$/, '')
+              .replace(/(\.\d*?)0+$/, '$1');
+            out.fees = formattedTotal;
+          }
+        }
+
+        return out;
+      }
+
+      function normalizeCategoryValue(value = '') {
+        return String(value ?? '').trim().toLowerCase();
+      }
+
+      function detectCategoryKey(rows = []) {
+        if (!rows.length) return null;
+        const keys = new Set();
+        for (const row of rows) {
+          for (const key of Object.keys(row)) {
+            if (!key) continue;
+            keys.add(key.trim().toLowerCase());
+          }
+        }
+        const candidates = [
+          'category',
+          'type',
+          'collection',
+          'group',
+          'line',
+          'segment',
+          'الصنف',
+          'الفئة',
+          'نوع',
+          'name',
+          'piece type | نوع القطعة'
+        ];
+        for (const candidate of candidates) {
+          if (keys.has(candidate)) {
+            return candidate;
+          }
+        }
+        return null;
+      }
+
+      function computeItemPrice(weightStr, karatStr, feesStr, basePrice) {
+        const weight = extractNumber(weightStr);
+        const fees = extractNumber(feesStr) || 0;
+        const karat = parseInt(String(karatStr ?? '').replace(/[^\d]/g, ''), 10) || 0;
+        if (!Number.isFinite(basePrice) || !basePrice || !weight || !karat) {
+          return null;
+        }
+        let purity;
+        if (karat === 18) purity = 750 / 995;
+        else if (karat === 21) purity = 875 / 995;
+        else purity = karat / 24;
+        const perGram = ((basePrice + PREMIUM) * OUNCE_GRAMS * purity) / 1000 + fees;
+        const total = perGram * weight;
+        if (!Number.isFinite(total)) return null;
+        return { total, perGram, weight, karat };
+      }
+
+      function findExistingPrice(row) {
+        for (const key of Object.keys(row)) {
+          if (!key) continue;
+          const lower = key.trim().toLowerCase();
+          if (
+            !lower ||
+            lower.includes('sold') ||
+            lower.includes('sale') ||
+            lower.includes('cost')
+          ) {
+            continue;
+          }
+          if (lower.includes('price') || lower.includes('amount') || lower.includes('value')) {
+            const numeric = extractNumber(row[key]);
+            if (Number.isFinite(numeric)) {
+              return { numeric, display: row[key] };
+            }
+          }
+        }
+        return null;
+      }
+
+      function formatCount(count) {
+        return `${count} item${count === 1 ? '' : 's'}`;
+      }
+
+      function formatPrice(value, fallbackText = 'Not available') {
+        if (Number.isFinite(value)) {
+          return value.toFixed(2);
+        }
+        return fallbackText;
+      }
+
+      function populateCategoryOptions(rows) {
+        const options = new Map();
+        for (const row of rows) {
+          const raw = row.__categoryRaw;
+          const normalized = row.__categoryNormalized;
+          if (!normalized) continue;
+          if (!options.has(normalized)) {
+            options.set(normalized, raw || 'Unnamed category');
+          }
+        }
+        const entries = Array.from(options.entries()).sort((a, b) => a[1].localeCompare(b[1]));
+        categorySelect.innerHTML = '<option value="">All categories</option>';
+        for (const [value, label] of entries) {
+          const option = document.createElement('option');
+          option.value = value;
+          option.textContent = label;
+          categorySelect.appendChild(option);
+        }
+      }
+
+      function updateStatus() {
+        resultsCount.textContent = formatCount(state.filtered.length);
+        if (state.rows.length) {
+          itemsStatus.innerHTML = `Showing <strong>${state.filtered.length}</strong> of <strong>${state.rows.length}</strong> items`;
+        } else {
+          itemsStatus.textContent = 'No inventory data available yet.';
+        }
+
+        if (Number.isFinite(state.goldPrice)) {
+          const parts = [`Gold price ${state.goldPrice.toFixed(2)}`];
+          if (state.goldUpdatedAt) parts.push(`updated ${sanitize(state.goldUpdatedAt)}`);
+          goldStatus.textContent = parts.join(' • ');
+        } else {
+          goldStatus.textContent = 'Gold price unavailable — prices shown use sheet data only.';
+        }
+      }
+
+      function applyFilters() {
+        const category = categorySelect.value;
+        const priceMin = extractNumber(priceMinInput.value);
+        const priceMax = extractNumber(priceMaxInput.value);
+
+        state.filtered = state.rows.filter((row) => {
+          if (category && row.__categoryNormalized !== category) {
+            return false;
+          }
+
+          if (Number.isFinite(priceMin)) {
+            if (!Number.isFinite(row.__price) || row.__price < priceMin) {
+              return false;
+            }
+          }
+
+          if (Number.isFinite(priceMax)) {
+            if (!Number.isFinite(row.__price) || row.__price > priceMax) {
+              return false;
+            }
+          }
+
+          return true;
+        });
+
+        sortFiltered();
+        renderItems();
+        updateStatus();
+      }
+
+      function fallbackComparison(a, b) {
+        const nameComparison = (a.__name || '').localeCompare(b.__name || '', undefined, {
+          sensitivity: 'base'
+        });
+        if (nameComparison !== 0) {
+          return nameComparison;
+        }
+        return (a.__index ?? 0) - (b.__index ?? 0);
+      }
+
+      function compareByNumeric(a, b, extractor, direction = 'asc') {
+        const valueA = extractor(a);
+        const valueB = extractor(b);
+        const hasA = Number.isFinite(valueA);
+        const hasB = Number.isFinite(valueB);
+
+        if (hasA && hasB) {
+          if (valueA !== valueB) {
+            return direction === 'desc' ? valueB - valueA : valueA - valueB;
+          }
+        } else if (hasA !== hasB) {
+          return hasA ? -1 : 1;
+        }
+
+        return fallbackComparison(a, b);
+      }
+
+      function compareBySku(a, b) {
+        const skuA = a.__sku || '';
+        const skuB = b.__sku || '';
+        const hasA = Boolean(skuA);
+        const hasB = Boolean(skuB);
+
+        if (hasA && hasB) {
+          const comparison = skuA.localeCompare(skuB, undefined, {
+            numeric: true,
+            sensitivity: 'base'
+          });
+          if (comparison !== 0) {
+            return comparison;
+          }
+        } else if (hasA !== hasB) {
+          return hasA ? -1 : 1;
+        }
+
+        return fallbackComparison(a, b);
+      }
+
+      const SORT_COMPARATORS = {
+        'price-asc': (a, b) => compareByNumeric(a, b, (row) => row.__price, 'asc'),
+        'price-desc': (a, b) => compareByNumeric(a, b, (row) => row.__price, 'desc'),
+        'weight-asc': (a, b) => compareByNumeric(a, b, (row) => row.__weight, 'asc'),
+        'weight-desc': (a, b) => compareByNumeric(a, b, (row) => row.__weight, 'desc'),
+        sku: compareBySku
+      };
+
+      function sortFiltered() {
+        const comparator = SORT_COMPARATORS[state.sortBy] || SORT_COMPARATORS['price-asc'];
+        state.filtered.sort(comparator);
+      }
+
+      function clampSortIndex(rawIndex) {
+        const parsed = Number.parseInt(rawIndex, 10);
+        if (!Number.isFinite(parsed)) {
+          return RESOLVED_DEFAULT_SORT_INDEX;
+        }
+        return Math.min(Math.max(parsed, 0), SORT_OPTIONS.length - 1);
+      }
+
+      function updateSortDisplay(index) {
+        const option = SORT_OPTIONS[index] ?? SORT_OPTIONS[RESOLVED_DEFAULT_SORT_INDEX] ?? SORT_OPTIONS[0];
+        if (sortSlider) {
+          const steps = Math.max(SORT_OPTIONS.length - 1, 1);
+          const progress = (index / steps) * 100;
+          sortSlider.style.setProperty('--progress', `${progress}%`);
+          sortSlider.setAttribute('aria-valuetext', option.announcement);
+        }
+        if (sortSelection) {
+          sortSelection.textContent = `Sorting by ${option.label}`;
+        }
+        sortLabelNodes.forEach((node) => {
+          const nodeIndex = Number.parseInt(node.getAttribute('data-sort-index'), 10);
+          node.classList.toggle('is-active', nodeIndex === index);
+        });
+      }
+
+      function setSortByIndex(index, { trigger = true } = {}) {
+        const resolvedIndex = clampSortIndex(index);
+        const option = SORT_OPTIONS[resolvedIndex] ?? SORT_OPTIONS[RESOLVED_DEFAULT_SORT_INDEX] ?? SORT_OPTIONS[0];
+        state.sortBy = option.value;
+        if (sortSlider) {
+          sortSlider.value = String(resolvedIndex);
+        }
+        updateSortDisplay(resolvedIndex);
+        if (trigger) {
+          sortFiltered();
+          renderItems();
+          updateStatus();
+        }
+      }
+
+      function createMetaRow(label, value) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'item-card__meta-entry';
+
+        const labelSpan = document.createElement('span');
+        labelSpan.className = 'item-card__meta-label';
+        labelSpan.textContent = label;
+
+        const valueSpan = document.createElement('span');
+        valueSpan.className = 'item-card__meta-value';
+        valueSpan.textContent = value;
+
+        wrapper.appendChild(labelSpan);
+        wrapper.appendChild(valueSpan);
+        return wrapper;
+      }
+
+      function createItemCard(row) {
+        const card = document.createElement('article');
+        card.className = `item-card item-card--${state.viewMode}`;
+        card.setAttribute('role', 'listitem');
+
+        const media = document.createElement('div');
+        media.className = 'item-card__media';
+
+        const showPlaceholder = () => {
+          media.innerHTML = '';
+          const placeholder = document.createElement('div');
+          placeholder.className = 'item-card__photo item-card__photo--placeholder';
+          placeholder.textContent = 'Photo unavailable';
+          media.appendChild(placeholder);
+        };
+
+        if (row.__photoUrl) {
+          const altText = row.__name ? `${row.__name} photo` : 'Item photo';
+          const image = document.createElement('img');
+          image.className = 'item-card__photo';
+          image.loading = 'lazy';
+          image.decoding = 'async';
+          image.crossOrigin = 'anonymous';
+          image.alt = altText;
+          media.appendChild(image);
+
+          const candidateUrls = buildPhotoCandidateUrls(row.__photoUrl);
+          if (!candidateUrls.length) {
+            image.src = row.__photoUrl;
+          } else {
+            const urls = [...candidateUrls];
+            const tryNext = () => {
+              const nextUrl = urls.shift();
+              if (!nextUrl) {
+                showPlaceholder();
+                return;
+              }
+
+              loadImageWithTimeout(image, nextUrl, 5000)
+                .catch(() => {
+                  if (urls.length) {
+                    setTimeout(tryNext, 100);
+                  } else {
+                    showPlaceholder();
+                  }
+                });
+            };
+
+            tryNext();
+          }
+        } else {
+          showPlaceholder();
+        }
+        card.appendChild(media);
+
+        const body = document.createElement('div');
+        body.className = 'item-card__body';
+
+        const header = document.createElement('div');
+        header.className = 'item-card__header';
+
+        const titleBlock = document.createElement('div');
+        titleBlock.className = 'item-card__title';
+
+        if (row.__sku) {
+          const skuChip = document.createElement('span');
+          skuChip.className = 'item-card__sku';
+          skuChip.textContent = `SKU ${row.__sku}`;
+          titleBlock.appendChild(skuChip);
+        }
+
+        const title = document.createElement('h3');
+        title.className = 'item-card__name';
+        title.textContent = row.__name || 'Item';
+        titleBlock.appendChild(title);
+
+        header.appendChild(titleBlock);
+
+        const priceBlock = document.createElement('div');
+        priceBlock.className = 'item-card__price';
+        const priceLabel = document.createElement('span');
+        priceLabel.textContent = row.__priceSource === 'sheet' ? 'Sheet price' : 'Estimated price';
+        const priceValue = document.createElement('strong');
+        priceValue.textContent = row.__priceDisplay;
+        priceBlock.appendChild(priceLabel);
+        priceBlock.appendChild(priceValue);
+        header.appendChild(priceBlock);
+
+        body.appendChild(header);
+
+        const metaList = document.createElement('div');
+        metaList.className = 'item-card__meta';
+
+        const primaryMeta = document.createElement('div');
+        primaryMeta.className = 'item-card__meta-row';
+        if (row.__weightDisplay) {
+          primaryMeta.appendChild(createMetaRow('Weight', row.__weightDisplay));
+        }
+        if (row.__karat) {
+          primaryMeta.appendChild(createMetaRow('Karat', row.__karat));
+        }
+        if (row.__categoryRaw) {
+          primaryMeta.appendChild(createMetaRow('Category', row.__categoryRaw));
+        }
+        metaList.appendChild(primaryMeta);
+
+        if (state.viewMode === 'detailed') {
+          const secondaryMeta = document.createElement('div');
+          secondaryMeta.className = 'item-card__meta-row';
+          if (row.__fees) {
+            secondaryMeta.appendChild(createMetaRow('Fees', row.__fees));
+          }
+          if (row.__availability) {
+            secondaryMeta.appendChild(createMetaRow('Status', row.__availability));
+          }
+          if (row.__perGramDisplay) {
+            secondaryMeta.appendChild(createMetaRow('Per gram', row.__perGramDisplay));
+          }
+          if (secondaryMeta.childElementCount) {
+            metaList.appendChild(secondaryMeta);
+          }
+        }
+
+        body.appendChild(metaList);
+
+        if (state.viewMode === 'detailed' && row.__description) {
+          const description = document.createElement('p');
+          description.className = 'item-card__description';
+          description.textContent = row.__description;
+          body.appendChild(description);
+        }
+
+        if (row.__badges.length) {
+          const badgeRow = document.createElement('div');
+          badgeRow.className = 'item-card__badge-row';
+          for (const badge of row.__badges) {
+            const span = document.createElement('span');
+            span.className = 'chip';
+            span.textContent = badge;
+            badgeRow.appendChild(span);
+          }
+          body.appendChild(badgeRow);
+        }
+
+        card.appendChild(body);
+        return card;
+      }
+
+      function renderItems() {
+        itemsGrid.innerHTML = '';
+        itemsGrid.dataset.view = state.viewMode;
+        if (!state.filtered.length) {
+          const empty = document.createElement('p');
+          empty.className = 'empty-state';
+          empty.textContent = state.rows.length
+            ? 'No items match your filters yet. Adjust the filters or reset them to see the full collection.'
+            : 'No inventory rows are available yet.';
+          itemsGrid.appendChild(empty);
+          return;
+        }
+
+        for (const row of state.filtered) {
+          itemsGrid.appendChild(createItemCard(row));
+        }
+      }
+
+      function parseRow(row) {
+        const normalized = normalizeRowKeys(row);
+        const priceInfo = computeItemPrice(normalized.weight, normalized.karat, normalized.fees, state.goldPrice);
+        let priceValue = priceInfo?.total ?? NaN;
+        let perGramValue = priceInfo?.perGram ?? NaN;
+        let priceSource = 'estimated';
+        let priceDisplay = formatPrice(priceValue);
+        const weightValue = extractNumber(normalized.weight);
+
+        if (!Number.isFinite(priceValue)) {
+          const fallback = findExistingPrice(normalized);
+          if (fallback) {
+            priceValue = fallback.numeric;
+            priceDisplay = formatPrice(priceValue, sanitize(fallback.display));
+            priceSource = 'sheet';
+          } else {
+            priceDisplay = formatPrice(NaN);
+            priceSource = 'unknown';
+          }
+        }
+
+        if (!Number.isFinite(perGramValue) && Number.isFinite(priceValue) && Number.isFinite(weightValue)) {
+          if (weightValue) {
+            perGramValue = priceValue / weightValue;
+          }
+        }
+
+        const categoryKey = state.categoryKey;
+        const categoryRaw = categoryKey ? normalized[categoryKey] : (normalized.category ?? normalized.type ?? '');
+        const categoryNormalized = normalizeCategoryValue(categoryRaw);
+
+        const parsed = {
+          ...normalized,
+          __name: sanitize(normalized.name ?? normalized['piece type | نوع القطعة'] ?? ''),
+          __sku: sanitize(normalized.sku ?? ''),
+          __weight: Number.isFinite(weightValue) ? weightValue : NaN,
+          __weightDisplay: Number.isFinite(weightValue)
+            ? `${weightValue.toFixed(2)} g`
+            : (normalized.weight ? sanitize(normalized.weight) : ''),
+          __karat: sanitize(normalized.karat ?? ''),
+          __fees: sanitize(normalized.fees ?? ''),
+          __description: sanitize(normalized.description ?? ''),
+          __availability: sanitize(normalized.availability ?? ''),
+          __categoryRaw: sanitize(categoryRaw ?? ''),
+          __categoryNormalized: categoryNormalized,
+          __price: Number.isFinite(priceValue) ? priceValue : NaN,
+          __priceDisplay: priceDisplay,
+          __priceSource: priceSource,
+          __perGramDisplay: Number.isFinite(perGramValue) ? `${perGramValue.toFixed(2)} / g` : '',
+          __photoUrl: normalizePhotoUrl(normalized.photo),
+          __badges: []
+        };
+
+        if (parsed.__availability) {
+          parsed.__badges.push(parsed.__availability);
+        }
+        if (normalized.timestamp) {
+          parsed.__badges.push(`Updated ${sanitize(normalized.timestamp)}`);
+        }
+
+        return parsed;
+      }
+
+      function enrichRows(rows) {
+        state.rows = rows.map((row, index) => {
+          const parsed = parseRow(row);
+          parsed.__index = index;
+          return parsed;
+        });
+        populateCategoryOptions(state.rows);
+        applyFilters();
+      }
+
+      async function fetchInventory() {
+        const response = await fetch(INVENTORY_ENDPOINT, { credentials: 'include' });
+        if (!response.ok) {
+          throw new Error(`Inventory request failed (${response.status})`);
+        }
+        return response.json();
+      }
+
+      async function fetchGoldPrice() {
+        try {
+          const response = await fetch(GOLD_API, { cache: 'no-store' });
+          if (!response.ok) {
+            throw new Error(`Gold price request failed (${response.status})`);
+          }
+          const data = await response.json();
+          const price = Number(data.price);
+          if (Number.isFinite(price)) {
+            state.goldPrice = price;
+            state.goldUpdatedAt = data.updatedAtReadable || data.updatedAt || '';
+          } else {
+            state.goldPrice = null;
+          }
+        } catch (error) {
+          console.warn('Gold price fetch failed:', error);
+          state.goldPrice = null;
+        }
+      }
+
+      function resetFilters() {
+        categorySelect.value = '';
+        priceMinInput.value = '';
+        priceMaxInput.value = '';
+        setSortByIndex(RESOLVED_DEFAULT_SORT_INDEX, { trigger: false });
+        applyFilters();
+      }
+
+      function attachListeners() {
+        categorySelect.addEventListener('change', applyFilters);
+        priceMinInput.addEventListener('input', applyFilters);
+        priceMaxInput.addEventListener('input', applyFilters);
+        resetFiltersBtn.addEventListener('click', resetFilters);
+        viewModeInputs.forEach((input) => {
+          input.addEventListener('change', (event) => {
+            if (event.target.checked) {
+              state.viewMode = event.target.value === 'detailed' ? 'detailed' : 'compact';
+              renderItems();
+            }
+          });
+        });
+        if (sortSlider) {
+          const handleSortInput = () => {
+            setSortByIndex(sortSlider.value);
+          };
+          sortSlider.addEventListener('input', handleSortInput);
+          sortSlider.addEventListener('change', handleSortInput);
+        }
+      }
+
+      async function initialize() {
+        attachListeners();
+        if (sortSlider) {
+          setSortByIndex(sortSlider.value, { trigger: false });
+        } else {
+          setSortByIndex(RESOLVED_DEFAULT_SORT_INDEX, { trigger: false });
+        }
+        itemsStatus.textContent = 'Loading inventory…';
+
+        try {
+          const [inventoryData] = await Promise.all([fetchInventory(), fetchGoldPrice()]);
+          const rows = Array.isArray(inventoryData) ? inventoryData : [];
+          state.categoryKey = detectCategoryKey(rows);
+          enrichRows(rows);
+        } catch (error) {
+          console.error('Inventory load failed:', error);
+          itemsStatus.textContent = 'Unable to load inventory. Please refresh after checking your connection.';
+          itemsGrid.innerHTML = '';
+          const empty = document.createElement('p');
+          empty.className = 'empty-state';
+          empty.textContent = 'We could not reach the inventory service. Please try again in a moment.';
+          itemsGrid.appendChild(empty);
+          return;
+        }
+
+        updateStatus();
+      }
+
+      initialize();
+    })();
+  </script>
+</body>
+</html>

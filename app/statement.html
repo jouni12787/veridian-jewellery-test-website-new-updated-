@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ghandour Juwellery • Gold Inventory Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/jpeg" href="../assets/logo-website-test.jpg">
+  <link rel="apple-touch-icon" href="../assets/logo-website-test.jpg">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#D4AF37">
+  <script>if (sessionStorage.getItem('authenticated') !== 'true') { window.location.replace('../index.html'); }</script>
+  <style>
+    :root {
+      --pad: 18px;
+      --gold-primary: #D4AF37;
+      --gold-secondary: #FFD700;
+      --gold-dark: #B8860B;
+      --gold-light: #F5E6B3;
+      --ivory: #F8F8FF;
+      --charcoal: #2C2C2C;
+      --warm-gray: #8B7D6B;
+      --accent-gold: #C9A227;
+      --bg: radial-gradient(circle at 10% 0%, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 55%, #ffffff 100%);
+      --glass: rgba(255, 255, 255, 0.92);
+      --card-border: rgba(212, 175, 55, 0.3);
+      --accent: var(--gold-primary);
+      --accent-dark: var(--gold-dark);
+      --text: var(--charcoal);
+      --muted: var(--warm-gray);
+      --shadow: 0 18px 40px -24px rgba(212, 175, 55, 0.35);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: calc(var(--pad) * 1.2) var(--pad) calc(var(--pad) * 1.6);
+    }
+
+    .bismillah {
+      margin: 0 0 clamp(10px, 2vw, 18px);
+      font-family: 'Amiri', 'Scheherazade New', serif;
+      font-size: clamp(1.1rem, 2.6vw, 1.35rem);
+      color: var(--accent-dark);
+      letter-spacing: 0.02em;
+      text-align: center;
+      align-self: center;
+      direction: rtl;
+      font-weight: 600;
+    }
+
+    .page {
+      width: min(1100px, 100%);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(18px, 3vw, 28px);
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .brand-logo {
+      height: 56px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 16px rgba(212, 175, 55, 0.25));
+    }
+
+    .page-nav {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 253, 245, 0.78));
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      box-shadow: 0 18px 32px -22px rgba(212, 175, 55, 0.45);
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      backdrop-filter: blur(12px);
+    }
+
+    .page-nav::-webkit-scrollbar { display: none; }
+
+    .nav-link {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--accent-dark);
+      text-decoration: none;
+      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+      background: rgba(255, 255, 255, 0.82);
+      scroll-snap-align: center;
+      min-width: max-content;
+      box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.12);
+    }
+
+    .nav-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px -18px rgba(212, 175, 55, 0.45);
+    }
+
+    .nav-link:focus-visible {
+      outline: 2px solid rgba(212, 175, 55, 0.55);
+      outline-offset: 2px;
+    }
+
+    .nav-link:active {
+      transform: scale(0.98);
+    }
+
+    .nav-link.active {
+      background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+      color: #fff;
+      box-shadow: 0 14px 30px -18px rgba(212, 175, 55, 0.6);
+    }
+
+    .hero-title {
+      margin: 0;
+      font-family: 'Playfair Display', 'Times New Roman', serif;
+      font-size: clamp(1.6rem, 3.8vw, 2.4rem);
+      letter-spacing: 0.02em;
+      color: var(--text);
+    }
+
+    .hero-subtitle {
+      margin: 0;
+      font-size: clamp(0.95rem, 2vw, 1.05rem);
+      color: var(--muted);
+      max-width: 620px;
+    }
+
+    .glass-card {
+      background: var(--glass);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: clamp(20px, 4vw, 32px);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 25px 50px -12px rgba(212, 175, 55, 0.4);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      box-shadow: 0 10px 30px -15px rgba(212, 175, 55, 0.25);
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px -10px rgba(212, 175, 55, 0.35);
+    }
+
+    .stat-card__title {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin: 0 0 8px 0;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-card__value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--accent-dark);
+      margin: 0;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .stat-card__subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 4px 0 0 0;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--accent-dark);
+      margin: 0 0 20px 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    }
+
+    .data-section {
+      margin-bottom: 30px;
+    }
+
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .data-card {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid rgba(212, 175, 55, 0.15);
+      box-shadow: 0 8px 25px -15px rgba(212, 175, 55, 0.2);
+    }
+
+    .data-card__header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+    }
+
+    .data-card__icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      color: white;
+      font-size: 1.2rem;
+    }
+
+    .data-card__title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--accent-dark);
+      margin: 0;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .data-card__content {
+      display: grid;
+      gap: 10px;
+    }
+
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.05);
+    }
+
+    .data-row:last-child {
+      border-bottom: none;
+    }
+
+    .data-label {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .data-value {
+      font-weight: 600;
+      color: var(--accent-dark);
+      font-size: 1rem;
+    }
+
+    .highlight-card {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 20px;
+      padding: 25px;
+      margin-top: 20px;
+    }
+
+    .highlight-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--accent-dark);
+      margin: 0 0 15px 0;
+      text-align: center;
+    }
+
+    .highlight-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .highlight-item {
+      text-align: center;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 12px;
+      border: 1px solid rgba(212, 175, 55, 0.15);
+    }
+
+    .highlight-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 0 0 5px 0;
+    }
+
+    .highlight-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent-dark);
+      margin: 0;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .refresh-button {
+      background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 12px 20px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 20px auto;
+      box-shadow: 0 14px 32px -18px rgba(212, 175, 55, 0.45);
+      transition: all 0.2s ease;
+    }
+
+    .refresh-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px -15px rgba(212, 175, 55, 0.6);
+    }
+
+    .last-updated {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 720px) {
+      body { padding-top: 60px; }
+      header { text-align: center; align-items: center; }
+      .header-top {
+        width: 100%;
+        display: grid;
+        justify-items: center;
+      }
+      .page-nav {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      .brand-logo { height: 46px; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .data-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .highlight-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page" id="dashboardPage">
+    <p class="bismillah" lang="ar" dir="rtl">بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
+    <header>
+      <div class="header-top">
+        <img src="../assets/logo-website-test.jpg" alt="Ghandour Juwellery logo" class="brand-logo" />
+        <nav class="page-nav" aria-label="Workspace navigation">
+          <a class="nav-link" href="./index.html">Scanner</a>
+          <a class="nav-link" href="./items.html">Inventory</a>
+          <a class="nav-link" href="./sales.html">Sales log</a>
+          <a class="nav-link" href="./purchases.html">Purchase log</a>
+          <a class="nav-link active" href="./statement.html" aria-current="page">Gold statement</a>
+        </nav>
+      </div>
+      <h1 class="hero-title">Gold Inventory Dashboard</h1>
+      <p class="hero-subtitle">Real-time overview of gold inventory, sales, purchases, and financial metrics.</p>
+    </header>
+
+    <section class="glass-card" aria-label="Gold inventory summary">
+      <div class="stats-grid" id="summaryStats">
+        <!-- Summary stats will be populated by JavaScript -->
+      </div>
+
+      <div class="data-section">
+        <h2 class="section-title">Gold Inventory by Karat</h2>
+        <div class="data-grid" id="inventoryData">
+          <!-- Inventory data will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <div class="data-section">
+        <h2 class="section-title">Today's Transactions</h2>
+        <div class="data-grid" id="transactionData">
+          <!-- Transaction data will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <div class="highlight-card">
+        <h3 class="highlight-title">Financial Summary</h3>
+        <div class="highlight-grid" id="financialData">
+          <!-- Financial data will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <button class="refresh-button" id="refreshData">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M23 4v6h-6"></path>
+          <path d="M1 20v-6h6"></path>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+        Refresh Data
+      </button>
+      <p class="last-updated" id="lastUpdated">Last updated: Loading...</p>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const STATEMENT_ENDPOINT = '/api/statement';
+      
+      const summaryStats = document.getElementById('summaryStats');
+      const inventoryData = document.getElementById('inventoryData');
+      const transactionData = document.getElementById('transactionData');
+      const financialData = document.getElementById('financialData');
+      const refreshButton = document.getElementById('refreshData');
+      const lastUpdated = document.getElementById('lastUpdated');
+
+      // Format numbers with commas and fixed decimal places
+      function formatNumber(value) {
+        if (typeof value !== 'number' || isNaN(value)) return 'N/A';
+        return value.toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
+
+      // Format currency values
+      function formatCurrency(value) {
+        if (typeof value !== 'number' || isNaN(value)) return 'N/A';
+        return '$' + formatNumber(value);
+      }
+
+      // Format weight values
+      function formatWeight(value) {
+        if (typeof value !== 'number' || isNaN(value)) return 'N/A';
+        return formatNumber(value) + ' g';
+      }
+
+      // Extract numeric value from string
+      function extractNumber(value) {
+        if (typeof value === 'number') return value;
+        if (typeof value !== 'string') return NaN;
+        
+        // Remove any non-numeric characters except decimal point and minus sign
+        const numericString = value.replace(/[^\d.-]/g, '');
+        const num = parseFloat(numericString);
+        return isNaN(num) ? NaN : num;
+      }
+
+      // Create a stat card
+      function createStatCard(title, value, subtitle = '') {
+        const card = document.createElement('div');
+        card.className = 'stat-card';
+        
+        const titleEl = document.createElement('p');
+        titleEl.className = 'stat-card__title';
+        titleEl.textContent = title;
+        
+        const valueEl = document.createElement('p');
+        valueEl.className = 'stat-card__value';
+        valueEl.textContent = value;
+        
+        card.appendChild(titleEl);
+        card.appendChild(valueEl);
+        
+        if (subtitle) {
+          const subtitleEl = document.createElement('p');
+          subtitleEl.className = 'stat-card__subtitle';
+          subtitleEl.textContent = subtitle;
+          card.appendChild(subtitleEl);
+        }
+        
+        return card;
+      }
+
+      // Create a data card
+      function createDataCard(icon, title, data) {
+        const card = document.createElement('div');
+        card.className = 'data-card';
+        
+        const header = document.createElement('div');
+        header.className = 'data-card__header';
+        
+        const iconEl = document.createElement('div');
+        iconEl.className = 'data-card__icon';
+        iconEl.innerHTML = icon;
+        
+        const titleEl = document.createElement('h3');
+        titleEl.className = 'data-card__title';
+        titleEl.textContent = title;
+        
+        header.appendChild(iconEl);
+        header.appendChild(titleEl);
+        card.appendChild(header);
+        
+        const content = document.createElement('div');
+        content.className = 'data-card__content';
+        
+        data.forEach(item => {
+          const row = document.createElement('div');
+          row.className = 'data-row';
+          
+          const label = document.createElement('span');
+          label.className = 'data-label';
+          label.textContent = item.label;
+          
+          const value = document.createElement('span');
+          value.className = 'data-value';
+          value.textContent = item.value;
+          
+          row.appendChild(label);
+          row.appendChild(value);
+          content.appendChild(row);
+        });
+        
+        card.appendChild(content);
+        return card;
+      }
+
+      // Create a highlight item
+      function createHighlightItem(label, value) {
+        const item = document.createElement('div');
+        item.className = 'highlight-item';
+        
+        const labelEl = document.createElement('p');
+        labelEl.className = 'highlight-label';
+        labelEl.textContent = label;
+        
+        const valueEl = document.createElement('p');
+        valueEl.className = 'highlight-value';
+        valueEl.textContent = value;
+        
+        item.appendChild(labelEl);
+        item.appendChild(valueEl);
+        return item;
+      }
+
+      // Process and display the data
+      function displayData(data) {
+        if (!Array.isArray(data) || !data.length) {
+          throw new Error('Unexpected response structure');
+        }
+
+        const row = data[0];
+        
+        // Clear existing content
+        summaryStats.innerHTML = '';
+        inventoryData.innerHTML = '';
+        transactionData.innerHTML = '';
+        financialData.innerHTML = '';
+        
+        // Extract and calculate values
+        const total18kWeight = extractNumber(row['total 18k gold weight  (gram)']);
+        const sold18kWeight = extractNumber(row['sold 18 k gold weight   (gram)']);
+        const available18kWeight = extractNumber(row['available 18 k gold weight   (gram)']);
+        
+        const total21kWeight = extractNumber(row['total 21k gold weight    (gram)']);
+        const sold21kWeight = extractNumber(row['sold 21 k gold weight    (gram)']);
+        const available21kWeight = extractNumber(row['available 21 k gold weight   (gram)']);
+        
+        const total22kWeight = extractNumber(row['total 22k gold weight    (gram)']);
+        const sold22kWeight = extractNumber(row['sold 22 k gold weight    (gram)']);
+        const available22kWeight = extractNumber(row['available 22 k gold weight   (gram)']);
+        
+        const total24kWeight = extractNumber(row['total 24k gold weight    (gram)']);
+        const sold24kWeight = extractNumber(row['sold 24 k gold weight    (gram)']);
+        const available24kWeight = extractNumber(row['available 24 k gold weight   (gram)']);
+        
+        // Calculate totals
+        const totalGoldWeight = total18kWeight + total21kWeight + total22kWeight + total24kWeight;
+        const totalSoldWeight = sold18kWeight + sold21kWeight + sold22kWeight + sold24kWeight;
+        const totalAvailableWeight = available18kWeight + available21kWeight + available22kWeight + available24kWeight;
+        
+        // Today's transactions
+        const todaySold18kWeight = extractNumber(row['today total sold weight of 18 k (gram)']);
+        const todaySold18kPrice = extractNumber(row['today total sold price of 18 k ($)']);
+        const todaySold21kWeight = extractNumber(row['today total sold weight of 21 k (gram)']);
+        const todaySold21kPrice = extractNumber(row['today total sold price of 21 k ($)']);
+        const todaySold22kWeight = extractNumber(row['today total sold weight of 22 k (gram)']);
+        const todaySold22kPrice = extractNumber(row['today total sold price of 22 k ($)']);
+        const todaySold24kWeight = extractNumber(row['today total sold weight of 24 k (gram)']);
+        const todaySold24kPrice = extractNumber(row['today total sold price of 24 k ($)']);
+        
+        const todayPurchased18kWeight = extractNumber(row['today total purchased weight of 18 k (gram)']);
+        const todayPurchased18kAmount = extractNumber(row['today total purchased amount of 18 k ($)']);
+        const todayPurchased21kWeight = extractNumber(row['today total purchased weight of 21 k (gram)']);
+        const todayPurchased21kAmount = extractNumber(row['today total purchased amount of 21 k ($)']);
+        const todayPurchased22kWeight = extractNumber(row['today total purchased weight of 22 k (gram)']);
+        const todayPurchased22kAmount = extractNumber(row['today total purchased amount of 22 k ($)']);
+        const todayPurchased24kWeight = extractNumber(row['today total purchased weight of 24 k (gram)']);
+        const todayPurchased24kAmount = extractNumber(row['today total purchased amount of 24 k ($)']);
+        
+        // Financial data
+        const outOfStoreUSD = extractNumber(row['out of the store today for services $']);
+        const outOfStoreLBP = extractNumber(row['out of the store today for services LBP']);
+        const liraToDollar = extractNumber(row['money from lira to dollar']);
+        const morningUSD = extractNumber(row['money in dollar in the morning ']);
+        const morningLBP = extractNumber(row['money in lebanese lira in the morning ']);
+        const todayTotalMoney = extractNumber(row['today total money ']);
+        const todayDiff18k = extractNumber(row['today total difference amount of 18 k gold']);
+        const todayDiff21k = extractNumber(row['today total difference amount of 21 k gold']);
+        
+        // Calculate totals for today
+        const todayTotalSoldWeight = todaySold18kWeight + todaySold21kWeight + todaySold22kWeight + todaySold24kWeight;
+        const todayTotalSoldPrice = todaySold18kPrice + todaySold21kPrice + todaySold22kPrice + todaySold24kPrice;
+        const todayTotalPurchasedWeight = todayPurchased18kWeight + todayPurchased21kWeight + todayPurchased22kWeight + todayPurchased24kWeight;
+        const todayTotalPurchasedAmount = todayPurchased18kAmount + todayPurchased21kAmount + todayPurchased22kAmount + todayPurchased24kAmount;
+        
+        // Summary Stats
+        summaryStats.appendChild(createStatCard(
+          'Total Gold Inventory', 
+          formatWeight(totalGoldWeight),
+          'Across all karats'
+        ));
+        
+        summaryStats.appendChild(createStatCard(
+          'Available Gold', 
+          formatWeight(totalAvailableWeight),
+          'Ready for sale'
+        ));
+        
+        summaryStats.appendChild(createStatCard(
+          'Today\'s Sales', 
+          formatCurrency(todayTotalSoldPrice),
+          formatWeight(todayTotalSoldWeight) + ' sold'
+        ));
+        
+        summaryStats.appendChild(createStatCard(
+          'Today\'s Purchases', 
+          formatCurrency(todayTotalPurchasedAmount),
+          formatWeight(todayTotalPurchasedWeight) + ' purchased'
+        ));
+        
+        // Inventory Data
+        inventoryData.appendChild(createDataCard(
+          '18K',
+          '18 Karat Gold',
+          [
+            { label: 'Total Weight', value: formatWeight(total18kWeight) },
+            { label: 'Sold Weight', value: formatWeight(sold18kWeight) },
+            { label: 'Available Weight', value: formatWeight(available18kWeight) }
+          ]
+        ));
+        
+        inventoryData.appendChild(createDataCard(
+          '21K',
+          '21 Karat Gold',
+          [
+            { label: 'Total Weight', value: formatWeight(total21kWeight) },
+            { label: 'Sold Weight', value: formatWeight(sold21kWeight) },
+            { label: 'Available Weight', value: formatWeight(available21kWeight) }
+          ]
+        ));
+        
+        inventoryData.appendChild(createDataCard(
+          '22K',
+          '22 Karat Gold',
+          [
+            { label: 'Total Weight', value: formatWeight(total22kWeight) },
+            { label: 'Sold Weight', value: formatWeight(sold22kWeight) },
+            { label: 'Available Weight', value: formatWeight(available22kWeight) }
+          ]
+        ));
+        
+        inventoryData.appendChild(createDataCard(
+          '24K',
+          '24 Karat Gold',
+          [
+            { label: 'Total Weight', value: formatWeight(total24kWeight) },
+            { label: 'Sold Weight', value: formatWeight(sold24kWeight) },
+            { label: 'Available Weight', value: formatWeight(available24kWeight) }
+          ]
+        ));
+        
+        // Transaction Data
+        transactionData.appendChild(createDataCard(
+          '💰',
+          'Today\'s Sales',
+          [
+            { label: '18K Sold', value: formatWeight(todaySold18kWeight) },
+            { label: '18K Revenue', value: formatCurrency(todaySold18kPrice) },
+            { label: '21K Sold', value: formatWeight(todaySold21kWeight) },
+            { label: '21K Revenue', value: formatCurrency(todaySold21kPrice) },
+            { label: '22K Sold', value: formatWeight(todaySold22kWeight) },
+            { label: '22K Revenue', value: formatCurrency(todaySold22kPrice) },
+            { label: '24K Sold', value: formatWeight(todaySold24kWeight) },
+            { label: '24K Revenue', value: formatCurrency(todaySold24kPrice) }
+          ]
+        ));
+        
+        transactionData.appendChild(createDataCard(
+          '🛒',
+          'Today\'s Purchases',
+          [
+            { label: '18K Purchased', value: formatWeight(todayPurchased18kWeight) },
+            { label: '18K Cost', value: formatCurrency(todayPurchased18kAmount) },
+            { label: '21K Purchased', value: formatWeight(todayPurchased21kWeight) },
+            { label: '21K Cost', value: formatCurrency(todayPurchased21kAmount) },
+            { label: '22K Purchased', value: formatWeight(todayPurchased22kWeight) },
+            { label: '22K Cost', value: formatCurrency(todayPurchased22kAmount) },
+            { label: '24K Purchased', value: formatWeight(todayPurchased24kWeight) },
+            { label: '24K Cost', value: formatCurrency(todayPurchased24kAmount) }
+          ]
+        ));
+        
+        // Financial Data
+        financialData.appendChild(createHighlightItem(
+          'Morning USD Balance',
+          formatCurrency(morningUSD)
+        ));
+        
+        financialData.appendChild(createHighlightItem(
+          'Morning LBP Balance',
+          formatNumber(morningLBP) + ' LBP'
+        ));
+        
+        financialData.appendChild(createHighlightItem(
+          'Today\'s Total Money',
+          formatCurrency(todayTotalMoney)
+        ));
+        
+        financialData.appendChild(createHighlightItem(
+          'LBP to USD Rate',
+          formatNumber(liraToDollar)
+        ));
+        
+        financialData.appendChild(createHighlightItem(
+          'Total Amount of 18K (كسر)',
+          formatCurrency(todayDiff18k)
+        ));
+
+        financialData.appendChild(createHighlightItem(
+          'Total Amount of 21K (كسر)',
+          formatCurrency(todayDiff21k)
+        ));
+        
+        // Update last updated time
+        lastUpdated.textContent = 'Last updated: ' + new Date().toLocaleString();
+      }
+
+      // Fetch data from the secure statement API
+      async function fetchData() {
+        try {
+          if (refreshButton) refreshButton.disabled = true;
+          lastUpdated.textContent = 'Loading latest data…';
+
+          const response = await fetch(STATEMENT_ENDPOINT, { credentials: 'include' });
+
+          if (response.status === 401) {
+            sessionStorage.removeItem('authenticated');
+            window.location.replace('../index.html');
+            return;
+          }
+
+          if (!response.ok) {
+            throw new Error(`Failed to fetch data: ${response.status}`);
+          }
+
+          const data = await response.json();
+          displayData(data);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          lastUpdated.textContent = 'Error loading data. Please try again.';
+        } finally {
+          if (refreshButton) refreshButton.disabled = false;
+        }
+      }
+
+      // Initialize the page
+      function initialize() {
+        fetchData();
+        if (refreshButton) {
+          refreshButton.addEventListener('click', fetchData);
+        }
+
+        // Auto-refresh every 5 minutes
+        setInterval(fetchData, 5 * 60 * 1000);
+      }
+
+      initialize();
+    })();
+  </script>
+</body>
+</html>
