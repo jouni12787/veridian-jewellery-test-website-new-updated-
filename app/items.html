@@ -208,116 +208,106 @@
       color: var(--accent-dark);
     }
 
-    .sort-slider {
+    .sort-chips {
       display: grid;
       gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     }
 
-    .sort-slider input[type="range"] {
-      --progress: 25%;
-      -webkit-appearance: none;
-      appearance: none;
-      width: 100%;
-      height: 6px;
-      border-radius: 999px;
-      background: linear-gradient(
-        90deg,
-        var(--accent) 0%,
-        var(--accent) var(--progress),
-        rgba(37, 150, 190, 0.2) var(--progress),
-        rgba(37, 150, 190, 0.2) 100%
-      );
-      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6);
-      cursor: pointer;
-    }
-
-    .sort-slider input[type="range"]:focus-visible {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(37, 150, 190, 0.35);
-    }
-
-    .sort-slider input[type="range"]::-webkit-slider-runnable-track {
-      height: 6px;
-      border-radius: 999px;
-      background: transparent;
-    }
-
-    .sort-slider input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--accent);
-      border: 2px solid #fff;
-      box-shadow: 0 10px 25px -12px rgba(37, 150, 190, 0.8);
-      margin-top: -8px;
-      transition: transform 0.2s ease;
-    }
-
-    .sort-slider input[type="range"]:active::-webkit-slider-thumb {
-      transform: scale(1.05);
-    }
-
-    .sort-slider input[type="range"]::-moz-range-track {
-      height: 6px;
-      border-radius: 999px;
-      background: transparent;
-    }
-
-    .sort-slider input[type="range"]::-moz-range-thumb {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--accent);
-      border: 2px solid #fff;
-      box-shadow: 0 10px 25px -12px rgba(37, 150, 190, 0.8);
-      transition: transform 0.2s ease;
-    }
-
-    .sort-slider input[type="range"]:active::-moz-range-thumb {
-      transform: scale(1.05);
-    }
-
-    .sort-slider__labels {
-      display: flex;
-      justify-content: space-between;
-      gap: 4px;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .sort-slider__labels span {
-      flex: 1;
-      text-align: center;
+    .sort-chip {
       position: relative;
-      padding-top: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      padding: 14px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(37, 150, 190, 0.22);
+      background: linear-gradient(140deg, rgba(255, 255, 255, 0.92) 0%, rgba(230, 246, 251, 0.9) 100%);
       color: var(--muted);
-      font-weight: 600;
-      transition: color 0.2s ease;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+      cursor: pointer;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
     }
 
-    .sort-slider__labels span::after {
+    .sort-chip::after {
       content: '';
       position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translate(-50%, 0);
-      width: 6px;
-      height: 6px;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at 0% 0%, rgba(37, 150, 190, 0.18), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .sort-chip:hover {
+      transform: translateY(-2px);
+      border-color: rgba(37, 150, 190, 0.38);
+      box-shadow: 0 18px 32px -24px rgba(37, 150, 190, 0.55);
+    }
+
+    .sort-chip:hover::after {
+      opacity: 1;
+    }
+
+    .sort-chip:focus-visible {
+      outline: 3px solid rgba(37, 150, 190, 0.38);
+      outline-offset: 3px;
+    }
+
+    .sort-chip__title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sort-chip__badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
-      background: rgba(37, 150, 190, 0.3);
-      transition: transform 0.2s ease, background 0.2s ease;
-    }
-
-    .sort-slider__labels span.is-active {
+      background: rgba(37, 150, 190, 0.18);
       color: var(--accent-dark);
+      font-size: 0.75rem;
+      font-weight: 600;
     }
 
-    .sort-slider__labels span.is-active::after {
-      transform: translate(-50%, -2px) scale(1.1);
-      background: var(--accent);
+    .sort-chip__subtitle {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .sort-chip.is-active {
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      border-color: rgba(37, 150, 190, 0.6);
+      box-shadow: 0 22px 40px -20px rgba(37, 150, 190, 0.75);
+      color: #fff;
+    }
+
+    .sort-chip.is-active::after {
+      opacity: 0.5;
+      background: radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.35), transparent 65%);
+    }
+
+    .sort-chip.is-active .sort-chip__title,
+    .sort-chip.is-active .sort-chip__subtitle {
+      color: #fff;
+    }
+
+    .sort-chip.is-active .sort-chip__badge {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
     }
 
     .sort-options__current {
@@ -832,35 +822,95 @@
       </div>
       <fieldset class="sort-options">
         <legend>Sort by</legend>
-        <div class="sort-slider">
-          <input
-            type="range"
-            id="sortBySlider"
-            name="sortBy"
-            min="0"
-            max="4"
-            step="1"
-            value="1"
-            list="sortOptionsList"
-            aria-label="Sort inventory by"
-            aria-describedby="sortSelection"
+        <div
+          class="sort-chips"
+          data-sort-group
+          role="radiogroup"
+          aria-label="Sort inventory by"
+          aria-describedby="sortSelection"
+        >
+          <button
+            type="button"
+            class="sort-chip"
+            data-sort-button
+            data-sort-index="0"
+            id="sortOptionSku"
+            role="radio"
+            aria-checked="false"
+            tabindex="-1"
           >
-          <div class="sort-slider__labels" aria-hidden="true">
-            <span data-sort-index="0">SKU</span>
-            <span data-sort-index="1">Price ↑</span>
-            <span data-sort-index="2">Price ↓</span>
-            <span data-sort-index="3">Weight ↑</span>
-            <span data-sort-index="4">Weight ↓</span>
-          </div>
+            <span class="sort-chip__title">
+              <span class="sort-chip__badge" aria-hidden="true">#</span>
+              SKU
+            </span>
+            <span class="sort-chip__subtitle">Catalog order</span>
+          </button>
+          <button
+            type="button"
+            class="sort-chip is-active"
+            data-sort-button
+            data-sort-index="1"
+            id="sortOptionPriceAsc"
+            role="radio"
+            aria-checked="true"
+            tabindex="0"
+          >
+            <span class="sort-chip__title">
+              <span class="sort-chip__badge" aria-hidden="true">↑</span>
+              Price
+            </span>
+            <span class="sort-chip__subtitle">Low → High</span>
+          </button>
+          <button
+            type="button"
+            class="sort-chip"
+            data-sort-button
+            data-sort-index="2"
+            id="sortOptionPriceDesc"
+            role="radio"
+            aria-checked="false"
+            tabindex="-1"
+          >
+            <span class="sort-chip__title">
+              <span class="sort-chip__badge" aria-hidden="true">↓</span>
+              Price
+            </span>
+            <span class="sort-chip__subtitle">High → Low</span>
+          </button>
+          <button
+            type="button"
+            class="sort-chip"
+            data-sort-button
+            data-sort-index="3"
+            id="sortOptionWeightAsc"
+            role="radio"
+            aria-checked="false"
+            tabindex="-1"
+          >
+            <span class="sort-chip__title">
+              <span class="sort-chip__badge" aria-hidden="true">⇧</span>
+              Weight
+            </span>
+            <span class="sort-chip__subtitle">Light → Heavy</span>
+          </button>
+          <button
+            type="button"
+            class="sort-chip"
+            data-sort-button
+            data-sort-index="4"
+            id="sortOptionWeightDesc"
+            role="radio"
+            aria-checked="false"
+            tabindex="-1"
+          >
+            <span class="sort-chip__title">
+              <span class="sort-chip__badge" aria-hidden="true">⇩</span>
+              Weight
+            </span>
+            <span class="sort-chip__subtitle">Heavy → Light</span>
+          </button>
         </div>
         <p class="sort-options__current" id="sortSelection" aria-live="polite">Sorting by Price (Low to High)</p>
-        <datalist id="sortOptionsList">
-          <option value="0" label="SKU"></option>
-          <option value="1" label="Price ↑"></option>
-          <option value="2" label="Price ↓"></option>
-          <option value="3" label="Weight ↑"></option>
-          <option value="4" label="Weight ↓"></option>
-        </datalist>
       </fieldset>
       <div class="view-toggle" role="radiogroup" aria-label="Display mode">
         <label class="toggle-pill">
@@ -918,9 +968,9 @@
       const priceMaxInput = document.getElementById('priceMax');
       const resetFiltersBtn = document.getElementById('resetFilters');
       const viewModeInputs = document.querySelectorAll('input[name="viewMode"]');
-      const sortSlider = document.getElementById('sortBySlider');
+      const sortGroup = document.querySelector('[data-sort-group]');
+      const sortButtons = Array.from(document.querySelectorAll('[data-sort-button]'));
       const sortSelection = document.getElementById('sortSelection');
-      const sortLabelNodes = document.querySelectorAll('[data-sort-index]');
       const itemsGrid = document.getElementById('itemsGrid');
       const resultsCount = document.getElementById('resultsCount');
       const itemsStatus = document.getElementById('itemsStatus');
@@ -1440,18 +1490,23 @@
 
       function updateSortDisplay(index) {
         const option = SORT_OPTIONS[index] ?? SORT_OPTIONS[RESOLVED_DEFAULT_SORT_INDEX] ?? SORT_OPTIONS[0];
-        if (sortSlider) {
-          const steps = Math.max(SORT_OPTIONS.length - 1, 1);
-          const progress = (index / steps) * 100;
-          sortSlider.style.setProperty('--progress', `${progress}%`);
-          sortSlider.setAttribute('aria-valuetext', option.announcement);
-        }
         if (sortSelection) {
           sortSelection.textContent = `Sorting by ${option.label}`;
         }
-        sortLabelNodes.forEach((node) => {
-          const nodeIndex = Number.parseInt(node.getAttribute('data-sort-index'), 10);
-          node.classList.toggle('is-active', nodeIndex === index);
+        if (sortGroup) {
+          sortGroup.setAttribute('data-active-index', String(index));
+        }
+        sortButtons.forEach((button) => {
+          const buttonIndex = Number.parseInt(button.getAttribute('data-sort-index'), 10);
+          const isActive = buttonIndex === index;
+          button.classList.toggle('is-active', isActive);
+          button.setAttribute('aria-checked', isActive ? 'true' : 'false');
+          button.tabIndex = isActive ? 0 : -1;
+          if (isActive && sortGroup) {
+            const buttonId = button.id || '';
+            sortGroup.setAttribute('aria-activedescendant', buttonId);
+            sortGroup.setAttribute('data-active-label', option.shortLabel || option.label);
+          }
         });
       }
 
@@ -1459,9 +1514,6 @@
         const resolvedIndex = clampSortIndex(index);
         const option = SORT_OPTIONS[resolvedIndex] ?? SORT_OPTIONS[RESOLVED_DEFAULT_SORT_INDEX] ?? SORT_OPTIONS[0];
         state.sortBy = option.value;
-        if (sortSlider) {
-          sortSlider.value = String(resolvedIndex);
-        }
         updateSortDisplay(resolvedIndex);
         if (trigger) {
           sortFiltered();
@@ -1775,19 +1827,51 @@
             }
           });
         });
-        if (sortSlider) {
-          const handleSortInput = () => {
-            setSortByIndex(sortSlider.value);
-          };
-          sortSlider.addEventListener('input', handleSortInput);
-          sortSlider.addEventListener('change', handleSortInput);
+        if (sortButtons.length) {
+          const findButtonByIndex = (targetIndex) =>
+            sortButtons.find((button) => Number.parseInt(button.getAttribute('data-sort-index'), 10) === targetIndex);
+
+          sortButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+              setSortByIndex(button.getAttribute('data-sort-index'));
+            });
+
+            button.addEventListener('keydown', (event) => {
+              const key = event.key;
+              const currentIndex = clampSortIndex(button.getAttribute('data-sort-index'));
+              let nextIndex = null;
+
+              if (key === 'ArrowRight' || key === 'ArrowDown') {
+                nextIndex = (currentIndex + 1) % SORT_OPTIONS.length;
+              } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
+                nextIndex = (currentIndex - 1 + SORT_OPTIONS.length) % SORT_OPTIONS.length;
+              } else if (key === 'Home') {
+                nextIndex = 0;
+              } else if (key === 'End') {
+                nextIndex = SORT_OPTIONS.length - 1;
+              }
+
+              if (nextIndex !== null) {
+                event.preventDefault();
+                setSortByIndex(nextIndex);
+                const targetButton = findButtonByIndex(nextIndex);
+                if (targetButton) {
+                  window.requestAnimationFrame(() => {
+                    targetButton.focus();
+                  });
+                }
+              }
+            });
+          });
         }
       }
 
       async function initialize() {
         attachListeners();
-        if (sortSlider) {
-          setSortByIndex(sortSlider.value, { trigger: false });
+        if (sortButtons.length) {
+          const activeButton = sortButtons.find((button) => button.classList.contains('is-active'));
+          const startingIndex = activeButton?.getAttribute('data-sort-index') ?? RESOLVED_DEFAULT_SORT_INDEX;
+          setSortByIndex(startingIndex, { trigger: false });
         } else {
           setSortByIndex(RESOLVED_DEFAULT_SORT_INDEX, { trigger: false });
         }
