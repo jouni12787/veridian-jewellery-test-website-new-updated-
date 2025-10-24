@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ghandour Juwellery • Secure Access</title>
+  <link rel="icon" type="image/jpeg" href="assets/logo-website-test.jpg">
+  <link rel="apple-touch-icon" href="assets/logo-website-test.jpg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#D4AF37">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --pad: 18px;
+
+      /* === Luxurious Gold Palette === */
+      --gold-primary: #D4AF37;       /* Rich gold */
+      --gold-secondary: #FFD700;     /* Bright gold */
+      --gold-dark: #B8860B;          /* Dark gold/bronze */
+      --gold-light: #F5E6B3;         /* Light gold/beige */
+      --ivory: #F8F8FF;              /* Ivory/off-white */
+      --charcoal: #2C2C2C;           /* Dark text */
+      --warm-gray: #8B7D6B;          /* Warm gray for muted text */
+      --accent-gold: #C9A227;        /* Accent gold */
+
+      /* === App tokens derived from palette === */
+      --bg: radial-gradient(circle at 10% 0%, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 55%, #ffffff 100%);
+      --glass: rgba(255, 255, 255, 0.92);
+      --card-border: rgba(212, 175, 55, 0.3);
+      --accent: var(--gold-primary);
+      --accent-dark: var(--gold-dark);
+      --text: var(--charcoal);
+      --muted: var(--warm-gray);
+      --shadow: 0 18px 40px -24px rgba(212, 175, 55, 0.35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    main {
+      width: min(420px, 100%);
+      display: grid;
+      gap: 20px;
+      padding: clamp(24px, 6vw, 36px);
+      border-radius: 28px;
+      background: var(--glass);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .bismillah {
+      margin: 0 0 clamp(8px, 2vw, 14px);
+      font-family: 'Amiri', 'Scheherazade New', serif;
+      font-size: clamp(1.05rem, 2.6vw, 1.25rem);
+      color: var(--accent-dark);
+      letter-spacing: 0.02em;
+      direction: rtl;
+      font-weight: 600;
+    }
+    .brand-logo {
+      display: block;
+      height: clamp(54px, 10vw, 72px);
+      margin: 0 auto;
+      filter: drop-shadow(0 6px 16px rgba(212, 175, 55, 0.25));
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(1.35rem, 3.4vw, 1.65rem);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+    form {
+      display: grid;
+      gap: 12px;
+      text-align: left;
+    }
+    label {
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+    select, button, input {
+      border: 1px solid rgba(212, 175, 55, 0.25); /* gold tone */
+    }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-family: inherit;
+      background: rgba(255, 255, 255, 0.96);
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+    input[type="password"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25);
+    }
+    button {
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+      color: #fff;
+      border: none;
+      box-shadow: 0 14px 32px -18px rgba(212, 175, 55, 0.45);
+      transition: transform 150ms ease, box-shadow 150ms ease;
+    }
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 40px -18px rgba(212, 175, 55, 0.55);
+    }
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+      box-shadow: none;
+      background: rgba(212, 175, 55, 0.35);
+    }
+    .error {
+      margin: 0;
+      color: #d84a63;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .error.visible { display: block; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="bismillah" lang="ar" dir="rtl">بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
+    <img class="brand-logo" src="./assets/logo-website-test.jpg" alt="Ghandour Juwellery logo">
+    <header>
+      <h1>Secure Staff Access</h1>
+      <p>Please enter the daily access password to continue.</p>
+    </header>
+    <form id="loginForm">
+      <label for="password">Password</label>
+      <input type="password" id="password" autocomplete="current-password" required />
+      <p class="error" id="error">Incorrect password. Please try again.</p>
+      <button type="submit" id="submitBtn">Enter Workspace</button>
+    </form>
+  </main>
+  <script>
+    // Check if already authenticated
+    if (sessionStorage.getItem('authenticated') === 'true') {
+      window.location.replace('app/index.html');
+    }
+
+    const FORM = document.getElementById('loginForm');
+    const PASSWORD_FIELD = document.getElementById('password');
+    const ERROR = document.getElementById('error');
+    const SUBMIT_BTN = document.getElementById('submitBtn');
+
+    function setLoading(state) {
+      SUBMIT_BTN.disabled = state;
+      SUBMIT_BTN.textContent = state ? 'Checking…' : 'Enter Workspace';
+    }
+
+    FORM.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      ERROR.classList.remove('visible');
+      setLoading(true);
+
+      try {
+        const response = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            password: PASSWORD_FIELD.value.trim() 
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          sessionStorage.setItem('authenticated', 'true');
+          window.location.href = 'app/index.html';
+        } else {
+          ERROR.classList.add('visible');
+          PASSWORD_FIELD.value = '';
+          PASSWORD_FIELD.focus();
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        ERROR.textContent = 'Network error. Please check your connection and try again.';
+        ERROR.classList.add('visible');
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    PASSWORD_FIELD.addEventListener('input', () => {
+      ERROR.classList.remove('visible');
+      // Reset to default error message
+      ERROR.textContent = 'Incorrect password. Please try again.';
+    });
+  </script>
+</body>
+</html>

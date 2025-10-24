@@ -1,0 +1,20 @@
+{
+  "name": "Ghandour Juwellery Barcode Scanner",
+  "short_name": "GJ Scanner",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#D4AF37",
+  "theme_color": "#D4AF37",
+  "icons": [
+    {
+      "src": "assets/logo-website-test.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "assets/logo-website-test.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
