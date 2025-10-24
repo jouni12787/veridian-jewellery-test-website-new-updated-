@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ghandour Juwellery • Gold Inventory Dashboard</title>
+  <title>Veridian Atelier • Gold Inventory Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
@@ -12,27 +12,27 @@
   <link rel="manifest" href="../manifest.webmanifest">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#D4AF37">
+  <meta name="theme-color" content="#2596be">
   <script>if (sessionStorage.getItem('authenticated') !== 'true') { window.location.replace('../index.html'); }</script>
   <style>
     :root {
       --pad: 18px;
-      --gold-primary: #D4AF37;
-      --gold-secondary: #FFD700;
-      --gold-dark: #B8860B;
-      --gold-light: #F5E6B3;
-      --ivory: #F8F8FF;
-      --charcoal: #2C2C2C;
-      --warm-gray: #8B7D6B;
-      --accent-gold: #C9A227;
-      --bg: radial-gradient(circle at 10% 0%, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 55%, #ffffff 100%);
+      --gold-primary: #2596be;
+      --gold-secondary: #2596be;
+      --gold-dark: #1f7fa0;
+      --gold-light: #e6f6fb;
+      --ivory: #fafdff;
+      --charcoal: #1f2a30;
+      --warm-gray: #4f6b78;
+      --accent-gold: #2596be;
+      --bg: radial-gradient(circle at 10% 0%, rgba(37, 150, 190, 0.15) 0%, rgba(37, 150, 190, 0.05) 55%, #ffffff 100%);
       --glass: rgba(255, 255, 255, 0.92);
-      --card-border: rgba(212, 175, 55, 0.3);
+      --card-border: rgba(37, 150, 190, 0.3);
       --accent: var(--gold-primary);
       --accent-dark: var(--gold-dark);
       --text: var(--charcoal);
       --muted: var(--warm-gray);
-      --shadow: 0 18px 40px -24px rgba(212, 175, 55, 0.35);
+      --shadow: 0 18px 40px -24px rgba(37, 150, 190, 0.35);
     }
 
     html {
@@ -53,18 +53,6 @@
       flex-direction: column;
       align-items: center;
       padding: calc(var(--pad) * 1.2) var(--pad) calc(var(--pad) * 1.6);
-    }
-
-    .bismillah {
-      margin: 0 0 clamp(10px, 2vw, 18px);
-      font-family: 'Amiri', 'Scheherazade New', serif;
-      font-size: clamp(1.1rem, 2.6vw, 1.35rem);
-      color: var(--accent-dark);
-      letter-spacing: 0.02em;
-      text-align: center;
-      align-self: center;
-      direction: rtl;
-      font-weight: 600;
     }
 
     .page {
@@ -92,7 +80,7 @@
       height: 56px;
       width: auto;
       object-fit: contain;
-      filter: drop-shadow(0 6px 16px rgba(212, 175, 55, 0.25));
+      filter: drop-shadow(0 6px 16px rgba(37, 150, 190, 0.25));
     }
 
     .page-nav {
@@ -102,9 +90,9 @@
       gap: 8px;
       padding: 8px 10px;
       border-radius: 999px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 253, 245, 0.78));
-      border: 1px solid rgba(212, 175, 55, 0.25);
-      box-shadow: 0 18px 32px -22px rgba(212, 175, 55, 0.45);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(229, 246, 251, 0.78));
+      border: 1px solid rgba(37, 150, 190, 0.25);
+      box-shadow: 0 18px 32px -22px rgba(37, 150, 190, 0.45);
       max-width: 100%;
       overflow-x: auto;
       overflow-y: hidden;
@@ -131,16 +119,16 @@
       background: rgba(255, 255, 255, 0.82);
       scroll-snap-align: center;
       min-width: max-content;
-      box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.12);
+      box-shadow: inset 0 0 0 1px rgba(37, 150, 190, 0.12);
     }
 
     .nav-link:hover {
       transform: translateY(-1px);
-      box-shadow: 0 12px 24px -18px rgba(212, 175, 55, 0.45);
+      box-shadow: 0 12px 24px -18px rgba(37, 150, 190, 0.45);
     }
 
     .nav-link:focus-visible {
-      outline: 2px solid rgba(212, 175, 55, 0.55);
+      outline: 2px solid rgba(37, 150, 190, 0.55);
       outline-offset: 2px;
     }
 
@@ -151,7 +139,7 @@
     .nav-link.active {
       background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
       color: #fff;
-      box-shadow: 0 14px 30px -18px rgba(212, 175, 55, 0.6);
+      box-shadow: 0 14px 30px -18px rgba(37, 150, 190, 0.6);
     }
 
     .hero-title {
@@ -181,7 +169,7 @@
 
     .glass-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 25px 50px -12px rgba(212, 175, 55, 0.4);
+      box-shadow: 0 25px 50px -12px rgba(37, 150, 190, 0.4);
     }
 
     .stats-grid {
@@ -195,14 +183,14 @@
       background: rgba(255, 255, 255, 0.85);
       border-radius: 20px;
       padding: 20px;
-      border: 1px solid rgba(212, 175, 55, 0.2);
-      box-shadow: 0 10px 30px -15px rgba(212, 175, 55, 0.25);
+      border: 1px solid rgba(37, 150, 190, 0.2);
+      box-shadow: 0 10px 30px -15px rgba(37, 150, 190, 0.25);
       transition: all 0.3s ease;
     }
 
     .stat-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 15px 35px -10px rgba(212, 175, 55, 0.35);
+      box-shadow: 0 15px 35px -10px rgba(37, 150, 190, 0.35);
     }
 
     .stat-card__title {
@@ -234,7 +222,7 @@
       color: var(--accent-dark);
       margin: 0 0 20px 0;
       padding-bottom: 10px;
-      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+      border-bottom: 1px solid rgba(37, 150, 190, 0.2);
     }
 
     .data-section {
@@ -251,8 +239,8 @@
       background: rgba(255, 255, 255, 0.85);
       border-radius: 18px;
       padding: 18px;
-      border: 1px solid rgba(212, 175, 55, 0.15);
-      box-shadow: 0 8px 25px -15px rgba(212, 175, 55, 0.2);
+      border: 1px solid rgba(37, 150, 190, 0.15);
+      box-shadow: 0 8px 25px -15px rgba(37, 150, 190, 0.2);
     }
 
     .data-card__header {
@@ -260,7 +248,7 @@
       align-items: center;
       margin-bottom: 15px;
       padding-bottom: 12px;
-      border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+      border-bottom: 1px solid rgba(37, 150, 190, 0.1);
     }
 
     .data-card__icon {
@@ -294,7 +282,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 8px 0;
-      border-bottom: 1px solid rgba(212, 175, 55, 0.05);
+      border-bottom: 1px solid rgba(37, 150, 190, 0.05);
     }
 
     .data-row:last-child {
@@ -313,8 +301,8 @@
     }
 
     .highlight-card {
-      background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
-      border: 1px solid rgba(212, 175, 55, 0.3);
+      background: linear-gradient(135deg, rgba(37, 150, 190, 0.1), rgba(37, 150, 190, 0.05));
+      border: 1px solid rgba(37, 150, 190, 0.3);
       border-radius: 20px;
       padding: 25px;
       margin-top: 20px;
@@ -339,7 +327,7 @@
       padding: 15px;
       background: rgba(255, 255, 255, 0.7);
       border-radius: 12px;
-      border: 1px solid rgba(212, 175, 55, 0.15);
+      border: 1px solid rgba(37, 150, 190, 0.15);
     }
 
     .highlight-label {
@@ -368,13 +356,13 @@
       align-items: center;
       gap: 8px;
       margin: 20px auto;
-      box-shadow: 0 14px 32px -18px rgba(212, 175, 55, 0.45);
+      box-shadow: 0 14px 32px -18px rgba(37, 150, 190, 0.45);
       transition: all 0.2s ease;
     }
 
     .refresh-button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 18px 40px -15px rgba(212, 175, 55, 0.6);
+      box-shadow: 0 18px 40px -15px rgba(37, 150, 190, 0.6);
     }
 
     .last-updated {
@@ -408,10 +396,9 @@
 </head>
 <body>
   <div class="page" id="dashboardPage">
-    <p class="bismillah" lang="ar" dir="rtl">بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
     <header>
       <div class="header-top">
-        <img src="../assets/logo-website-test.jpg" alt="Ghandour Juwellery logo" class="brand-logo" />
+        <img src="../assets/logo-website-test.jpg" alt="Veridian Atelier logo" class="brand-logo" />
         <nav class="page-nav" aria-label="Workspace navigation">
           <a class="nav-link" href="./index.html">Scanner</a>
           <a class="nav-link" href="./items.html">Inventory</a>

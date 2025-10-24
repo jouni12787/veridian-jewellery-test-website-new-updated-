@@ -1,10 +1,10 @@
 {
-  "name": "Ghandour Juwellery Barcode Scanner",
-  "short_name": "GJ Scanner",
+  "name": "Veridian Atelier Barcode Scanner",
+  "short_name": "VA Scanner",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#D4AF37",
-  "theme_color": "#D4AF37",
+  "background_color": "#2596be",
+  "theme_color": "#2596be",
   "icons": [
     {
       "src": "assets/logo-website-test.jpg",

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ghandour Juwellery • Purchase Log</title>
+  <title>Veridian Atelier • Purchase Log</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -15,7 +15,7 @@
   <link rel="manifest" href="../manifest.webmanifest">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#D4AF37">
+  <meta name="theme-color" content="#2596be">
   <meta
     http-equiv="Content-Security-Policy"
     content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self' https://api.gold-api.com; child-src 'self' https://drive.google.com https://*.googleusercontent.com; frame-src 'self' https://drive.google.com https://*.googleusercontent.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
@@ -24,22 +24,22 @@
   <style>
     :root {
       --pad: 18px;
-      --gold-primary: #D4AF37;
-      --gold-secondary: #FFD700;
-      --gold-dark: #B8860B;
-      --gold-light: #F5E6B3;
-      --ivory: #F8F8FF;
-      --charcoal: #2C2C2C;
-      --warm-gray: #8B7D6B;
-      --accent-gold: #C9A227;
-      --bg: radial-gradient(circle at 10% 0%, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 55%, #ffffff 100%);
+      --gold-primary: #2596be;
+      --gold-secondary: #2596be;
+      --gold-dark: #1f7fa0;
+      --gold-light: #e6f6fb;
+      --ivory: #fafdff;
+      --charcoal: #1f2a30;
+      --warm-gray: #4f6b78;
+      --accent-gold: #2596be;
+      --bg: radial-gradient(circle at 10% 0%, rgba(37, 150, 190, 0.15) 0%, rgba(37, 150, 190, 0.05) 55%, #ffffff 100%);
       --glass: rgba(255, 255, 255, 0.92);
-      --card-border: rgba(212, 175, 55, 0.3);
+      --card-border: rgba(37, 150, 190, 0.3);
       --accent: var(--gold-primary);
       --accent-dark: var(--gold-dark);
       --text: var(--charcoal);
       --muted: var(--warm-gray);
-      --shadow: 0 18px 40px -24px rgba(212, 175, 55, 0.35);
+      --shadow: 0 18px 40px -24px rgba(37, 150, 190, 0.35);
     }
 
     * {
@@ -56,18 +56,6 @@
       flex-direction: column;
       align-items: center;
       padding: calc(var(--pad) * 1.2) var(--pad) calc(var(--pad) * 1.6);
-    }
-
-    .bismillah {
-      margin: 0 0 clamp(10px, 2vw, 18px);
-      font-family: 'Amiri', 'Scheherazade New', serif;
-      font-size: clamp(1.1rem, 2.6vw, 1.35rem);
-      color: var(--accent-dark);
-      letter-spacing: 0.02em;
-      text-align: center;
-      align-self: center;
-      direction: rtl;
-      font-weight: 600;
     }
 
     .page {
@@ -95,7 +83,7 @@
       height: 56px;
       width: auto;
       object-fit: contain;
-      filter: drop-shadow(0 6px 16px rgba(212, 175, 55, 0.25));
+      filter: drop-shadow(0 6px 16px rgba(37, 150, 190, 0.25));
     }
 
     .page-nav {
@@ -105,9 +93,9 @@
       gap: 8px;
       padding: 8px 10px;
       border-radius: 999px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 253, 245, 0.78));
-      border: 1px solid rgba(212, 175, 55, 0.25);
-      box-shadow: 0 18px 32px -22px rgba(212, 175, 55, 0.45);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(229, 246, 251, 0.78));
+      border: 1px solid rgba(37, 150, 190, 0.25);
+      box-shadow: 0 18px 32px -22px rgba(37, 150, 190, 0.45);
       max-width: 100%;
       overflow-x: auto;
       overflow-y: hidden;
@@ -134,16 +122,16 @@
       background: rgba(255, 255, 255, 0.82);
       scroll-snap-align: center;
       min-width: max-content;
-      box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.12);
+      box-shadow: inset 0 0 0 1px rgba(37, 150, 190, 0.12);
     }
 
     .nav-link:hover {
       transform: translateY(-1px);
-      box-shadow: 0 12px 24px -18px rgba(212, 175, 55, 0.45);
+      box-shadow: 0 12px 24px -18px rgba(37, 150, 190, 0.45);
     }
 
     .nav-link:focus-visible {
-      outline: 2px solid rgba(212, 175, 55, 0.55);
+      outline: 2px solid rgba(37, 150, 190, 0.55);
       outline-offset: 2px;
     }
 
@@ -154,7 +142,7 @@
     .nav-link.active {
       background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
       color: #fff;
-      box-shadow: 0 14px 30px -18px rgba(212, 175, 55, 0.6);
+      box-shadow: 0 14px 30px -18px rgba(37, 150, 190, 0.6);
     }
 
     .hero-title {
@@ -207,7 +195,7 @@
     input[type="date"] {
       padding: 10px 14px;
       border-radius: 14px;
-      border: 1px solid rgba(212, 175, 55, 0.35);
+      border: 1px solid rgba(37, 150, 190, 0.35);
       background: rgba(255, 255, 255, 0.85);
       font: inherit;
       color: inherit;
@@ -217,7 +205,7 @@
     input[type="date"]:focus {
       outline: none;
       border-color: var(--gold-primary);
-      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25);
+      box-shadow: 0 0 0 3px rgba(37, 150, 190, 0.25);
     }
 
     .quick-filters {
@@ -240,14 +228,14 @@
     .quick-filter-btn:hover,
     .quick-filter-btn:focus {
       transform: translateY(-1px);
-      box-shadow: 0 12px 24px -18px rgba(212, 175, 55, 0.45);
+      box-shadow: 0 12px 24px -18px rgba(37, 150, 190, 0.45);
       outline: none;
     }
 
     .quick-filter-btn.active {
       background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
       color: #fff;
-      box-shadow: 0 14px 30px -20px rgba(212, 175, 55, 0.55);
+      box-shadow: 0 14px 30px -20px rgba(37, 150, 190, 0.55);
     }
 
     .clear-btn {
@@ -282,7 +270,7 @@
     .table-wrapper {
       overflow-x: auto;
       border-radius: 18px;
-      border: 1px solid rgba(212, 175, 55, 0.2);
+      border: 1px solid rgba(37, 150, 190, 0.2);
     }
 
     table {
@@ -295,7 +283,7 @@
     td {
       padding: 14px 16px;
       text-align: left;
-      border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+      border-bottom: 1px solid rgba(37, 150, 190, 0.12);
     }
 
     th {
@@ -304,11 +292,11 @@
       letter-spacing: 0.06em;
       color: var(--muted);
       font-weight: 700;
-      background: rgba(212, 175, 55, 0.06);
+      background: rgba(37, 150, 190, 0.06);
     }
 
     tbody tr:hover {
-      background: rgba(212, 175, 55, 0.04);
+      background: rgba(37, 150, 190, 0.04);
     }
 
     .loading {
@@ -367,7 +355,7 @@
       tr {
         display: grid;
         grid-template-columns: 1fr;
-        border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        border-bottom: 1px solid rgba(37, 150, 190, 0.2);
       }
 
       th {
@@ -378,10 +366,9 @@
 </head>
 <body>
   <div class="page">
-    <p class="bismillah" lang="ar" dir="rtl">بِسْمِ اللَّـهِ الرَّحْمَـٰنِ الرَّحِيمِ</p>
     <header>
       <div class="header-top">
-        <img src="../assets/logo-website-test.jpg" alt="Ghandour Juwellery logo" class="brand-logo" />
+        <img src="../assets/logo-website-test.jpg" alt="Veridian Atelier logo" class="brand-logo" />
         <nav class="page-nav" aria-label="Workspace navigation">
           <a class="nav-link" href="./index.html">Scanner</a>
           <a class="nav-link" href="./items.html">Inventory</a>
