@@ -812,6 +812,14 @@
           </select>
         </div>
         <div class="filter-group">
+          <label for="availabilityFilter">Availability</label>
+          <select id="availabilityFilter" name="availability">
+            <option value="">All items</option>
+            <option value="available">Available</option>
+            <option value="not-available">Not available</option>
+          </select>
+        </div>
+        <div class="filter-group">
           <label for="priceMin">Price range</label>
           <div class="range-inputs">
             <input type="number" id="priceMin" placeholder="Min" min="0" step="0.01" inputmode="decimal">
@@ -964,6 +972,7 @@
       const OUNCE_GRAMS = 32;
 
       const categorySelect = document.getElementById('categoryFilter');
+      const availabilitySelect = document.getElementById('availabilityFilter');
       const priceMinInput = document.getElementById('priceMin');
       const priceMaxInput = document.getElementById('priceMax');
       const resetFiltersBtn = document.getElementById('resetFilters');
@@ -1272,6 +1281,25 @@
         return String(value ?? '').trim().toLowerCase();
       }
 
+      function normalizeAvailabilityState(value = '') {
+        const normalized = String(value ?? '').trim().toLowerCase();
+        if (!normalized) {
+          return 'unknown';
+        }
+
+        const negativePatterns = /not\s*available|unavailable|sold|reserved|out\s*of\s*stock|out-of-stock|on hold|on\s*hold|hold|pending|coming soon|preorder|pre-order/;
+        if (negativePatterns.test(normalized)) {
+          return 'not-available';
+        }
+
+        const positivePatterns = /available|in stock|instock|ready/;
+        if (positivePatterns.test(normalized)) {
+          return 'available';
+        }
+
+        return 'unknown';
+      }
+
       function detectCategoryKey(rows = []) {
         if (!rows.length) return null;
         const keys = new Set();
@@ -1391,11 +1419,20 @@
 
       function applyFilters() {
         const category = categorySelect.value;
+        const availability = availabilitySelect.value;
         const priceMin = extractNumber(priceMinInput.value);
         const priceMax = extractNumber(priceMaxInput.value);
 
         state.filtered = state.rows.filter((row) => {
           if (category && row.__categoryNormalized !== category) {
+            return false;
+          }
+
+          if (availability === 'available' && row.__availabilityState !== 'available') {
+            return false;
+          }
+
+          if (availability === 'not-available' && row.__availabilityState !== 'not-available') {
             return false;
           }
 
@@ -1735,6 +1772,8 @@
         const categoryKey = state.categoryKey;
         const categoryRaw = categoryKey ? normalized[categoryKey] : (normalized.category ?? normalized.type ?? '');
         const categoryNormalized = normalizeCategoryValue(categoryRaw);
+        const availabilityDisplay = sanitize(normalized.availability ?? '');
+        const availabilityState = normalizeAvailabilityState(availabilityDisplay);
 
         const parsed = {
           ...normalized,
@@ -1747,7 +1786,8 @@
           __karat: sanitize(normalized.karat ?? ''),
           __fees: sanitize(normalized.fees ?? ''),
           __description: sanitize(normalized.description ?? ''),
-          __availability: sanitize(normalized.availability ?? ''),
+          __availability: availabilityDisplay,
+          __availabilityState: availabilityState,
           __categoryRaw: sanitize(categoryRaw ?? ''),
           __categoryNormalized: categoryNormalized,
           __price: Number.isFinite(priceValue) ? priceValue : NaN,
@@ -1808,6 +1848,7 @@
 
       function resetFilters() {
         categorySelect.value = '';
+        availabilitySelect.value = '';
         priceMinInput.value = '';
         priceMaxInput.value = '';
         setSortByIndex(RESOLVED_DEFAULT_SORT_INDEX, { trigger: false });
@@ -1816,6 +1857,7 @@
 
       function attachListeners() {
         categorySelect.addEventListener('change', applyFilters);
+        availabilitySelect.addEventListener('change', applyFilters);
         priceMinInput.addEventListener('input', applyFilters);
         priceMaxInput.addEventListener('input', applyFilters);
         resetFiltersBtn.addEventListener('click', resetFilters);
