@@ -77,6 +77,31 @@
       gap: 12px;
       flex-wrap: wrap;
     }
+    .language-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(37, 150, 190, 0.2);
+      box-shadow: inset 0 0 0 1px rgba(37, 150, 190, 0.12);
+    }
+    .language-toggle select {
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent-dark);
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      padding: 0;
+    }
+    .language-toggle select option {
+      color: var(--text);
+    }
     .page-nav {
       position: relative;
       display: flex;
@@ -496,6 +521,60 @@
       overflow: hidden;
       clip: rect(0, 0, 0, 0);
       border: 0;
+    }
+
+    body.rtl {
+      direction: rtl;
+    }
+
+    body.rtl header {
+      text-align: right;
+      align-items: flex-end;
+    }
+
+    body.rtl .header-top {
+      flex-direction: row-reverse;
+    }
+
+    body.rtl .page-nav {
+      direction: rtl;
+      justify-content: flex-start;
+    }
+
+    body.rtl .badge-row,
+    body.rtl .contact-row,
+    body.rtl footer {
+      flex-direction: row-reverse;
+      text-align: right;
+    }
+
+    body.rtl .content-grid,
+    body.rtl .results-panel,
+    body.rtl .scanner-panel,
+    body.rtl .search-container,
+    body.rtl .category-browser,
+    body.rtl .history-card,
+    body.rtl .hardware-card,
+    body.rtl .hardware-input,
+    body.rtl .gold-price-suggestions,
+    body.rtl #hud,
+    body.rtl #manualEntry,
+    body.rtl #goldPriceEntry {
+      direction: rtl;
+    }
+
+    body.rtl .history-header,
+    body.rtl .hardware-header {
+      flex-direction: row-reverse;
+    }
+
+    body.rtl .contact-row {
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    body.rtl .contact-action {
+      flex-direction: row-reverse;
     }
 
     footer {
@@ -1181,31 +1260,39 @@
     <header>
       <div class="header-top">
         <img src="../assets/logo-website-test.jpg" alt="Veridian Atelier logo" class="brand-logo" />
-        <nav class="page-nav" aria-label="Workspace navigation">
-          <a class="nav-link active" href="./index.html" aria-current="page">Scanner</a>
-          <a class="nav-link" href="./items.html">Inventory</a>
-          <a class="nav-link" href="./sales.html">Sales log</a>
-          <a class="nav-link" href="./purchases.html">Purchase log</a>
-          <a class="nav-link" href="./statement.html">Gold statement</a>
+        <nav id="pageNav" class="page-nav" aria-label="Workspace navigation">
+          <a class="nav-link active" href="./index.html" aria-current="page" data-i18n="navScanner">Scanner</a>
+          <a class="nav-link" href="./items.html" data-i18n="navInventory">Inventory</a>
+          <a class="nav-link" href="./sales.html" data-i18n="navSales">Sales log</a>
+          <a class="nav-link" href="./purchases.html" data-i18n="navPurchases">Purchase log</a>
+          <a class="nav-link" href="./statement.html" data-i18n="navStatement">Gold statement</a>
         </nav>
+        <div class="language-toggle">
+          <label for="languageToggle" class="sr-only" data-i18n="languageLabel">Language</label>
+          <select id="languageToggle" aria-label="Select language">
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
       </div>
       <div class="badge-row">
-        <span class="chip">Veridian Atelier</span>
+        <span class="chip" data-i18n="badgeBrand">Veridian Atelier</span>
       </div>
-      <h1 class="hero-title">Instant barcode console</h1>
-      <p class="hero-subtitle">Scan a piece to pull up its story, photos, and live valuation without scrolling.</p>
-      <div id="support" class="muted">Initializing…</div>
+      <h1 class="hero-title" data-i18n="heroTitle">Instant barcode console</h1>
+      <p class="hero-subtitle" data-i18n="heroSubtitle">Scan a piece to pull up its story, photos, and live valuation without scrolling.</p>
+      <div id="support" class="muted" data-i18n="supportInitializing" data-i18n-dynamic>Initializing…</div>
     </header>
 
     <div class="content-grid">
-      <section class="glass-card results-panel" aria-label="Item details">
-        <h2>Item details</h2>
+      <section id="resultsSection" class="glass-card results-panel" aria-label="Item details">
+        <h2 data-i18n="resultsHeading">Item details</h2>
         <div class="search-container">
-          <label class="sr-only" for="searchInput">Search inventory</label>
+          <label class="sr-only" for="searchInput" data-i18n="searchLabel">Search inventory</label>
           <input
             type="search"
             id="searchInput"
             name="search"
+            data-i18n-placeholder="searchPlaceholder"
             placeholder="Search items by name, SKU, or description…"
             autocomplete="off"
             spellcheck="false"
@@ -1214,14 +1301,28 @@
         </div>
         <div id="categorySection" class="category-browser" hidden>
           <div class="browser-header">
-            <label for="categorySelect">Browse by collection</label>
+            <label for="categorySelect" data-i18n="categoryLabel">Browse by collection</label>
             <div class="browser-controls">
-              <button type="button" id="categoryPrev" class="browser-nav" disabled aria-label="Previous categories">
+              <button
+                type="button"
+                id="categoryPrev"
+                class="browser-nav"
+                disabled
+                aria-label="Previous categories"
+                data-i18n-aria-label="categoryPrevAria"
+              >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M15 18l-6-6 6-6" />
                 </svg>
               </button>
-              <button type="button" id="categoryNext" class="browser-nav" disabled aria-label="Next categories">
+              <button
+                type="button"
+                id="categoryNext"
+                class="browser-nav"
+                disabled
+                aria-label="Next categories"
+                data-i18n-aria-label="categoryNextAria"
+              >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M9 18l6-6-6-6" />
                 </svg>
@@ -1230,43 +1331,62 @@
           </div>
 
           <div class="category-scroll-container">
-            <div class="category-chips" id="categoryChips" role="tablist" aria-label="Product categories">
+            <div
+              class="category-chips"
+              id="categoryChips"
+              role="tablist"
+              aria-label="Product categories"
+              data-i18n-aria-label="categoryAria"
+            >
               <!-- Chips will be dynamically added here -->
             </div>
           </div>
 
           <div id="categoryResults" class="search-results category-results" hidden aria-live="polite"></div>
         </div>
-        <div id="itemPlaceholder" class="results-placeholder">Scan or enter a SKU to see the item information here.</div>
+        <div id="itemPlaceholder" class="results-placeholder" data-i18n="itemPlaceholder">
+          Scan or enter a SKU to see the item information here.
+        </div>
         <div id="itemCard" tabindex="-1"></div>
         <div id="historyCard" class="history-card" hidden>
           <div class="history-header">
-            <h3>Recent scans</h3>
-            <button type="button" id="clearHistoryBtn">Clear</button>
+            <h3 data-i18n="historyHeading">Recent scans</h3>
+            <button type="button" id="clearHistoryBtn" data-i18n="historyClear">Clear</button>
           </div>
           <ul id="scanHistoryList" class="history-list"></ul>
         </div>
       </section>
 
-      <section class="glass-card scanner-panel" aria-label="Live barcode scanner">
+      <section
+        id="scannerSection"
+        class="glass-card scanner-panel"
+        aria-label="Live barcode scanner"
+        data-i18n-aria-label="scannerAria"
+      >
       <video id="preview" playsinline muted></video>
 
-      <div id="hud" aria-label="Camera controls">
-        <select id="cameraSelect" aria-label="Camera" disabled></select>
-        <button id="startBtn" disabled>Start</button>
-        <button id="stopBtn" disabled>Stop</button>
-        <button id="switchBtn" disabled>Switch</button>
-        <button id="torchBtn" disabled>Toggle torch</button>
+      <div id="hud" aria-label="Camera controls" data-i18n-aria-label="hudAria">
+        <select id="cameraSelect" aria-label="Camera" data-i18n-aria-label="cameraSelectAria" disabled></select>
+        <button id="startBtn" disabled data-i18n="start">Start</button>
+        <button id="stopBtn" disabled data-i18n="stop">Stop</button>
+        <button id="switchBtn" disabled data-i18n="switch">Switch</button>
+        <button id="torchBtn" disabled data-i18n="torchToggle">Toggle torch</button>
       </div>
 
       <div>
-        <div id="result">No barcode yet…</div>
-        <div id="hint">Tip: Serve over HTTPS. On iPhone, allow camera; hold 15–25 cm away; keep the code flat; use Torch.</div>
+        <div id="result" data-i18n="resultEmpty" data-i18n-dynamic>No barcode yet…</div>
+        <div id="hint" data-i18n="scanHint">
+          Tip: Serve over HTTPS. On iPhone, allow camera; hold 15–25 cm away; keep the code flat; use Torch.
+        </div>
       </div>
 
-      <form id="manualForm" aria-label="Manual barcode entry">
+      <form
+        id="manualForm"
+        aria-label="Manual barcode entry"
+        data-i18n-aria-label="manualFormAria"
+      >
         <div id="manualEntry">
-          <label for="manualInput">Manual entry:</label>
+          <label for="manualInput" data-i18n="manualLabel">Manual entry:</label>
           <input
             type="number"
             id="manualInput"
@@ -1275,15 +1395,20 @@
             max="399999"
             inputmode="numeric"
             placeholder="100001"
+            data-i18n-placeholder="manualPlaceholder"
             required
           />
-          <button type="submit">Lookup</button>
+          <button type="submit" data-i18n="manualSubmit">Lookup</button>
         </div>
       </form>
 
-      <form id="goldPriceForm" aria-label="Gold price override">
+      <form
+        id="goldPriceForm"
+        aria-label="Gold price override"
+        data-i18n-aria-label="goldFormAria"
+      >
         <div id="goldPriceEntry">
-          <label for="goldPriceInput">Gold price override:</label>
+          <label for="goldPriceInput" data-i18n="goldLabel">Gold price override:</label>
           <input
             type="number"
             id="goldPriceInput"
@@ -1292,34 +1417,44 @@
             step="0.01"
             inputmode="decimal"
             placeholder="2300"
+            data-i18n-placeholder="goldPlaceholder"
           />
-          <button type="submit">Apply</button>
-          <button type="button" id="goldPriceClear">Use live price</button>
+          <button type="submit" data-i18n="goldApply">Apply</button>
+          <button type="button" id="goldPriceClear" data-i18n="goldUseLive">Use live price</button>
         </div>
-        <div id="goldPriceStatus" class="muted">Using live price…</div>
-        <div class="gold-price-suggestions" role="group" aria-label="Quick gold price suggestions">
-          <span>Quick add:</span>
-          <button type="button" data-gold-suggestion="30">Live + 30</button>
-          <button type="button" data-gold-suggestion="50">Live + 50</button>
-          <button type="button" data-gold-suggestion="70">Live + 70</button>
-          <button type="button" data-gold-suggestion="100">Live + 100</button>
+        <div id="goldPriceStatus" class="muted" data-i18n="goldStatusLiveDefault" data-i18n-dynamic>Using live price…</div>
+        <div
+          class="gold-price-suggestions"
+          role="group"
+          aria-label="Quick gold price suggestions"
+          data-i18n-aria-label="goldSuggestionsAria"
+        >
+          <span data-i18n="goldQuickAdd">Quick add:</span>
+          <button type="button" data-gold-suggestion="30" data-i18n="goldSuggestion30">Live + 30</button>
+          <button type="button" data-gold-suggestion="50" data-i18n="goldSuggestion50">Live + 50</button>
+          <button type="button" data-gold-suggestion="70" data-i18n="goldSuggestion70">Live + 70</button>
+          <button type="button" data-gold-suggestion="100" data-i18n="goldSuggestion100">Live + 100</button>
         </div>
       </form>
 
-      <div class="hardware-card" aria-label="Bluetooth scanner capture">
+      <div
+        class="hardware-card"
+        aria-label="Bluetooth scanner capture"
+        data-i18n-aria-label="hardwareAria"
+      >
         <div class="hardware-header">
-          <h3>Bluetooth scanner capture</h3>
+          <h3 data-i18n="hardwareHeading">Bluetooth scanner capture</h3>
           <label class="hardware-toggle">
             <input type="checkbox" id="hardwareToggle" checked />
-            Enable capture
+            <span data-i18n="hardwareToggleLabel">Enable capture</span>
           </label>
         </div>
-        <p class="muted" style="margin: 0;">
+        <p class="muted" style="margin: 0;" data-i18n="hardwareDescription">
           Pair your handheld laser scanner with this device. Most scanners behave like a keyboard: keep the capture field focused
           and each trigger will type the barcode followed by Enter. The app will look up the item instantly.
         </p>
         <div class="hardware-input">
-          <label for="hardwareField">Scanner input field</label>
+          <label for="hardwareField" data-i18n="hardwareFieldLabel">Scanner input field</label>
           <input
             id="hardwareField"
             type="text"
@@ -1327,26 +1462,37 @@
             autocomplete="off"
             spellcheck="false"
             placeholder="Ready to scan…"
+            data-i18n-placeholder="hardwarePlaceholder"
             aria-describedby="hardwareStatus"
           />
-          <button type="button" id="hardwareClear">Clear history</button>
+          <button type="button" id="hardwareClear" data-i18n="hardwareClear">Clear history</button>
         </div>
-        <div id="hardwareStatus">Awaiting scan…</div>
-        <ul id="hardwareLog" class="hardware-log" aria-live="polite" aria-label="Recent scans"></ul>
+        <div id="hardwareStatus" data-i18n="hardwareStatusIdle" data-i18n-dynamic>Awaiting scan…</div>
+        <ul
+          id="hardwareLog"
+          class="hardware-log"
+          aria-live="polite"
+          aria-label="Recent scans"
+          data-i18n-aria-label="hardwareLogAria"
+        ></ul>
       </div>
       </section>
     </div>
 
     <footer>
       <div class="badge-row">
-        <span class="chip" id="engineChip">Engine: —</span>
-        <span class="chip">HTTPS required</span>
-        <span class="chip">iOS & Android</span>
-        <span class="chip">Code128, EAN/UPC, Code39, ITF, QR</span>
+        <span class="chip" id="engineChip" data-i18n="engineChipDefault" data-i18n-dynamic>Engine: —</span>
+        <span class="chip" data-i18n="badgeHttps">HTTPS required</span>
+        <span class="chip" data-i18n="badgePlatforms">iOS & Android</span>
+        <span class="chip" data-i18n="badgeFormats">Code128, EAN/UPC, Code39, ITF, QR</span>
       </div>
       <div class="contact-row">
-        <span>Need help staging a private showing? Contact our concierge team at <strong>ajouni178@gmail.com</strong>.</span>
-        <a class="contact-action" id="whatsAppLink" href="https://wa.me/" target="_blank" rel="noopener">WhatsApp us</a>
+        <span id="contactText" data-i18n="contactText" data-i18n-dynamic>
+          Need help staging a private showing? Contact our concierge team at <strong>ajouni178@gmail.com</strong>.
+        </span>
+        <a class="contact-action" id="whatsAppLink" href="https://wa.me/" target="_blank" rel="noopener" data-i18n="contactWhatsApp">
+          WhatsApp us
+        </a>
       </div>
     </footer>
   </div>
@@ -1389,6 +1535,474 @@
   const hardwareClear = document.getElementById('hardwareClear');
   const hardwareCard = document.querySelector('.hardware-card');
   const whatsAppLink = document.getElementById('whatsAppLink');
+  const languageToggle = document.getElementById('languageToggle');
+  const pageNav = document.getElementById('pageNav');
+  const resultsSectionEl = document.getElementById('resultsSection');
+  const scannerSection = document.getElementById('scannerSection');
+  const hud = document.getElementById('hud');
+  const contactTextEl = document.getElementById('contactText');
+
+  const i18nElements = document.querySelectorAll('[data-i18n]');
+  const i18nPlaceholderElements = document.querySelectorAll('[data-i18n-placeholder]');
+  const i18nAriaElements = document.querySelectorAll('[data-i18n-aria-label]');
+
+  const translations = {
+    en: {
+      pageTitle: 'Veridian Atelier • Smart Barcode Scanner',
+      languageLabel: 'Language',
+      languageSelectAria: 'Select language',
+      navAria: 'Workspace navigation',
+      navScanner: 'Scanner',
+      navInventory: 'Inventory',
+      navSales: 'Sales log',
+      navPurchases: 'Purchase log',
+      navStatement: 'Gold statement',
+      badgeBrand: 'Veridian Atelier',
+      heroTitle: 'Instant barcode console',
+      heroSubtitle: 'Scan a piece to pull up its story, photos, and live valuation without scrolling.',
+      supportInitializing: 'Initializing…',
+      resultsAria: 'Item details',
+      resultsHeading: 'Item details',
+      searchLabel: 'Search inventory',
+      searchPlaceholder: 'Search items by name, SKU, or description…',
+      searchNoImage: 'No Image',
+      searchUnnamedItem: 'Unnamed item',
+      searchNoMatches: 'No matches for "{query}".',
+      categoryLabel: 'Browse by collection',
+      categoryPrevAria: 'Previous categories',
+      categoryNextAria: 'Next categories',
+      categoryAria: 'Product categories',
+      itemPlaceholder: 'Scan or enter a SKU to see the item information here.',
+      historyHeading: 'Recent scans',
+      historyClear: 'Clear',
+      scannerAria: 'Live barcode scanner',
+      hudAria: 'Camera controls',
+      cameraSelectAria: 'Camera',
+      cameraBack: 'Back Camera',
+      cameraGeneric: 'Camera {index}',
+      start: 'Start',
+      stop: 'Stop',
+      switch: 'Switch',
+      torchToggle: 'Toggle torch',
+      torchTurnOff: 'Turn torch off',
+      resultEmpty: 'No barcode yet…',
+      resultScanning: 'Scanning…',
+      resultValueFormat: 'Value: {value}  |  Format: {format}',
+      formatUnknown: 'unknown',
+      scanHint: 'Tip: Serve over HTTPS. On iPhone, allow camera; hold 15–25 cm away; keep the code flat; use Torch.',
+      manualFormAria: 'Manual barcode entry',
+      manualLabel: 'Manual entry:',
+      manualPlaceholder: '100001',
+      manualSubmit: 'Lookup',
+      goldFormAria: 'Gold price override',
+      goldLabel: 'Gold price override:',
+      goldPlaceholder: '2300',
+      goldApply: 'Apply',
+      goldUseLive: 'Use live price',
+      goldStatusLiveDefault: 'Using live price…',
+      goldStatusManual: 'Using manual price {price}',
+      goldStatusManualUpdated: 'set {time}',
+      goldStatusLive: 'Using live price {price}',
+      goldStatusLiveUpdated: 'updated {time}',
+      goldStatusWaiting: 'Waiting for live price…',
+      statusSeparator: ' • ',
+      goldSuggestionsAria: 'Quick gold price suggestions',
+      goldQuickAdd: 'Quick add:',
+      goldSuggestion30: 'Live + 30',
+      goldSuggestion50: 'Live + 50',
+      goldSuggestion70: 'Live + 70',
+      goldSuggestion100: 'Live + 100',
+      hardwareAria: 'Bluetooth scanner capture',
+      hardwareHeading: 'Bluetooth scanner capture',
+      hardwareToggleLabel: 'Enable capture',
+      hardwareDescription:
+        'Pair your handheld laser scanner with this device. Most scanners behave like a keyboard: keep the capture field focused and each trigger will type the barcode followed by Enter. The app will look up the item instantly.',
+      hardwareFieldLabel: 'Scanner input field',
+      hardwarePlaceholder: 'Ready to scan…',
+      hardwareClear: 'Clear history',
+      hardwareStatusIdle: 'Awaiting scan…',
+      hardwareStatusPaused: 'Capture paused',
+      hardwareStatusReady: 'Ready for scanner…',
+      hardwareStatusLastScan: 'Last scan: {value}',
+      hardwareStatusTyping: 'Typing: {value}',
+      hardwareLogAria: 'Recent scans',
+      hardwareLimit: 'Too many scan attempts. Please wait.',
+      engineChipDefault: 'Engine: —',
+      engineLabel: 'Engine: {status}',
+      engineStatusStopped: 'stopped',
+      engineStatusNative: 'native',
+      engineStatusZXing: 'zxing',
+      engineStatusNone: 'none',
+      badgeHttps: 'HTTPS required',
+      badgePlatforms: 'iOS & Android',
+      badgeFormats: 'Code128, EAN/UPC, Code39, ITF, QR',
+      contactText: 'Need help staging a private showing? Contact our concierge team at <strong>{email}</strong>.',
+      contactWhatsApp: 'WhatsApp us',
+      toastManualApplied: 'Manual gold price applied.',
+      toastAuthRequired: 'Authentication required',
+      toastInventoryLoading: 'Inventory still loading…',
+      toastCategoryMissing: 'Category column not available in the sheet.',
+      toastItemNotFound: 'Item not found in current inventory cache.',
+      toastHistoryCleared: 'Scan history cleared',
+      toastEmployeeRequired: 'Employee name is required to record a sale.',
+      toastPriceRequired: 'Sold price is required to record a sale.',
+      toastPriceInvalid: 'Please enter a valid numeric price.',
+      toastSessionExpired: 'Your session has expired. Please log in again to record sales.',
+      toastNetworkError: 'Network error. Please try again.',
+      toastNoItemForSku: 'No item found for SKU {sku}',
+      toastGoldInvalid: 'Enter a valid gold price.',
+      toastGoldUnavailable: 'Gold price not available yet.',
+      toastGoldReverted: 'Reverted to live gold price.',
+      errorSaleGeneric: 'Could not record sale.',
+      toastGoldSuggestion: 'Applied {base} price ({baseValue}) + {delta} = {value}',
+      loginNetworkError: 'Network error',
+      errorAuthFailed: 'Authentication failed',
+      errorInvalidSkuCharacters: 'Invalid characters in SKU',
+      errorSkuDigits: 'SKU must be 5-6 digits',
+      errorSkuRange: 'SKU must be between 100000 and 399999',
+      errorInvalidSku: 'Invalid SKU',
+      supportTapStart: 'Tap Start and allow camera access to begin scanning.',
+      supportStopped: 'Stopped.',
+      supportNativeRunning: '<span class="ok">Native detector running…</span>',
+      supportSwitchingZXing: 'Switching to ZXing fallback…',
+      supportZXingRunning: '<span class="ok">ZXing running…</span>',
+      supportRequestingAccess: 'Requesting camera access…',
+      supportCamerasHybrid: 'Cameras found. Native + ZXing fallback ready.',
+      supportCamerasFallback: 'Cameras found. ZXing ready.',
+      supportHttpsRequired:
+        'This page must be served over HTTPS (or localhost) for camera access. Tip: reload with https:// or move this page to a secure host.',
+      supportFailedZXing: 'Failed to start ZXing.',
+      supportFailedCamera: 'Failed to start camera/decoder.',
+      supportNoCameraApis: 'This browser does not support camera APIs.',
+      retry: 'Retry',
+      permissionHintPrimary:
+        'Tap the address bar lock icon and allow camera access, then press <strong>Retry</strong>.',
+      permissionHintAndroid:
+        'If you do not see a prompt, open <strong>Settings → Apps → Permissions → Camera</strong> and make sure your browser is allowed.',
+      permissionHintXiaomi:
+        'On Xiaomi/MIUI devices, also open the <strong>Security</strong> app → <strong>Privacy protection → Permission manager → Camera</strong> and enable access for the browser.',
+      permissionHintIOS:
+        'On iOS, go to <strong>Settings → Safari → Camera</strong> (or the specific browser in Settings) and set it to <strong>Allow</strong>.',
+      permissionHeading: 'Camera permission needed.',
+      skuLabel: 'SKU {value}',
+      fallbackItemName: 'Item',
+      saleSelectedPiece: 'the selected piece',
+      fieldType: 'Type:',
+      fieldTimestamp: 'Timestamp:',
+      fieldWeight: 'Weight:',
+      fieldWeightUnit: '{value} g',
+      fieldKarat: 'Karat:',
+      fieldFees: 'Fees:',
+      fieldStatus: 'Status:',
+      fieldSold: 'Sold',
+      fieldAvailable: 'Available',
+      fieldSoldBy: 'Sold by:',
+      fieldSoldDate: 'Sold date:',
+      fieldSoldPrice: 'Sold price:',
+      fieldNotes: 'Notes:',
+      priceEstimated: 'Estimated Price:',
+      pricePerGram: 'Per-gram:',
+      priceSourceManual: 'Manual',
+      priceSourceLive: 'Live',
+      priceGoldLabel: '{source} XAU:',
+      priceTimestamp: 'Updated: {time}',
+      priceSetTime: 'Set: {time}',
+      linkOpenMedia: 'Open photo/video',
+      buttonSell: 'Sell this item',
+      chipSold: 'Sold',
+      promptEmployee: 'Employee name:',
+      promptSoldPrice: 'Sold price:',
+      promptNotes: 'Notes (optional):',
+      saleRecordedSummary: 'Sale recorded for {sku}. {summary}',
+      saleRecordedSimple: 'Sale recorded for {sku}.',
+      saleStatus: 'Status: {value}',
+      saleSoldBy: 'Sold by: {value}',
+      saleSoldOn: 'Sold on: {value}',
+      salePrice: 'Price: {value}',
+      saleNotes: 'Notes: {value}',
+      manualSourceLabel: 'manual',
+      liveSourceLabel: 'live'
+    },
+    ar: {
+      pageTitle: 'Veridian Atelier • وحدة الماسح الذكي',
+      languageLabel: 'اللغة',
+      languageSelectAria: 'اختيار اللغة',
+      navAria: 'التنقل داخل مساحة العمل',
+      navScanner: 'الماسح',
+      navInventory: 'المخزون',
+      navSales: 'سجل المبيعات',
+      navPurchases: 'سجل المشتريات',
+      navStatement: 'بيان الذهب',
+      badgeBrand: 'فيريديان أتيلييه',
+      heroTitle: 'منصة الماسح الفورية',
+      heroSubtitle: 'امسح القطعة لعرض قصتها وصورها وتقييمها الحي دون الحاجة إلى التمرير.',
+      supportInitializing: 'جاري التهيئة…',
+      resultsAria: 'تفاصيل القطعة',
+      resultsHeading: 'تفاصيل القطعة',
+      searchLabel: 'ابحث في المخزون',
+      searchPlaceholder: 'ابحث حسب الاسم أو رمز القطعة أو الوصف…',
+      searchNoImage: 'لا توجد صورة',
+      searchUnnamedItem: 'عنصر بدون اسم',
+      searchNoMatches: 'لا توجد نتائج لـ "{query}".',
+      categoryLabel: 'تصفّح حسب المجموعة',
+      categoryPrevAria: 'المجموعات السابقة',
+      categoryNextAria: 'المجموعات التالية',
+      categoryAria: 'فئات المنتجات',
+      itemPlaceholder: 'امسح أو أدخل رمز القطعة لعرض معلوماتها هنا.',
+      historyHeading: 'عمليات المسح الأخيرة',
+      historyClear: 'مسح',
+      scannerAria: 'ماسح الباركود المباشر',
+      hudAria: 'عناصر التحكم بالكاميرا',
+      cameraSelectAria: 'الكاميرا',
+      cameraBack: 'الكاميرا الخلفية',
+      cameraGeneric: 'الكاميرا {index}',
+      start: 'بدء',
+      stop: 'إيقاف',
+      switch: 'تبديل',
+      torchToggle: 'تشغيل/إيقاف الإضاءة',
+      torchTurnOff: 'إيقاف الإضاءة',
+      resultEmpty: 'لا يوجد باركود بعد…',
+      resultScanning: 'جاري المسح…',
+      resultValueFormat: 'القيمة: {value}  |  النمط: {format}',
+      formatUnknown: 'غير معروف',
+      scanHint: 'نصيحة: استخدم بروتوكول HTTPS. على الآيفون، اسمح للكاميرا؛ أمسك الجهاز على بعد 15–25 سم؛ حافظ على استواء الرمز؛ واستخدم الإضاءة.',
+      manualFormAria: 'إدخال الباركود يدويًا',
+      manualLabel: 'إدخال يدوي:',
+      manualPlaceholder: '100001',
+      manualSubmit: 'بحث',
+      goldFormAria: 'تعديل سعر الذهب',
+      goldLabel: 'سعر الذهب (مخصص):',
+      goldPlaceholder: '2300',
+      goldApply: 'تطبيق',
+      goldUseLive: 'استخدام السعر المباشر',
+      goldStatusLiveDefault: 'يتم استخدام السعر المباشر…',
+      goldStatusManual: 'يتم استخدام السعر المخصص {price}',
+      goldStatusManualUpdated: 'تم تعيينه في {time}',
+      goldStatusLive: 'يتم استخدام السعر المباشر {price}',
+      goldStatusLiveUpdated: 'تم التحديث في {time}',
+      goldStatusWaiting: 'في انتظار السعر المباشر…',
+      statusSeparator: ' • ',
+      goldSuggestionsAria: 'اقتراحات سريعة لسعر الذهب',
+      goldQuickAdd: 'إضافة سريعة:',
+      goldSuggestion30: 'المباشر + 30',
+      goldSuggestion50: 'المباشر + 50',
+      goldSuggestion70: 'المباشر + 70',
+      goldSuggestion100: 'المباشر + 100',
+      hardwareAria: 'التقاط الماسح البلوتوث',
+      hardwareHeading: 'التقاط الماسح البلوتوث',
+      hardwareToggleLabel: 'تفعيل الالتقاط',
+      hardwareDescription:
+        'قم بإقران الماسح اليدوي مع هذا الجهاز. معظم الماسحات تعمل كلوحة مفاتيح: حافظ على تركيز الحقل، وسيتم إدخال الباركود تلقائيًا ثم البحث عنه مباشرة.',
+      hardwareFieldLabel: 'حقل إدخال الماسح',
+      hardwarePlaceholder: 'جاهز للمسح…',
+      hardwareClear: 'مسح السجل',
+      hardwareStatusIdle: 'بانتظار المسح…',
+      hardwareStatusPaused: 'تم إيقاف الالتقاط',
+      hardwareStatusReady: 'جاهز للماسح…',
+      hardwareStatusLastScan: 'آخر مسح: {value}',
+      hardwareStatusTyping: 'يتم الإدخال: {value}',
+      hardwareLogAria: 'عمليات المسح الأخيرة',
+      hardwareLimit: 'عدد محاولات المسح كبير جدًا. يرجى الانتظار.',
+      engineChipDefault: 'المحرك: —',
+      engineLabel: 'المحرك: {status}',
+      engineStatusStopped: 'متوقف',
+      engineStatusNative: 'محلي',
+      engineStatusZXing: 'ZXing',
+      engineStatusNone: 'غير مفعّل',
+      badgeHttps: 'يتطلب HTTPS',
+      badgePlatforms: 'iOS و Android',
+      badgeFormats: 'Code128، EAN/UPC، Code39، ITF، QR',
+      contactText: 'هل تحتاج إلى تنظيم عرض خاص؟ تواصل مع فريق الخدمات لدينا على <strong>{email}</strong>.',
+      contactWhatsApp: 'راسلنا عبر واتساب',
+      toastManualApplied: 'تم تطبيق سعر الذهب المخصص.',
+      toastAuthRequired: 'يلزم تسجيل الدخول',
+      toastInventoryLoading: 'لا يزال المخزون قيد التحميل…',
+      toastCategoryMissing: 'عمود الفئة غير متوفر في ورقة البيانات.',
+      toastItemNotFound: 'لم يتم العثور على القطعة في ذاكرة المخزون الحالية.',
+      toastHistoryCleared: 'تم مسح سجل المسح',
+      toastEmployeeRequired: 'يجب إدخال اسم الموظف لتسجيل عملية البيع.',
+      toastPriceRequired: 'يجب إدخال سعر البيع لتسجيل العملية.',
+      toastPriceInvalid: 'يرجى إدخال سعر رقمي صالح.',
+      toastSessionExpired: 'انتهت صلاحية الجلسة. يرجى تسجيل الدخول مرة أخرى لتسجيل المبيعات.',
+      toastNetworkError: 'خطأ في الشبكة. يرجى المحاولة مرة أخرى.',
+      toastNoItemForSku: 'لم يتم العثور على قطعة بالرمز {sku}',
+      toastGoldInvalid: 'يرجى إدخال سعر ذهب صالح.',
+      toastGoldUnavailable: 'سعر الذهب غير متوفر حاليًا.',
+      toastGoldReverted: 'تم الرجوع إلى السعر المباشر.',
+      errorSaleGeneric: 'تعذر تسجيل عملية البيع.',
+      toastGoldSuggestion: 'تم تطبيق سعر {base} ({baseValue}) + {delta} = {value}',
+      loginNetworkError: 'خطأ في الشبكة',
+      errorAuthFailed: 'فشل التوثيق',
+      errorInvalidSkuCharacters: 'رمز القطعة يحتوي على محارف غير صالحة',
+      errorSkuDigits: 'يجب أن يتكون رمز القطعة من 5 إلى 6 أرقام',
+      errorSkuRange: 'يجب أن يكون رمز القطعة بين 100000 و 399999',
+      errorInvalidSku: 'رمز القطعة غير صالح',
+      supportTapStart: 'اضغط على زر البدء واسمح بالوصول إلى الكاميرا لبدء المسح.',
+      supportStopped: 'تم الإيقاف.',
+      supportNativeRunning: '<span class="ok">يعمل الكاشف المدمج…</span>',
+      supportSwitchingZXing: 'جارٍ التبديل إلى ZXing الاحتياطي…',
+      supportZXingRunning: '<span class="ok">يعمل ZXing…</span>',
+      supportRequestingAccess: 'جاري طلب إذن استخدام الكاميرا…',
+      supportCamerasHybrid: 'تم العثور على كاميرات. الكاشف المدمج وZXing جاهزان.',
+      supportCamerasFallback: 'تم العثور على كاميرات. ZXing جاهز.',
+      supportHttpsRequired: 'يجب تقديم هذه الصفحة عبر HTTPS (أو محليًا) لاستخدام الكاميرا. تلميح: أعد التحميل باستخدام https:// أو انقل الصفحة إلى خادم آمن.',
+      supportFailedZXing: 'تعذر بدء ZXing.',
+      supportFailedCamera: 'تعذر بدء الكاميرا أو أداة القراءة.',
+      supportNoCameraApis: 'هذا المتصفح لا يدعم واجهات الكاميرا.',
+      retry: 'إعادة المحاولة',
+      permissionHintPrimary: 'اضغط على رمز القفل في شريط العنوان واسمح بالوصول إلى الكاميرا، ثم اضغط <strong>إعادة المحاولة</strong>.',
+      permissionHintAndroid:
+        'إذا لم يظهر إشعار، افتح <strong>الإعدادات ← التطبيقات ← الأذونات ← الكاميرا</strong> وتأكد من السماح للمتصفح.',
+      permissionHintXiaomi:
+        'على أجهزة شاومي/MIUI، افتح أيضًا تطبيق <strong>الأمان</strong> ← <strong>حماية الخصوصية → مدير الأذونات → الكاميرا</strong> وفعّل الوصول للمتصفح.',
+      permissionHintIOS:
+        'على أجهزة iOS، انتقل إلى <strong>الإعدادات ← سفاري ← الكاميرا</strong> (أو المتصفح المحدد) واضبطه على <strong>السماح</strong>.',
+      permissionHeading: 'يلزم إذن استخدام الكاميرا.',
+      skuLabel: 'رمز القطعة {value}',
+      fallbackItemName: 'قطعة',
+      saleSelectedPiece: 'القطعة المحددة',
+      fieldType: 'النوع:',
+      fieldTimestamp: 'الطابع الزمني:',
+      fieldWeight: 'الوزن:',
+      fieldWeightUnit: '{value} غ',
+      fieldKarat: 'العيار:',
+      fieldFees: 'الأجور:',
+      fieldStatus: 'الحالة:',
+      fieldSold: 'مباع',
+      fieldAvailable: 'متاح',
+      fieldSoldBy: 'المباع بواسطة:',
+      fieldSoldDate: 'تاريخ البيع:',
+      fieldSoldPrice: 'سعر البيع:',
+      fieldNotes: 'ملاحظات:',
+      priceEstimated: 'السعر التقديري:',
+      pricePerGram: 'لكل غرام:',
+      priceSourceManual: 'مخصص',
+      priceSourceLive: 'مباشر',
+      priceGoldLabel: 'سعر XAU {source}:',
+      priceTimestamp: 'تم التحديث في {time}',
+      priceSetTime: 'تم التعيين في {time}',
+      linkOpenMedia: 'فتح الصورة/الفيديو',
+      buttonSell: 'بيع هذه القطعة',
+      chipSold: 'مباع',
+      promptEmployee: 'اسم الموظف:',
+      promptSoldPrice: 'سعر البيع:',
+      promptNotes: 'ملاحظات (اختياري):',
+      saleRecordedSummary: 'تم تسجيل بيع للقطعة {sku}. {summary}',
+      saleRecordedSimple: 'تم تسجيل بيع للقطعة {sku}.',
+      saleStatus: 'الحالة: {value}',
+      saleSoldBy: 'المباع بواسطة: {value}',
+      saleSoldOn: 'تم البيع في: {value}',
+      salePrice: 'السعر: {value}',
+      saleNotes: 'ملاحظات: {value}',
+      manualSourceLabel: 'مخصص',
+      liveSourceLabel: 'مباشر'
+    }
+  };
+
+  let currentLanguage = localStorage.getItem('statementLanguage') === 'ar' ? 'ar' : 'en';
+
+  function t(key, replacements) {
+    const table = translations[currentLanguage] || translations.en;
+    const template = (table && table[key]) || translations.en[key] || key;
+    if (!replacements) return template;
+    return template.replace(/\{(\w+)\}/g, (match, token) => {
+      if (Object.prototype.hasOwnProperty.call(replacements, token)) {
+        return replacements[token];
+      }
+      return match;
+    });
+  }
+
+  function getLocale() {
+    return currentLanguage === 'ar' ? 'ar-EG' : undefined;
+  }
+
+  function formatNumber(value, fractionDigits = 2) {
+    if (!Number.isFinite(value)) return '';
+    return value.toLocaleString(getLocale(), {
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits
+    });
+  }
+
+  function updateLanguageAttributes() {
+    document.documentElement.lang = currentLanguage === 'ar' ? 'ar' : 'en';
+    document.documentElement.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
+    document.body.classList.toggle('rtl', currentLanguage === 'ar');
+  }
+
+  function renderStaticText() {
+    document.title = t('pageTitle');
+
+    i18nElements.forEach((element) => {
+      if (!(element instanceof HTMLElement)) return;
+      if (element.hasAttribute('data-i18n-dynamic')) return;
+      const key = element.getAttribute('data-i18n');
+      if (!key) return;
+      const htmlKeys = new Set(['contactText', 'supportNativeRunning', 'supportZXingRunning', 'permissionHintPrimary', 'permissionHintAndroid', 'permissionHintXiaomi', 'permissionHintIOS']);
+      if (htmlKeys.has(key)) {
+        element.innerHTML = t(key, { email: 'ajouni178@gmail.com' });
+      } else {
+        element.textContent = t(key);
+      }
+    });
+
+    i18nPlaceholderElements.forEach((element) => {
+      const key = element.getAttribute('data-i18n-placeholder');
+      if (!key) return;
+      element.placeholder = t(key);
+    });
+
+    i18nAriaElements.forEach((element) => {
+      const key = element.getAttribute('data-i18n-aria-label');
+      if (!key) return;
+      element.setAttribute('aria-label', t(key));
+    });
+
+    if (languageToggle) {
+      languageToggle.value = currentLanguage;
+      languageToggle.setAttribute('aria-label', t('languageSelectAria'));
+    }
+
+    if (pageNav) {
+      pageNav.setAttribute('aria-label', t('navAria'));
+    }
+
+    if (resultsSectionEl) {
+      resultsSectionEl.setAttribute('aria-label', t('resultsAria'));
+    }
+
+    if (scannerSection) {
+      scannerSection.setAttribute('aria-label', t('scannerAria'));
+    }
+
+    if (hud) {
+      hud.setAttribute('aria-label', t('hudAria'));
+    }
+
+    if (contactTextEl) {
+      contactTextEl.innerHTML = t('contactText', { email: 'ajouni178@gmail.com' });
+    }
+  }
+
+  function refreshLanguage() {
+    updateLanguageAttributes();
+    renderStaticText();
+    updateGoldPriceStatus();
+    refreshEngineLabel();
+    if (typeof updateRetryButtonText === 'function') {
+      updateRetryButtonText();
+    }
+  }
+
+  function applyLanguage(nextLanguage) {
+    const resolved = translations[nextLanguage] ? nextLanguage : 'en';
+    if (resolved !== currentLanguage) {
+      currentLanguage = resolved;
+      localStorage.setItem('statementLanguage', currentLanguage);
+    }
+    refreshLanguage();
+  }
 
   const DEFAULT_CONFIG = {
     authEndpoint: '/api/auth',
@@ -1521,14 +2135,14 @@
   function validateSKU(sku) {
     const skuStr = String(sku ?? '').trim();
     if (/['"\\;()]/.test(skuStr)) {
-      throw new Error('Invalid characters in SKU');
+      throw new Error(t('errorInvalidSkuCharacters'));
     }
     if (!/^\d{5,6}$/.test(skuStr)) {
-      throw new Error('SKU must be 5-6 digits');
+      throw new Error(t('errorSkuDigits'));
     }
     const num = Number.parseInt(skuStr, 10);
     if (num < 100000 || num > 399999) {
-      throw new Error('SKU must be between 100000 and 399999');
+      throw new Error(t('errorSkuRange'));
     }
     return skuStr;
   }
@@ -1577,7 +2191,7 @@
     const time = document.createElement('time');
     const now = new Date();
     time.dateTime = now.toISOString();
-    time.textContent = now.toLocaleTimeString();
+    time.textContent = now.toLocaleTimeString(getLocale());
     entry.appendChild(code);
     entry.appendChild(time);
     hardwareLog.prepend(entry);
@@ -1589,17 +2203,17 @@
   function commitHardwareScan(rawValue) {
     const normalized = String(rawValue ?? '').trim();
     if (!normalized) {
-      updateHardwareStatus(hardwareEnabled ? 'Awaiting scan…' : 'Capture paused');
+      updateHardwareStatus(hardwareEnabled ? t('hardwareStatusIdle') : t('hardwareStatusPaused'));
       return;
     }
     if (!allowHardwareScan()) {
-      const limitMessage = 'Too many scan attempts. Please wait.';
+      const limitMessage = t('hardwareLimit');
       updateHardwareStatus(limitMessage);
       showToast(limitMessage, 'error');
       return;
     }
     appendHardwareLog(normalized);
-    updateHardwareStatus(`Last scan: ${normalized}`);
+    updateHardwareStatus(t('hardwareStatusLastScan', { value: sanitizeInput(normalized) }));
     if (hardwareField) {
       hardwareField.value = '';
     }
@@ -1625,7 +2239,7 @@
         hardwareField.select?.();
       }
     }
-    updateHardwareStatus(hardwareEnabled ? 'Awaiting scan…' : 'Capture paused');
+    updateHardwareStatus(hardwareEnabled ? t('hardwareStatusIdle') : t('hardwareStatusPaused'));
   });
 
   hardwareField?.addEventListener('keydown', (event) => {
@@ -1635,22 +2249,22 @@
       commitHardwareScan(hardwareField.value);
     } else if (event.key === 'Escape') {
       hardwareField.value = '';
-      updateHardwareStatus('Awaiting scan…');
+      updateHardwareStatus(t('hardwareStatusIdle'));
     }
   });
 
   hardwareField?.addEventListener('input', () => {
     if (!hardwareEnabled) return;
     if (hardwareField.value) {
-      updateHardwareStatus(`Typing: ${hardwareField.value}`);
+      updateHardwareStatus(t('hardwareStatusTyping', { value: sanitizeInput(hardwareField.value) }));
     } else {
-      updateHardwareStatus('Awaiting scan…');
+      updateHardwareStatus(t('hardwareStatusIdle'));
     }
   });
 
   hardwareField?.addEventListener('focus', () => {
     if (!hardwareEnabled) return;
-    if (!hardwareField.value) updateHardwareStatus('Ready for scanner…');
+    if (!hardwareField.value) updateHardwareStatus(t('hardwareStatusReady'));
   });
 
   hardwareCard?.addEventListener('click', () => {
@@ -1667,7 +2281,7 @@
       clearTimeout(hardwareBufferTimer);
       hardwareBufferTimer = null;
     }
-    updateHardwareStatus(hardwareEnabled ? 'Awaiting scan…' : 'Capture paused');
+    updateHardwareStatus(hardwareEnabled ? t('hardwareStatusIdle') : t('hardwareStatusPaused'));
     hardwareField?.focus();
   });
 
@@ -1710,7 +2324,7 @@
         const pos = hardwareField.value.length;
         hardwareField.setSelectionRange?.(pos, pos);
       }
-      updateHardwareStatus(`Typing: ${hardwareKeyBuffer}`);
+      updateHardwareStatus(t('hardwareStatusTyping', { value: sanitizeInput(hardwareKeyBuffer) }));
       if (hardwareBufferTimer) clearTimeout(hardwareBufferTimer);
       hardwareBufferTimer = setTimeout(() => {
         flushHardwareBuffer();
@@ -1725,7 +2339,7 @@
         clearTimeout(hardwareBufferTimer);
         hardwareBufferTimer = null;
       }
-      updateHardwareStatus('Awaiting scan…');
+      updateHardwareStatus(t('hardwareStatusIdle'));
       return;
     }
   }, true);
@@ -1756,29 +2370,29 @@
 
   function getGoldTimestampLabel() {
     if (isManualGoldActive()) {
-      return manualGoldUpdatedAt ? `Set: ${manualGoldUpdatedAt}` : "";
+      return manualGoldUpdatedAt ? t('priceSetTime', { time: manualGoldUpdatedAt }) : '';
     }
-    return goldUpdatedAt ? `Updated: ${goldUpdatedAt}` : "";
+    return goldUpdatedAt ? t('priceTimestamp', { time: goldUpdatedAt }) : '';
   }
 
   function updateGoldPriceStatus() {
     if (!goldPriceStatus) return;
     if (isManualGoldActive()) {
-      const parts = [`Using manual price ${manualGoldPrice.toFixed(2)}`];
-      if (manualGoldUpdatedAt) parts.push(`set ${manualGoldUpdatedAt}`);
-      goldPriceStatus.textContent = parts.join(' • ');
+      const parts = [t('goldStatusManual', { price: formatNumber(manualGoldPrice) })];
+      if (manualGoldUpdatedAt) parts.push(t('goldStatusManualUpdated', { time: manualGoldUpdatedAt }));
+      goldPriceStatus.textContent = parts.join(t('statusSeparator'));
     } else if (goldPrice && Number.isFinite(goldPrice)) {
-      const parts = [`Using live price ${goldPrice.toFixed(2)}`];
-      if (goldUpdatedAt) parts.push(`updated ${goldUpdatedAt}`);
-      goldPriceStatus.textContent = parts.join(' • ');
+      const parts = [t('goldStatusLive', { price: formatNumber(goldPrice) })];
+      if (goldUpdatedAt) parts.push(t('goldStatusLiveUpdated', { time: goldUpdatedAt }));
+      goldPriceStatus.textContent = parts.join(t('statusSeparator'));
     } else {
-      goldPriceStatus.textContent = 'Waiting for live price…';
+      goldPriceStatus.textContent = t('goldStatusWaiting');
     }
   }
 
-  function setManualGoldPrice(value, { toastMessage = 'Manual gold price applied.', toastType = 'success' } = {}) {
+  function setManualGoldPrice(value, { toastMessage = t('toastManualApplied'), toastType = 'success' } = {}) {
     manualGoldPrice = value;
-    manualGoldUpdatedAt = new Date().toLocaleString();
+    manualGoldUpdatedAt = new Date().toLocaleString(getLocale());
     updateGoldPriceStatus();
     if (toastMessage) {
       showToast(toastMessage, toastType);
@@ -1852,7 +2466,7 @@ async function login(password) {
     return result;
   } catch (error) {
     console.error('Login fetch error:', error);
-    return { success: false, error: 'Network error' };
+    return { success: false, error: t('loginNetworkError') };
   }
 }
 
@@ -1865,8 +2479,8 @@ async function fetchInventory() {
 
     if (!response.ok) {
       if (response.status === 401) {
-        showToast('Authentication required', 'error');
-        throw new Error('Authentication failed');
+        showToast(t('toastAuthRequired'), 'error');
+        throw new Error(t('errorAuthFailed'));
       }
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -1921,7 +2535,7 @@ async function recordSale(saleData) {
     console.error('Sale request error:', error);
     return {
       success: false,
-      error: 'Network error. Please try again.',
+      error: t('toastNetworkError'),
       details: error
     };
   }
@@ -2313,12 +2927,12 @@ async function testSaleAPI() {
     }
 
     if (!sheetRows.length) {
-      showToast('Inventory still loading…', 'info');
+      showToast(t('toastInventoryLoading'), 'info');
       return;
     }
 
     if (!categoryKeyName) {
-      showToast('Category column not available in the sheet.', 'error');
+      showToast(t('toastCategoryMissing'), 'error');
       return;
     }
 
@@ -2431,7 +3045,7 @@ async function testSaleAPI() {
     const data = await fetchInventory();
     processSheetData(data);
   } catch (error) {
-    showToast('Authentication required', 'error');
+    showToast(t('toastAuthRequired'), 'error');
     // Redirect to login or show auth overlay
   }
 }
@@ -2486,7 +3100,7 @@ async function testSaleAPI() {
 
       const title = document.createElement('span');
       title.className = 'history-item-primary';
-      title.textContent = entry.itemName || `SKU ${entry.sku}`;
+      title.textContent = entry.itemName || t('skuLabel', { value: entry.sku });
 
       const meta = document.createElement('span');
       meta.className = 'history-item-meta';
@@ -2494,7 +3108,7 @@ async function testSaleAPI() {
       if (entry.timestamp) {
         const date = new Date(entry.timestamp);
         if (!Number.isNaN(date.valueOf())) {
-          timestampText = date.toLocaleString();
+          timestampText = date.toLocaleString(getLocale());
         }
       }
       const metaParts = [entry.sku, timestampText].filter(Boolean);
@@ -2504,14 +3118,14 @@ async function testSaleAPI() {
       if (metaParts.length) button.appendChild(meta);
       button.addEventListener('click', () => {
         if (!sheetRows.length) {
-          showToast('Inventory still loading…', 'info');
+          showToast(t('toastInventoryLoading'), 'info');
           return;
         }
         const row = skuIndex.get(normalizeSku(entry.sku));
         if (row) {
           renderItem(row);
         } else {
-          showToast('Item not found in current inventory cache.', 'error');
+          showToast(t('toastItemNotFound'), 'error');
         }
       });
 
@@ -2534,7 +3148,7 @@ async function testSaleAPI() {
     if (!limited.length) {
       const empty = document.createElement('p');
       empty.className = 'search-empty';
-      empty.textContent = `No matches for "${query}".`;
+      empty.textContent = t('searchNoMatches', { query });
       searchResultsEl.appendChild(empty);
     } else {
       // Create grid container for search results too
@@ -2561,13 +3175,14 @@ async function testSaleAPI() {
 
         const title = document.createElement('span');
         title.className = 'search-result-title';
-        title.textContent = rowName || skuValue || 'Unnamed item';
+        title.textContent = rowName || skuValue || t('searchUnnamedItem');
         textSection.appendChild(title);
 
-        const metaParts = [skuValue];
-        if (weight) metaParts.push(`${weight} g`);
-        if (karat) metaParts.push(String(karat));
-        if (description) metaParts.push(description);
+        const metaParts = [];
+        if (skuValue) metaParts.push(sanitizeInput(skuValue));
+        if (weight) metaParts.push(t('fieldWeightUnit', { value: sanitizeInput(weight) }));
+        if (karat) metaParts.push(sanitizeInput(String(karat)));
+        if (description) metaParts.push(sanitizeInput(description));
 
         if (metaParts.length) {
           const meta = document.createElement('span');
@@ -2605,7 +3220,7 @@ async function testSaleAPI() {
           const showPlaceholder = () => {
             imageSection.classList.remove('loading');
             imageSection.classList.add('no-image');
-            imageSection.innerHTML = '<span>No Image</span>';
+            imageSection.innerHTML = `<span>${t('searchNoImage')}</span>`;
           };
 
           const tryNextImage = () => {
@@ -2634,7 +3249,7 @@ async function testSaleAPI() {
           // Show placeholder when no photo
           const imageSection = document.createElement('div');
           imageSection.className = 'search-result-image no-image';
-          imageSection.innerHTML = '<span>No Image</span>';
+          imageSection.innerHTML = `<span>${t('searchNoImage')}</span>`;
           contentDiv.appendChild(imageSection);
         }
 
@@ -2668,7 +3283,7 @@ async function testSaleAPI() {
     }
     if (!sheetRows.length) {
       if (!searchLoadingNotified) {
-        showToast('Inventory still loading…', 'info');
+        showToast(t('toastInventoryLoading'), 'info');
         searchLoadingNotified = true;
       }
       return;
@@ -2693,7 +3308,7 @@ async function testSaleAPI() {
   clearHistoryBtn?.addEventListener('click', () => {
     localStorage.removeItem(SCAN_HISTORY_KEY);
     renderScanHistory();
-    showToast('Scan history cleared', 'info');
+    showToast(t('toastHistoryCleared'), 'info');
   });
 
   renderScanHistory();
@@ -2724,52 +3339,72 @@ async function testSaleAPI() {
 
     const priceInfo = computeItemPrice(weight, karat, fees);
     const activePrice = getActiveGoldPrice();
-    const sourceLabel = isManualGoldActive() ? "Manual" : "Live";
     const timestampLabel = getGoldTimestampLabel();
 
+    const skuChip = sku ? `<span class="item-card-chip">${t('skuLabel', { value: sanitizeInput(sku) })}</span>` : '';
+    const displayName = sanitizeInput(name || t('fallbackItemName'));
+
+    const metaRow = (labelKey, rawValue, formatter) => {
+      if (!rawValue) return '';
+      const formatted = formatter ? formatter(rawValue) : sanitizeInput(rawValue);
+      return `<div><strong>${t(labelKey)}</strong> ${formatted}</div>`;
+    };
+
+    const metaRows = [
+      metaRow('fieldType', itemType),
+      metaRow('fieldTimestamp', timestamp),
+      metaRow('fieldWeight', weight, (value) => t('fieldWeightUnit', { value: sanitizeInput(value) })),
+      metaRow('fieldKarat', karat),
+      metaRow('fieldFees', fees)
+    ];
+
+    const statusText = isSold ? t('fieldSold') : sanitizeInput(availability || t('fieldAvailable'));
+    metaRows.push(metaRow('fieldStatus', statusText));
+    if (isSold && soldByVal) metaRows.push(metaRow('fieldSoldBy', soldByVal));
+    if (isSold && soldDateVal) metaRows.push(metaRow('fieldSoldDate', soldDateVal));
+    if (isSold && soldPriceVal) metaRows.push(metaRow('fieldSoldPrice', soldPriceVal));
+    if (isSold && notesVal) metaRows.push(metaRow('fieldNotes', notesVal));
+
+    const metaHtml = metaRows.filter(Boolean).join('');
+    const descriptionHtml = description ? `<div class="item-card-description">${sanitizeInput(description)}</div>` : '';
+
     const priceBlock = priceInfo
-      ? `<div class="item-card-price">
-         <strong>Estimated Price:</strong> ${priceInfo.total.toFixed(2)}
-         <div class="muted">
-           Per-gram: ${priceInfo.perGram.toFixed(2)} • ${sourceLabel} XAU: ${activePrice && Number.isFinite(activePrice) ? activePrice.toFixed(2) : "—"}
-           ${timestampLabel ? ` • ${timestampLabel}` : ""}
-         </div>
-       </div>`
-      : "";
+      ? (() => {
+          const details = [
+            `${t('pricePerGram')} ${formatNumber(priceInfo.perGram)}`,
+            `${t('priceGoldLabel', { source: isManualGoldActive() ? t('manualSourceLabel') : t('liveSourceLabel') })} ${Number.isFinite(activePrice) ? formatNumber(activePrice) : '—'}`
+          ];
+          if (timestampLabel) details.push(sanitizeInput(timestampLabel));
+          return `<div class="item-card-price">
+            <strong>${t('priceEstimated')} ${formatNumber(priceInfo.total)}</strong>
+            <div class="muted">${details.join(t('statusSeparator'))}</div>
+          </div>`;
+        })()
+      : '';
 
-    const mediaSection = media.html ? `<div class="item-card-media">${media.html}</div>` : "";
+    const mediaSection = media.html ? `<div class="item-card-media">${media.html}</div>` : '';
+    const safePhotoLink = sanitizeInput(photoRaw);
     const mediaLink = !media.html && photoRaw
-      ? `<a class="item-card-link" href="${photoRaw}" target="_blank" rel="noopener">Open photo/video</a>`
-      : "";
+      ? `<a class="item-card-link" href="${safePhotoLink}" target="_blank" rel="noopener">${t('linkOpenMedia')}</a>`
+      : '';
 
-    // Build "Sell" button (hide if already sold)
     const sellBtnHTML = !isSold
-      ? `<button id="sellBtn" type="button" style="margin-top:10px">Sell this item</button>`
-      : `<span class="chip">Sold</span>`;
+      ? `<button id="sellBtn" type="button" style="margin-top:10px">${t('buttonSell')}</button>`
+      : `<span class="chip">${t('chipSold')}</span>`;
 
-    if (itemPlaceholder) itemPlaceholder.style.display = "none";
-    itemCard.style.display = "grid";
+    if (itemPlaceholder) itemPlaceholder.style.display = 'none';
+    itemCard.style.display = 'grid';
     itemCard.innerHTML = `
   <div class="item-card-grid">
     <div class="item-card-copy">
-      ${sku ? `<span class="item-card-chip">SKU ${sku}</span>` : ""}
-      <h3>${name || "Item"}</h3>
+      ${skuChip}
+      <h3>${displayName}</h3>
 
       <div class="item-card-meta">
-        ${itemType ? `<div><strong>Type:</strong> ${itemType}</div>` : ""}
-        ${timestamp ? `<div><strong>Timestamp:</strong> ${timestamp}</div>` : ""}
-        ${weight ? `<div><strong>Weight:</strong> ${weight} g</div>` : ""}
-        ${karat ? `<div><strong>Karat:</strong> ${karat}</div>` : ""}
-        ${fees ? `<div><strong>Fees:</strong> ${fees}</div>` : ""}
-
-        <div><strong>Status:</strong> ${isSold ? "Sold" : "Available"}</div>
-        ${isSold && soldByVal ? `<div><strong>Sold by:</strong> ${soldByVal}</div>` : ""}
-        ${isSold && soldDateVal ? `<div><strong>Sold date:</strong> ${soldDateVal}</div>` : ""}
-        ${isSold && soldPriceVal ? `<div><strong>Sold price:</strong> ${soldPriceVal}</div>` : ""}
-        ${isSold && notesVal ? `<div><strong>Notes:</strong> ${notesVal}</div>` : ""}
+        ${metaHtml}
       </div>
 
-      ${description ? `<div class="item-card-description">${description}</div>` : ""}
+      ${descriptionHtml}
       ${priceBlock}
       ${sellBtnHTML}
       ${mediaLink}
@@ -2800,12 +3435,12 @@ async function testSaleAPI() {
     function createSaleSummaryMessage(row, context = {}) {
       const fallback = context || {};
       const skuValue = (row && (row['sku'] ?? row['SKU'])) ?? fallback.sku ?? '';
-      const skuLabel = skuValue ? `SKU ${skuValue}` : 'the selected piece';
+      const skuLabel = skuValue ? t('skuLabel', { value: sanitizeInput(skuValue) }) : t('saleSelectedPiece');
 
       const availabilityRaw = (row && (row['availability'] ?? row['status|الحالة'])) ?? fallback.availability ?? '';
       const availability = String(availabilityRaw || '').trim();
       const isSold = availability ? /^no|sold|مباع|غير متوفر/i.test(availability) : false;
-      const statusLabel = availability ? (isSold ? 'Sold' : availability) : (fallback.defaultStatus || (isSold ? 'Sold' : ''));
+      const statusLabel = availability ? (isSold ? t('fieldSold') : sanitizeInput(availability)) : (fallback.defaultStatus ? sanitizeInput(fallback.defaultStatus) : t('fieldAvailable'));
 
       const soldBy = (row && (row['soldby'] ?? row['أسم البائع'])) ?? fallback.employee ?? '';
       const soldDate = (row && (row['solddate'] ?? row['تاريخ المبيع'] ?? row['sale date'])) ?? fallback.soldDate ?? '';
@@ -2813,14 +3448,16 @@ async function testSaleAPI() {
       const notesVal = (row && (row['notes'] ?? row['ملاحظات'])) ?? fallback.notes ?? '';
 
       const parts = [];
-      if (statusLabel) parts.push(`Status: ${statusLabel}`);
-      if (soldBy) parts.push(`Sold by: ${soldBy}`);
-      if (soldDate) parts.push(`Sold on: ${soldDate}`);
-      if (soldPrice) parts.push(`Price: ${soldPrice}`);
-      if (notesVal) parts.push(`Notes: ${notesVal}`);
+      if (statusLabel) parts.push(t('saleStatus', { value: statusLabel }));
+      if (soldBy) parts.push(t('saleSoldBy', { value: sanitizeInput(soldBy) }));
+      if (soldDate) parts.push(t('saleSoldOn', { value: sanitizeInput(soldDate) }));
+      if (soldPrice) parts.push(t('salePrice', { value: sanitizeInput(soldPrice) }));
+      if (notesVal) parts.push(t('saleNotes', { value: sanitizeInput(notesVal) }));
 
-      const summary = parts.filter(Boolean).join(' • ');
-      return summary ? `Sale recorded for ${skuLabel}. ${summary}` : `Sale recorded for ${skuLabel}.`;
+      const summary = parts.filter(Boolean).join(t('statusSeparator'));
+      return summary
+        ? t('saleRecordedSummary', { sku: skuLabel, summary })
+        : t('saleRecordedSimple', { sku: skuLabel });
     }
 
     function notifySaleRecorded(row, context = {}) {
@@ -2830,25 +3467,25 @@ async function testSaleAPI() {
 
     // UPDATED SELL BUTTON CODE - This is the critical part
     document.getElementById('sellBtn')?.addEventListener('click', async () => {
-      const employeeInput = prompt("Employee name:");
+      const employeeInput = prompt(t('promptEmployee'));
       if (employeeInput === null) return;
       const employee = String(employeeInput).trim();
       if (!employee) {
-        showToast('Employee name is required to record a sale.', 'error');
+        showToast(t('toastEmployeeRequired'), 'error');
         return;
       }
 
-      const priceInput = prompt("Sold price:");
+      const priceInput = prompt(t('promptSoldPrice'));
       if (priceInput === null) return;
       const priceText = String(priceInput).trim();
       if (!priceText) {
-        showToast('Sold price is required to record a sale.', 'error');
+        showToast(t('toastPriceRequired'), 'error');
         return;
       }
 
       const compactPrice = priceText.replace(/[^0-9,.-]/g, '').replace(/\s+/g, '');
       if (!compactPrice) {
-        showToast('Please enter a valid numeric price.', 'error');
+        showToast(t('toastPriceInvalid'), 'error');
         return;
       }
 
@@ -2873,11 +3510,11 @@ async function testSaleAPI() {
       }
 
       if (!Number.isFinite(parsedPrice)) {
-        showToast('Please enter a valid numeric price.', 'error');
+        showToast(t('toastPriceInvalid'), 'error');
         return;
       }
 
-      const notesInput = prompt("Notes (optional):");
+      const notesInput = prompt(t('promptNotes'));
       const notes = notesInput ? String(notesInput).trim() : "";
 
       const saleContext = {
@@ -2917,9 +3554,9 @@ async function testSaleAPI() {
             notifySaleRecorded(null, saleContext);
           }
         } else {
-          const errorMessage = result?.error || result?.details?.error || "Could not record sale.";
+          const errorMessage = result?.error || result?.details?.error || t('errorSaleGeneric');
           if (result?.status === 401) {
-            showToast('Your session has expired. Please log in again to record sales.', 'error');
+            showToast(t('toastSessionExpired'), 'error');
             try { sessionStorage.removeItem('authenticated'); } catch {}
             setTimeout(() => { window.location.replace('../index.html'); }, 1200);
           } else {
@@ -2928,11 +3565,10 @@ async function testSaleAPI() {
         }
       } catch (e) {
         console.error('Sale recording failed:', e);
-        showToast('Network error. Please try again.', 'error');
+        showToast(t('toastNetworkError'), 'error');
       }
     });
   }
-  loadSheet();
 
   // ========= ORIGINAL SCANNER CODE (unchanged except handleDetected) =========
   let currentStream = null;
@@ -2951,7 +3587,10 @@ async function testSaleAPI() {
 
   const retryBtn = document.createElement('button');
   retryBtn.type = 'button';
-  retryBtn.textContent = 'Retry';
+  function updateRetryButtonText() {
+    retryBtn.textContent = t('retry');
+  }
+  updateRetryButtonText();
   retryBtn.style.marginLeft = '8px';
 
   function rememberPreferredCamera(id) { if (!id) return; try { localStorage.setItem(PREFERRED_CAMERA_KEY, id); } catch {} }
@@ -2960,23 +3599,21 @@ async function testSaleAPI() {
   function setSupportMessage(message, { html = false, retry = false } = {}) { if (html) supportEl.innerHTML = message; else supportEl.textContent = message; toggleRetry(retry); }
   function showPermissionHint() {
     const ua = navigator.userAgent || '';
-    const hints = [
-      'Tap the address bar lock icon and allow camera access, then press <strong>Retry</strong>.'
-    ];
+    const hints = [t('permissionHintPrimary')];
 
     if (/Android/i.test(ua)) {
-      hints.push('If you do not see a prompt, open <strong>Settings → Apps → Permissions → Camera</strong> and make sure your browser is allowed.');
+      hints.push(t('permissionHintAndroid'));
       if (/(MIUI|XiaoMi|Redmi)/i.test(ua)) {
-        hints.push('On Xiaomi/MIUI devices, also open the <strong>Security</strong> app → <strong>Privacy protection → Permission manager → Camera</strong> and enable access for the browser.');
+        hints.push(t('permissionHintXiaomi'));
       }
     } else if (/(iPhone|iPad|iPod)/i.test(ua)) {
-      hints.push('On iOS, go to <strong>Settings → Safari → Camera</strong> (or the specific browser in Settings) and set it to <strong>Allow</strong>.');
+      hints.push(t('permissionHintIOS'));
     }
 
     const message = `
       <div class="permission-hint">
-        <strong>Camera permission needed.</strong>
-        <ul>${hints.map(hint => `<li>${hint}</li>`).join('')}</ul>
+        <strong>${t('permissionHeading')}</strong>
+        <ul>${hints.map((hint) => `<li>${hint}</li>`).join('')}</ul>
       </div>
     `;
 
@@ -2988,7 +3625,30 @@ async function testSaleAPI() {
   const vibe = () => (navigator.vibrate && navigator.vibrate(60));
   const hasBarcodeDetector = 'BarcodeDetector' in window;
 
-  function setEngine(name) { engine = name; engineChip.textContent = 'Engine: ' + name; }
+  function refreshEngineLabel() {
+    if (!engineChip) return;
+    let statusKey = 'engineStatusNone';
+    switch (engine) {
+      case 'native':
+        statusKey = 'engineStatusNative';
+        break;
+      case 'zxing':
+        statusKey = 'engineStatusZXing';
+        break;
+      case 'stopped':
+        statusKey = 'engineStatusStopped';
+        break;
+      default:
+        statusKey = 'engineStatusNone';
+    }
+    const statusLabel = t(statusKey);
+    engineChip.textContent = t('engineLabel', { status: statusLabel });
+  }
+
+  function setEngine(name) {
+    engine = name;
+    refreshEngineLabel();
+  }
   function setButtonsReady(ready) {
     startBtn.disabled = !ready;
     cameraSelect.disabled = !ready || !devices.length;
@@ -3055,7 +3715,8 @@ async function testSaleAPI() {
     showScanningFeedback();
 
     // Show raw scan line for debugging
-    resultEl.textContent = `Value: ${text}  |  Format: ${format || 'unknown'}`;
+    const formatLabel = format || t('formatUnknown');
+    resultEl.textContent = t('resultValueFormat', { value: text, format: formatLabel });
 
     // Lookup row by SKU
     const inputSku = String(text ?? "").trim();
@@ -3076,11 +3737,11 @@ async function testSaleAPI() {
       if (itemPlaceholder) itemPlaceholder.style.display = "none";
       itemCard.style.display = "block";
       const safeSku = sanitizeInput(inputSku);
-      itemCard.innerHTML = `<span class="err">No item found for SKU ${safeSku}</span>`;
+      itemCard.innerHTML = `<span class="err">${t('toastNoItemForSku', { sku: safeSku })}</span>`;
       if (!sheetRows.length) {
-        showToast('Inventory still loading…', 'info');
+        showToast(t('toastInventoryLoading'), 'info');
       } else {
-        showToast(`No item found for SKU ${inputSku}`, 'error');
+        showToast(t('toastNoItemForSku', { sku: sanitizeInput(inputSku) }), 'error');
       }
       focusItemCard();
     }
@@ -3093,7 +3754,7 @@ async function testSaleAPI() {
     try {
       sku = validateSKU(raw);
     } catch (err) {
-      const message = err?.message || 'Invalid SKU';
+      const message = err?.message || t('errorInvalidSku');
       showError(message);
       showToast(message, 'error');
       if (manualInput) {
@@ -3123,7 +3784,7 @@ async function testSaleAPI() {
     const raw = String(goldPriceInput?.value ?? '').trim();
     const value = Number(raw.replace(',', '.'));
     if (!Number.isFinite(value) || value <= 0) {
-      showToast('Enter a valid gold price.', 'error');
+      showToast(t('toastGoldInvalid'), 'error');
       goldPriceInput?.focus();
       goldPriceInput?.select?.();
       return;
@@ -3144,13 +3805,18 @@ async function testSaleAPI() {
           ? manualGoldPrice
           : NaN;
       if (!Number.isFinite(base) || base <= 0) {
-        showToast('Gold price not available yet.', 'error');
+        showToast(t('toastGoldUnavailable'), 'error');
         return;
       }
       const newValue = base + delta;
-      const baseLabel = Number.isFinite(goldPrice) ? 'live' : 'manual';
+      const baseLabel = Number.isFinite(goldPrice) ? t('liveSourceLabel') : t('manualSourceLabel');
       setManualGoldPrice(newValue, {
-        toastMessage: `Applied ${baseLabel} price (${base.toFixed(2)}) + ${delta.toFixed(2)} = ${newValue.toFixed(2)}`,
+        toastMessage: t('toastGoldSuggestion', {
+          base: baseLabel,
+          baseValue: formatNumber(base),
+          delta: formatNumber(delta),
+          value: formatNumber(newValue)
+        })
       });
       if (goldPriceInput) {
         goldPriceInput.value = '';
@@ -3164,11 +3830,15 @@ async function testSaleAPI() {
     manualGoldUpdatedAt = null;
     updateGoldPriceStatus();
     if (wasManual) {
-      showToast('Reverted to live gold price.', 'info');
+      showToast(t('toastGoldReverted'), 'info');
       if (lastRenderedItem) {
         renderItem(lastRenderedItem);
       }
     }
+  });
+
+  languageToggle?.addEventListener('change', (event) => {
+    applyLanguage(event?.target?.value);
   });
 
   // ----- Wait for ZXing (fallback) to load
@@ -3176,16 +3846,16 @@ async function testSaleAPI() {
     return new Promise((resolve, reject) => {
       if (window.ZXingBrowser) return resolve();
       const s = document.getElementById('zxing-script');
-      if (!s) return reject(new Error('ZXing script tag not found'));
+      if (!s) return reject(new Error(t('supportFailedZXing')));
       if (s.dataset.ready === '1') return resolve();
       s.addEventListener('load', () => { s.dataset.ready = '1'; resolve(); });
-      s.addEventListener('error', () => reject(new Error('Failed to load ZXing')));
+      s.addEventListener('error', () => reject(new Error(t('supportFailedZXing'))));
     });
   }
 
   async function ensureHTTPS() {
     if (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1') return true;
-    showError('This page must be served over HTTPS (or localhost) for camera access. Tip: reload with https:// or move this page to a secure host.');
+    showError(t('supportHttpsRequired'));
     return false;
   }
 
@@ -3213,7 +3883,7 @@ async function testSaleAPI() {
       devices = [];
       if (e?.name === 'NotAllowedError' || e?.name === 'SecurityError') {
         prepareForPermissionRequest();
-        setSupportMessage('Tap Start and allow camera access to begin scanning.', { html: false });
+        setSupportMessage(t('supportTapStart'), { html: false });
         toggleRetry(false);
         return 0;
       }
@@ -3226,7 +3896,7 @@ async function testSaleAPI() {
     devices.forEach((d, i) => {
       const opt = document.createElement('option');
       opt.value = d.deviceId;
-      opt.textContent = d.label || (i === 0 ? 'Back Camera' : `Camera ${i+1}`);
+      opt.textContent = d.label || (i === 0 ? t('cameraBack') : t('cameraGeneric', { index: i + 1 }));
       cameraSelect.appendChild(opt);
     });
 
@@ -3264,7 +3934,7 @@ async function testSaleAPI() {
     if (zxingStopFn) { try { zxingStopFn(); } catch {} zxingStopFn = null; }
     stopStream(); clearTimeout(failoverTimer);
     stopBtn.disabled = true; startBtn.disabled = false; switchBtn.disabled = devices.length < 2; torchBtn.disabled = true;
-    setEngine('stopped'); setSupportMessage('Stopped.');
+    setEngine('stopped'); setSupportMessage(t('supportStopped'));
   }
   async function enableTorchIfSupported() {
     torchBtn.disabled = true;
@@ -3278,7 +3948,7 @@ async function testSaleAPI() {
           torchOn = !torchOn;
           try {
             await track.applyConstraints({ advanced: [{ torch: torchOn }] });
-            torchBtn.textContent = torchOn ? 'Turn torch off' : 'Toggle torch';
+            torchBtn.textContent = torchOn ? t('torchTurnOff') : t('torchToggle');
           } catch {}
         };
       }
@@ -3355,30 +4025,30 @@ async function testSaleAPI() {
 
   async function startSelected() {
     lastValue = null;
-    resultEl.textContent = 'Scanning…';
+    resultEl.textContent = t('resultScanning');
     startBtn.disabled = true; stopBtn.disabled = false;
     stopAll();
     try {
       if ('BarcodeDetector' in window) {
         await startNative();
-        setSupportMessage('<span class="ok">Native detector running…</span>', { html: true });
+        setSupportMessage(t('supportNativeRunning'), { html: true });
         failoverTimer = setTimeout(async () => {
           if (!lastValue) {
-            setSupportMessage('Switching to ZXing fallback…');
+            setSupportMessage(t('supportSwitchingZXing'));
             if (nativeLoopAbort) nativeLoopAbort.aborted = true;
             stopStream();
-            try { await startZXing(); } catch (e) { showError(e.message || 'Failed to start ZXing.'); }
+            try { await startZXing(); } catch (e) { showError(e.message || t('supportFailedZXing')); }
           }
         }, 6000);
       } else {
         await startZXing();
-        setSupportMessage('<span class="ok">ZXing running…</span>', { html: true });
+        setSupportMessage(t('supportZXingRunning'), { html: true });
       }
     } catch (e) {
       if (e?.name === 'NotAllowedError' || e?.name === 'SecurityError') {
         showPermissionHint();
       } else {
-        showError(e?.message || 'Failed to start camera/decoder.');
+        showError(e?.message || t('supportFailedCamera'));
       }
       startBtn.disabled = false; stopBtn.disabled = true;
     }
@@ -3386,13 +4056,13 @@ async function testSaleAPI() {
 
   retryBtn.addEventListener('click', async () => {
     retryBtn.disabled = true;
-    setSupportMessage('Requesting camera access…');
+    setSupportMessage(t('supportRequestingAccess'));
     try {
       const count = await listCameras();
       if (count > 0) {
         setSupportMessage(('BarcodeDetector' in window)
-          ? 'Cameras found. Native + ZXing fallback ready.'
-          : 'Cameras found. ZXing ready.');
+          ? t('supportCamerasHybrid')
+          : t('supportCamerasFallback'));
       } else {
         showPermissionHint();
       }
@@ -3417,14 +4087,17 @@ async function testSaleAPI() {
     if (!currentStream) return; stopAll(); await startSelected();
   });
 
+  refreshLanguage();
+  loadSheet();
+
   (async () => {
     if (!await ensureHTTPS()) return;
-    if (!navigator.mediaDevices?.getUserMedia) { setButtonsReady(false); showError('This browser does not support camera APIs.'); return; }
+    if (!navigator.mediaDevices?.getUserMedia) { setButtonsReady(false); showError(t('supportNoCameraApis')); return; }
     const [zxingResult, cameraResult] = await Promise.allSettled([ waitForZXing(), listCameras() ]);
     if (zxingResult.status === 'rejected') console.warn('ZXing preload failed:', zxingResult.reason);
     if (cameraResult.status === 'fulfilled') {
       const count = cameraResult.value;
-      if (count > 0) setSupportMessage(('BarcodeDetector' in window) ? 'Cameras found. Native + ZXing fallback ready.' : 'Cameras found. ZXing ready.');
+      if (count > 0) setSupportMessage(('BarcodeDetector' in window) ? t('supportCamerasHybrid') : t('supportCamerasFallback'));
       else showPermissionHint();
     } else { setButtonsReady(true); showPermissionHint(); }
   })();
