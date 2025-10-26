@@ -646,6 +646,9 @@
         const todayTotalMoney = extractNumber(row['today total money ']);
         const todayDiff18k = extractNumber(row['today total difference amount of 18 k gold']);
         const todayDiff21k = extractNumber(row['today total difference amount of 21 k gold']);
+        const profitMonth = extractNumber(row['profit this months']);
+        const profitWeek = extractNumber(row['profit this week ']);
+        const profitToday = extractNumber(row['profit today ']);
         
         // Calculate totals for today
         const todayTotalSoldWeight = todaySold18kWeight + todaySold21kWeight + todaySold22kWeight + todaySold24kWeight;
@@ -673,9 +676,15 @@
         ));
         
         summaryStats.appendChild(createStatCard(
-          'Today\'s Purchases', 
+          'Today\'s Purchases',
           formatCurrency(todayTotalPurchasedAmount),
           formatWeight(todayTotalPurchasedWeight) + ' purchased'
+        ));
+
+        summaryStats.appendChild(createStatCard(
+          'Net Profit Today',
+          formatCurrency(profitToday),
+          'After making fees'
         ));
         
         // Inventory Data
@@ -773,12 +782,27 @@
         
         financialData.appendChild(createHighlightItem(
           'Total Amount of 18K (كسر)',
-          formatWeight(todayDiff18k)
+          formatCurrency(todayDiff18k)
         ));
 
         financialData.appendChild(createHighlightItem(
           'Total Amount of 21K (كسر)',
-          formatWeight(todayDiff21k)
+          formatCurrency(todayDiff21k)
+        ));
+
+        financialData.appendChild(createHighlightItem(
+          'Profit This Month',
+          formatCurrency(profitMonth)
+        ));
+
+        financialData.appendChild(createHighlightItem(
+          'Profit This Week',
+          formatCurrency(profitWeek)
+        ));
+
+        financialData.appendChild(createHighlightItem(
+          'Profit Today',
+          formatCurrency(profitToday)
         ));
         
         // Update last updated time
