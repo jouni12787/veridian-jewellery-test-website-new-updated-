@@ -69,6 +69,42 @@
       gap: 12px;
       flex-wrap: wrap;
     }
+    .language-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(37, 150, 190, 0.2);
+      box-shadow: inset 0 0 0 1px rgba(37, 150, 190, 0.12);
+    }
+    .language-toggle select {
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent-dark);
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      padding: 0;
+    }
+    .language-toggle select option {
+      color: var(--text);
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
     .brand-logo {
       height: 56px;
       width: auto;
@@ -453,6 +489,39 @@
       font-size: 1rem;
       color: var(--muted);
     }
+    body.rtl {
+      direction: rtl;
+      font-family: 'Amiri', 'Inter', system-ui, -apple-system, Segoe UI, sans-serif;
+    }
+    body.rtl header {
+      text-align: right;
+      align-items: flex-end;
+    }
+    body.rtl .header-top {
+      justify-content: flex-start;
+    }
+    body.rtl .page-nav {
+      direction: rtl;
+      justify-content: flex-end;
+    }
+    body.rtl .filter-form,
+    body.rtl .quick-filters {
+      flex-direction: row-reverse;
+    }
+    body.rtl .clear-btn {
+      margin-left: 0;
+      margin-right: auto;
+    }
+    body.rtl table {
+      direction: rtl;
+    }
+    body.rtl th,
+    body.rtl td {
+      text-align: right;
+    }
+    body.rtl td::before {
+      text-align: left;
+    }
     .error-message {
       color: #d84a63;
       font-weight: 600;
@@ -484,51 +553,58 @@
       <div class="header-top">
         <img src="../assets/logo-website-test.jpg" alt="Veridian Atelier logo" class="brand-logo" />
         <nav class="page-nav" aria-label="Workspace navigation">
-          <a class="nav-link" href="./index.html">Scanner</a>
-          <a class="nav-link" href="./items.html">Inventory</a>
-          <a class="nav-link active" href="./sales.html" aria-current="page">Sales log</a>
-          <a class="nav-link" href="./purchases.html">Purchase log</a>
-          <a class="nav-link" href="./statement.html">Gold statement</a>
+          <a class="nav-link" href="./index.html" data-i18n="navScanner">Scanner</a>
+          <a class="nav-link" href="./items.html" data-i18n="navInventory">Inventory</a>
+          <a class="nav-link active" href="./sales.html" aria-current="page" data-i18n="navSales">Sales log</a>
+          <a class="nav-link" href="./purchases.html" data-i18n="navPurchases">Purchase log</a>
+          <a class="nav-link" href="./statement.html" data-i18n="navStatement">Gold statement</a>
         </nav>
+        <div class="language-toggle">
+          <label for="languageToggle" class="sr-only" data-i18n="languageLabel">Language</label>
+          <select id="languageToggle" aria-label="Select language">
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
       </div>
-      <h1 class="hero-title">Sales log</h1>
-      <p class="hero-subtitle">Review every sold piece, who sold it, and for how much. Filter the log by sale date to audit a specific day.</p>
+      <h1 class="hero-title" data-i18n="heroTitle">Sales log</h1>
+      <p class="hero-subtitle" data-i18n="heroSubtitle">Review every sold piece, who sold it, and for how much. Filter the log by sale date to audit a specific day.</p>
     </header>
 
-    <section class="glass-card filter-card" aria-label="Sales filters">
+    <section class="glass-card filter-card" id="filtersSection" aria-label="Sales filters">
       <form id="filterForm" class="filter-form" novalidate>
-        <label for="soldDateFilter">Filter by sold date</label>
+        <label for="soldDateFilter" data-i18n="filterLabel">Filter by sold date</label>
         <div class="filter-input-group">
           <input type="date" id="soldDateFilter" name="soldDate" />
-          <div class="quick-filters" role="group" aria-label="Quick sold date filters">
-            <button type="button" class="quick-filter-btn" data-quick-filter="today">Today</button>
-            <button type="button" class="quick-filter-btn" data-quick-filter="yesterday">Yesterday</button>
-            <button type="button" class="quick-filter-btn" data-quick-filter="week">This week</button>
+          <div class="quick-filters" id="quickFiltersGroup" role="group" aria-label="Quick sold date filters">
+            <button type="button" class="quick-filter-btn" data-quick-filter="today" data-i18n="filterToday">Today</button>
+            <button type="button" class="quick-filter-btn" data-quick-filter="yesterday" data-i18n="filterYesterday">Yesterday</button>
+            <button type="button" class="quick-filter-btn" data-quick-filter="week" data-i18n="filterWeek">This week</button>
           </div>
         </div>
-        <button type="button" id="clearFilterBtn" class="clear-btn">Clear</button>
+        <button type="button" id="clearFilterBtn" class="clear-btn" data-i18n="filterClear">Clear</button>
       </form>
-      <p id="salesStats" class="sales-stats">Loading sales…</p>
+      <p id="salesStats" class="sales-stats" data-i18n="statsLoading" data-i18n-dynamic>Loading sales…</p>
     </section>
 
-    <section class="glass-card table-card" aria-label="Sales log">
-      <div id="salesLoading" class="loading" role="status">Loading sales history…</div>
+    <section class="glass-card table-card" id="tableSection" aria-label="Sales log">
+      <div id="salesLoading" class="loading" role="status" data-i18n="loadingMessage" data-i18n-dynamic>Loading sales history…</div>
       <div id="salesError" class="error-message" hidden role="alert"></div>
-      <p id="salesEmpty" class="empty-state" hidden>No sales recorded yet.</p>
+      <p id="salesEmpty" class="empty-state" hidden data-i18n="emptyState" data-i18n-dynamic>No sales recorded yet.</p>
       <div id="salesTableWrapper" class="table-wrapper" hidden>
         <table class="sales-table">
           <thead>
             <tr>
-              <th scope="col">SKU</th>
-              <th scope="col">Piece</th>
-              <th scope="col">Photo</th>
-              <th scope="col">Weight (g)</th>
-              <th scope="col">Karat</th>
-              <th scope="col">Status</th>
-              <th scope="col">Sold price</th>
-              <th scope="col">Sold date</th>
-              <th scope="col">Sold by</th>
-              <th scope="col">Notes</th>
+              <th scope="col" data-i18n="tableSku">SKU</th>
+              <th scope="col" data-i18n="tablePiece">Piece</th>
+              <th scope="col" data-i18n="tablePhoto">Photo</th>
+              <th scope="col" data-i18n="tableWeight">Weight (g)</th>
+              <th scope="col" data-i18n="tableKarat">Karat</th>
+              <th scope="col" data-i18n="tableStatus">Status</th>
+              <th scope="col" data-i18n="tableSoldPrice">Sold price</th>
+              <th scope="col" data-i18n="tableSoldDate">Sold date</th>
+              <th scope="col" data-i18n="tableSoldBy">Sold by</th>
+              <th scope="col" data-i18n="tableNotes">Notes</th>
             </tr>
           </thead>
           <tbody id="salesTableBody"></tbody>
@@ -556,8 +632,14 @@
         data-close="photoViewer"
       >&times;</button>
       <img id="photoViewerImage" alt="" decoding="async" hidden />
-      <figcaption id="photoViewerCaption">Sold piece photo</figcaption>
-      <p id="photoViewerStatus" class="photo-viewer__status" hidden>Loading photo…</p>
+      <figcaption id="photoViewerCaption" data-i18n="photoViewerCaption">Sold piece photo</figcaption>
+      <p
+        id="photoViewerStatus"
+        class="photo-viewer__status"
+        hidden
+        data-i18n="photoViewerStatusLoading"
+        data-i18n-dynamic
+      >Loading photo…</p>
     </figure>
   </div>
 
@@ -594,6 +676,135 @@
       const photoViewerStatus = document.getElementById('photoViewerStatus');
       const photoViewerClose = document.getElementById('photoViewerClose');
       const photoViewerBackdrop = document.getElementById('photoViewerBackdrop');
+      const languageToggle = document.getElementById('languageToggle');
+      const filtersSection = document.getElementById('filtersSection');
+      const tableSection = document.getElementById('tableSection');
+      const quickFiltersGroup = document.getElementById('quickFiltersGroup');
+      const i18nElements = document.querySelectorAll('[data-i18n]');
+
+      if (photoViewerStatus) {
+        photoViewerStatus.dataset.state = 'loading';
+      }
+
+      const translations = {
+        en: {
+          pageTitle: 'Veridian Atelier • Sales Log',
+          languageLabel: 'Language',
+          languageSelectAria: 'Select language',
+          navScanner: 'Scanner',
+          navInventory: 'Inventory',
+          navSales: 'Sales log',
+          navPurchases: 'Purchase log',
+          navStatement: 'Gold statement',
+          heroTitle: 'Sales log',
+          heroSubtitle:
+            'Review every sold piece, who sold it, and for how much. Filter the log by sale date to audit a specific day.',
+          filtersSectionAria: 'Sales filters',
+          filterLabel: 'Filter by sold date',
+          quickFiltersAria: 'Quick sold date filters',
+          filterToday: 'Today',
+          filterYesterday: 'Yesterday',
+          filterWeek: 'This week',
+          filterClear: 'Clear',
+          statsLoading: 'Loading sales…',
+          statsNoSales: 'No sales recorded yet.',
+          statsNoMatches: 'No sales match the selected filter{description}.',
+          statsSummarySingular: 'Showing {visible} of {total} sold item{filter}.',
+          statsSummaryPlural: 'Showing {visible} of {total} sold items{filter}.',
+          statsFilterSuffix: ' for {description}',
+          loadingMessage: 'Loading sales history…',
+          errorGeneric: 'Unable to load sales history.',
+          errorStats: 'Unable to load sales.',
+          emptyState: 'No sales recorded yet.',
+          tableSku: 'SKU',
+          tablePiece: 'Piece',
+          tablePhoto: 'Photo',
+          tableWeight: 'Weight (g)',
+          tableKarat: 'Karat',
+          tableStatus: 'Status',
+          tableSoldPrice: 'Sold price',
+          tableSoldDate: 'Sold date',
+          tableSoldBy: 'Sold by',
+          tableNotes: 'Notes',
+          photoViewerCaption: 'Sold piece photo',
+          photoViewerStatusLoading: 'Loading photo…',
+          photoViewerStatusUnavailable: 'Photo unavailable.',
+          photoViewerClose: 'Close photo',
+          photoDefaultLabel: 'Sold piece',
+          photoViewerAlt: '{label} photo',
+          photoViewerOpen: 'View photo of {label}',
+          statusSold: 'Sold',
+          statusRecorded: 'Recorded',
+          filterDescriptionToday: 'Today ({date})',
+          filterDescriptionYesterday: 'Yesterday ({date})',
+          filterDescriptionExact: '{date}',
+          filterDescriptionWeek: 'This week ({range})',
+          filterRange: '{start} – {end}'
+        },
+        ar: {
+          pageTitle: 'Veridian Atelier • سجل المبيعات',
+          languageLabel: 'اللغة',
+          languageSelectAria: 'اختيار اللغة',
+          navScanner: 'الماسح',
+          navInventory: 'المخزون',
+          navSales: 'سجل المبيعات',
+          navPurchases: 'سجل المشتريات',
+          navStatement: 'بيان الذهب',
+          heroTitle: 'سجل المبيعات',
+          heroSubtitle:
+            'راجع كل قطعة تم بيعها، ومن باعها، ومبلغ البيع. قم بتصفية السجل بتاريخ البيع لمراجعة يوم محدد.',
+          filtersSectionAria: 'مرشحات المبيعات',
+          filterLabel: 'تصفية حسب تاريخ البيع',
+          quickFiltersAria: 'مرشحات سريعة لتاريخ البيع',
+          filterToday: 'اليوم',
+          filterYesterday: 'أمس',
+          filterWeek: 'هذا الأسبوع',
+          filterClear: 'مسح',
+          statsLoading: 'جاري تحميل المبيعات…',
+          statsNoSales: 'لم يتم تسجيل أي مبيعات بعد.',
+          statsNoMatches: 'لا توجد مبيعات مطابقة لمرشح البحث المحدد{description}.',
+          statsSummarySingular: 'عرض {visible} من أصل {total} قطعة مباعة{filter}.',
+          statsSummaryPlural: 'عرض {visible} من أصل {total} قطع مباعة{filter}.',
+          statsFilterSuffix: ' لـ{description}',
+          loadingMessage: 'جاري تحميل سجل المبيعات…',
+          errorGeneric: 'تعذر تحميل سجل المبيعات.',
+          errorStats: 'تعذر تحميل بيانات المبيعات.',
+          emptyState: 'لم يتم تسجيل أي مبيعات بعد.',
+          tableSku: 'رمز الصنف',
+          tablePiece: 'القطعة',
+          tablePhoto: 'الصورة',
+          tableWeight: 'الوزن (غرام)',
+          tableKarat: 'العيار',
+          tableStatus: 'الحالة',
+          tableSoldPrice: 'سعر البيع',
+          tableSoldDate: 'تاريخ البيع',
+          tableSoldBy: 'اسم البائع',
+          tableNotes: 'ملاحظات',
+          photoViewerCaption: 'صورة القطعة المباعة',
+          photoViewerStatusLoading: 'جاري تحميل الصورة…',
+          photoViewerStatusUnavailable: 'الصورة غير متاحة.',
+          photoViewerClose: 'إغلاق الصورة',
+          photoDefaultLabel: 'قطعة مباعة',
+          photoViewerAlt: 'صورة {label}',
+          photoViewerOpen: 'عرض صورة {label}',
+          statusSold: 'مباع',
+          statusRecorded: 'مسجل',
+          filterDescriptionToday: 'اليوم ({date})',
+          filterDescriptionYesterday: 'أمس ({date})',
+          filterDescriptionExact: '{date}',
+          filterDescriptionWeek: 'هذا الأسبوع ({range})',
+          filterRange: '{start} – {end}'
+        }
+      };
+
+      let currentLanguage = localStorage.getItem('statementLanguage') === 'ar' ? 'ar' : 'en';
+      let isLoading = false;
+      const renderState = {
+        total: 0,
+        visible: 0,
+        description: '',
+        emptyReason: 'none'
+      };
 
       const DRIVE_PATTERNS = [
         /[?&]id=([A-Za-z0-9_-]+)/i,
@@ -603,6 +814,148 @@
         /\/thumbnail\?id=([A-Za-z0-9_-]+)/i,
         /\/d\/([A-Za-z0-9_-]+)/i
       ];
+
+      function t(key, replacements) {
+        const langTable = translations[currentLanguage] || translations.en;
+        const template = key in langTable ? langTable[key] : translations.en[key] || key;
+        if (!replacements) return template;
+        return template.replace(/\{(\w+)\}/g, (match, token) => {
+          if (Object.prototype.hasOwnProperty.call(replacements, token)) {
+            return replacements[token];
+          }
+          return match;
+        });
+      }
+
+      function getLocale() {
+        return currentLanguage === 'ar' ? 'ar-EG' : undefined;
+      }
+
+      function formatNumber(value) {
+        const numeric = Number(value);
+        if (!Number.isFinite(numeric)) return String(value ?? '');
+        const locale = getLocale();
+        return numeric.toLocaleString(locale);
+      }
+
+      function updateLanguageAttributes() {
+        document.documentElement.lang = currentLanguage === 'ar' ? 'ar' : 'en';
+        document.documentElement.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
+        document.body.classList.toggle('rtl', currentLanguage === 'ar');
+      }
+
+      function renderStaticText() {
+        document.title = t('pageTitle');
+        i18nElements.forEach((element) => {
+          if (!(element instanceof HTMLElement)) return;
+          if (element.hasAttribute('data-i18n-dynamic')) return;
+          const key = element.getAttribute('data-i18n');
+          if (!key) return;
+          element.textContent = t(key);
+        });
+
+        if (languageToggle) {
+          languageToggle.value = currentLanguage;
+          languageToggle.setAttribute('aria-label', t('languageSelectAria'));
+        }
+
+        if (filtersSection) {
+          filtersSection.setAttribute('aria-label', t('filtersSectionAria'));
+        }
+
+        if (tableSection) {
+          tableSection.setAttribute('aria-label', t('navSales'));
+        }
+
+        if (quickFiltersGroup) {
+          quickFiltersGroup.setAttribute('aria-label', t('quickFiltersAria'));
+        }
+
+        if (photoViewerClose) {
+          photoViewerClose.setAttribute('aria-label', t('photoViewerClose'));
+        }
+
+        if (photoViewerCaption && photoViewerCaption.hasAttribute('data-i18n')) {
+          photoViewerCaption.textContent = t('photoViewerCaption');
+        }
+      }
+
+      function updateLoadingDisplay() {
+        if (loadingEl) {
+          loadingEl.textContent = t('loadingMessage');
+        }
+      }
+
+      function updateEmptyDisplay() {
+        if (!emptyEl) return;
+        if (renderState.emptyReason === 'no-sales') {
+          emptyEl.textContent = t('emptyState');
+        } else if (renderState.emptyReason === 'no-matches') {
+          const description = renderState.description ? ` (${renderState.description})` : '';
+          emptyEl.textContent = t('statsNoMatches', { description });
+        }
+      }
+
+      function updateStatsDisplay() {
+        if (!statsEl) return;
+        if (isLoading) {
+          statsEl.textContent = t('statsLoading');
+          return;
+        }
+        if (renderState.emptyReason === 'error') {
+          statsEl.textContent = t('errorStats');
+          return;
+        }
+        if (renderState.emptyReason === 'no-sales') {
+          statsEl.textContent = t('statsNoSales');
+          return;
+        }
+        const filterSuffix = renderState.description
+          ? t('statsFilterSuffix', { description: renderState.description })
+          : '';
+        const summaryKey = renderState.total === 1 ? 'statsSummarySingular' : 'statsSummaryPlural';
+        statsEl.textContent = t(summaryKey, {
+          visible: formatNumber(renderState.visible),
+          total: formatNumber(renderState.total),
+          filter: filterSuffix
+        });
+      }
+
+      function updatePhotoViewerDefaults() {
+        if (photoViewerCaption && photoViewerCaption.hasAttribute('data-i18n') && photoViewer?.hidden !== false) {
+          photoViewerCaption.textContent = t('photoViewerCaption');
+        }
+        if (photoViewerStatus && photoViewerStatus.hasAttribute('data-i18n')) {
+          const statusState = photoViewerStatus.dataset.state || 'loading';
+          if (statusState === 'error') {
+            photoViewerStatus.textContent = t('photoViewerStatusUnavailable');
+          } else {
+            photoViewerStatus.textContent = t('photoViewerStatusLoading');
+          }
+        }
+      }
+
+      function refreshLanguageDependentText() {
+        renderStaticText();
+        updateLanguageAttributes();
+        updateLoadingDisplay();
+        updateEmptyDisplay();
+        updateStatsDisplay();
+        updatePhotoViewerDefaults();
+      }
+
+      function applyLanguage(language) {
+        const nextLanguage = translations[language] ? language : 'en';
+        if (currentLanguage === nextLanguage) {
+          refreshLanguageDependentText();
+          applyFilter();
+          return;
+        }
+        currentLanguage = nextLanguage;
+        localStorage.setItem('statementLanguage', currentLanguage);
+        refreshLanguageDependentText();
+        applyFilter();
+      }
 
       let soldItems = [];
       let activeDateFilter = '';
@@ -657,7 +1010,7 @@
         };
       }
 
-      function openPhotoViewer(urls = [], label = 'Sold piece photo', trigger = null) {
+      function openPhotoViewer(urls = [], label = t('photoViewerCaption'), trigger = null) {
         if (!photoViewer || !photoViewerImage) return;
         const candidates = Array.isArray(urls)
           ? Array.from(new Set(urls.filter(Boolean)))
@@ -669,18 +1022,19 @@
         photoViewerUrls = candidates;
         photoViewerUrlIndex = 0;
 
-        const captionText = label && String(label).trim() ? String(label).trim() : 'Sold piece photo';
+        const captionText = label && String(label).trim() ? String(label).trim() : t('photoViewerCaption');
         if (photoViewerCaption) {
           photoViewerCaption.textContent = captionText;
           photoViewerCaption.hidden = false;
         }
         if (photoViewerStatus) {
-          photoViewerStatus.textContent = 'Loading photo…';
+          photoViewerStatus.textContent = t('photoViewerStatusLoading');
+          photoViewerStatus.dataset.state = 'loading';
           photoViewerStatus.hidden = false;
         }
 
         photoViewerImage.hidden = true;
-        photoViewerImage.alt = captionText;
+        photoViewerImage.alt = t('photoViewerAlt', { label: captionText });
         photoViewerImage.removeAttribute('src');
         photoViewerImage.onload = () => {
           if (photoViewerStatus) photoViewerStatus.hidden = true;
@@ -694,7 +1048,8 @@
             photoViewerImage.src = photoViewerUrls[photoViewerUrlIndex];
           } else {
             if (photoViewerStatus) {
-              photoViewerStatus.textContent = 'Photo unavailable.';
+              photoViewerStatus.textContent = t('photoViewerStatusUnavailable');
+              photoViewerStatus.dataset.state = 'error';
               photoViewerStatus.hidden = false;
             }
             photoViewerImage.hidden = true;
@@ -722,11 +1077,12 @@
           photoViewerImage.hidden = true;
         }
         if (photoViewerStatus) {
-          photoViewerStatus.textContent = 'Loading photo…';
+          photoViewerStatus.textContent = t('photoViewerStatusLoading');
+          photoViewerStatus.dataset.state = 'loading';
           photoViewerStatus.hidden = true;
         }
         if (photoViewerCaption) {
-          photoViewerCaption.textContent = 'Sold piece photo';
+          photoViewerCaption.textContent = t('photoViewerCaption');
           photoViewerCaption.hidden = false;
         }
 
@@ -756,13 +1112,15 @@
       });
 
       function setLoading(state) {
+        isLoading = Boolean(state);
         if (loadingEl) loadingEl.hidden = !state;
         if (state) {
           tableWrapper.hidden = true;
-          emptyEl.hidden = true;
+          if (emptyEl) emptyEl.hidden = true;
           if (errorEl) errorEl.hidden = true;
-          statsEl.textContent = 'Loading sales…';
         }
+        updateLoadingDisplay();
+        updateStatsDisplay();
       }
 
       function normalizeRowKeys(row) {
@@ -884,19 +1242,33 @@
         if (!value) return '';
         const date = new Date(`${value}T00:00:00`);
         if (Number.isNaN(date.valueOf())) return value;
-        return date.toLocaleDateString(undefined, DATE_FORMAT);
+        const locale = getLocale();
+        return date.toLocaleDateString(locale, DATE_FORMAT);
+      }
+
+      function formatRangeLabel(startValue, endValue) {
+        const startLabel = formatFilterLabel(startValue);
+        const endLabel = formatFilterLabel(endValue);
+        if (!startLabel || !endLabel) return '';
+        if (startLabel === endLabel) return startLabel;
+        return t('filterRange', { start: startLabel, end: endLabel });
       }
 
       function getActiveFilterDescription() {
-        if (activeRangeFilter && activeRangeFilter.label) {
-          return activeRangeFilter.label;
+        if (activeRangeFilter && activeRangeFilter.start && activeRangeFilter.end) {
+          const rangeLabel = formatRangeLabel(activeRangeFilter.start, activeRangeFilter.end);
+          if (!rangeLabel) return '';
+          if (activeRangeFilter.type === 'week') {
+            return t('filterDescriptionWeek', { range: rangeLabel });
+          }
+          return rangeLabel;
         }
         if (activeDateFilter) {
           const baseLabel = formatFilterLabel(activeDateFilter);
           if (!baseLabel) return '';
-          if (activeQuickFilter === 'today') return `Today (${baseLabel})`;
-          if (activeQuickFilter === 'yesterday') return `Yesterday (${baseLabel})`;
-          return baseLabel;
+          if (activeQuickFilter === 'today') return t('filterDescriptionToday', { date: baseLabel });
+          if (activeQuickFilter === 'yesterday') return t('filterDescriptionYesterday', { date: baseLabel });
+          return t('filterDescriptionExact', { date: baseLabel });
         }
         return '';
       }
@@ -939,14 +1311,10 @@
           const startValue = dateToInputValue(start);
           const endValue = dateToInputValue(end);
           if (startValue && endValue) {
-            const startLabel = start.toLocaleDateString(undefined, DATE_FORMAT);
-            const endLabel = end.toLocaleDateString(undefined, DATE_FORMAT);
-            const rangeLabel = startLabel === endLabel ? startLabel : `${startLabel} – ${endLabel}`;
             nextRangeFilter = {
               type: 'week',
               start: startValue,
-              end: endValue,
-              label: `This week (${rangeLabel})`
+              end: endValue
             };
             nextDateFilter = '';
           } else {
@@ -995,9 +1363,6 @@
 
           const soldDateObj = parseSheetDate(soldDateRaw);
           const filterKey = soldDateObj ? dateToInputValue(soldDateObj) : null;
-          const displayDate = soldDateObj
-            ? soldDateObj.toLocaleDateString(undefined, DATE_FORMAT)
-            : (String(soldDateRaw ?? '').trim() || '—');
 
           const sku = String(row['sku'] ?? '').trim();
           const pieceName = String(row['name'] ?? row['description'] ?? '').trim();
@@ -1007,69 +1372,92 @@
           const soldBy = String(soldByRaw ?? '').trim();
           const notes = String(notesRaw ?? '').trim();
           const photoSources = resolvePhotoSources(row['photo']);
-          const viewerLabel = pieceName || sku || 'Sold piece';
+          const viewerLabel = pieceName || sku || '';
 
           items.push({
-            sku: sku || '—',
-            name: pieceName || '—',
-            weight: weight || '—',
-            karat: karat || '—',
-            soldPrice: soldPrice || '—',
-            soldBy: soldBy || '—',
-            notes: notes || '—',
-            displayDate: displayDate || '—',
+            sku,
+            name: pieceName,
+            weight,
+            karat,
+            soldPrice,
+            soldBy,
+            notes,
             filterKey,
             sortDate: soldDateObj ? soldDateObj.getTime() : null,
             soldFlag,
             photoSources,
-            viewerLabel
+            viewerLabel,
+            soldDate: soldDateObj,
+            soldDateRaw: String(soldDateRaw ?? '').trim()
           });
         }
         return items;
       }
 
+      function getCellValue(value) {
+        return value && String(value).trim() ? String(value).trim() : '—';
+      }
+
+      function formatSoldDate(item) {
+        if (item.soldDate instanceof Date && !Number.isNaN(item.soldDate.valueOf())) {
+          const locale = getLocale();
+          return item.soldDate.toLocaleDateString(locale, DATE_FORMAT);
+        }
+        if (item.soldDateRaw && String(item.soldDateRaw).trim()) {
+          return String(item.soldDateRaw).trim();
+        }
+        return '—';
+      }
+
       function render(items) {
         tableBody.innerHTML = '';
+        const activeLabel = getActiveFilterDescription();
+        renderState.total = soldItems.length;
+        renderState.visible = items.length;
+        renderState.description = activeLabel;
+
         if (!items.length) {
           tableWrapper.hidden = true;
-          emptyEl.hidden = false;
-          const activeLabel = getActiveFilterDescription();
-          emptyEl.textContent = soldItems.length
-            ? `No sales match the selected filter${activeLabel ? ` (${activeLabel})` : ''}.`
-            : 'No sales recorded yet.';
-          statsEl.textContent = soldItems.length
-            ? `Showing 0 of ${soldItems.length} sold items${activeLabel ? ` for ${activeLabel}` : ''}.`
-            : 'No sold items recorded yet.';
+          renderState.emptyReason = soldItems.length ? 'no-matches' : 'no-sales';
+          if (emptyEl) {
+            emptyEl.hidden = isLoading;
+            if (!isLoading) {
+              updateEmptyDisplay();
+            }
+          }
+          updateStatsDisplay();
           return;
         }
 
         tableWrapper.hidden = false;
-        emptyEl.hidden = true;
+        if (emptyEl) emptyEl.hidden = true;
+        renderState.emptyReason = 'none';
 
         for (const item of items) {
           const tr = document.createElement('tr');
           const columns = [
-            { label: 'SKU', value: item.sku },
-            { label: 'Piece', value: item.name },
-            { label: 'Photo', key: 'photo', className: 'photo-cell' },
-            { label: 'Weight (g)', value: item.weight },
-            { label: 'Karat', value: item.karat },
-            { label: 'Status', key: 'status' },
-            { label: 'Sold price', value: item.soldPrice },
-            { label: 'Sold date', value: item.displayDate },
-            { label: 'Sold by', value: item.soldBy },
-            { label: 'Notes', value: item.notes, className: 'notes-cell' }
+            { labelKey: 'tableSku', value: getCellValue(item.sku) },
+            { labelKey: 'tablePiece', value: getCellValue(item.name) },
+            { labelKey: 'tablePhoto', key: 'photo', className: 'photo-cell' },
+            { labelKey: 'tableWeight', value: getCellValue(item.weight) },
+            { labelKey: 'tableKarat', value: getCellValue(item.karat) },
+            { labelKey: 'tableStatus', key: 'status' },
+            { labelKey: 'tableSoldPrice', value: getCellValue(item.soldPrice) },
+            { labelKey: 'tableSoldDate', value: formatSoldDate(item) },
+            { labelKey: 'tableSoldBy', value: getCellValue(item.soldBy) },
+            { labelKey: 'tableNotes', value: getCellValue(item.notes), className: 'notes-cell' }
           ];
 
           for (const column of columns) {
             const td = document.createElement('td');
-            td.dataset.label = column.label;
+            const labelText = column.labelKey ? t(column.labelKey) : '';
+            if (labelText) td.dataset.label = labelText;
             if (column.className) td.classList.add(column.className);
 
             if (column.key === 'status') {
               const badge = document.createElement('span');
               badge.className = `status-pill ${item.soldFlag ? 'status-sold' : 'status-recorded'}`;
-              badge.textContent = item.soldFlag ? 'Sold' : 'Recorded';
+              badge.textContent = t(item.soldFlag ? 'statusSold' : 'statusRecorded');
               td.appendChild(badge);
             } else if (column.key === 'photo') {
               let thumbCandidates = item.photoSources?.thumb
@@ -1086,22 +1474,23 @@
               if (!thumbCandidates.length || !fullCandidates.length) {
                 td.textContent = '—';
               } else {
-                const labelText = item.viewerLabel || item.name || item.sku || 'Sold piece';
+                const baseLabel = item.viewerLabel || item.name || item.sku || t('photoDefaultLabel');
                 const button = document.createElement('button');
                 button.type = 'button';
                 button.className = 'photo-thumb loading';
-                button.setAttribute('aria-label', `View photo of ${labelText}`);
+                const openLabel = t('photoViewerOpen', { label: baseLabel });
+                button.setAttribute('aria-label', openLabel);
                 button.setAttribute('aria-haspopup', 'dialog');
-                button.title = `View photo of ${labelText}`;
+                button.title = openLabel;
 
                 const thumbImg = document.createElement('img');
-                thumbImg.alt = `${labelText} photo`;
+                thumbImg.alt = t('photoViewerAlt', { label: baseLabel });
                 thumbImg.decoding = 'async';
                 thumbImg.loading = 'lazy';
                 button.appendChild(thumbImg);
                 td.appendChild(button);
 
-                const handleClick = () => openPhotoViewer(fullCandidates, labelText, button);
+                const handleClick = () => openPhotoViewer(fullCandidates, baseLabel, button);
                 button.addEventListener('click', handleClick);
 
                 let thumbIndex = 0;
@@ -1127,7 +1516,7 @@
                 thumbIndex += 1;
               }
             } else {
-              td.textContent = column.value || '—';
+              td.textContent = getCellValue(column.value);
             }
 
             tr.appendChild(td);
@@ -1135,11 +1524,7 @@
 
           tableBody.appendChild(tr);
         }
-
-        const total = soldItems.length;
-        const activeLabel = getActiveFilterDescription();
-        const activeText = activeLabel ? ` for ${activeLabel}` : '';
-        statsEl.textContent = `Showing ${items.length} of ${total} sold item${total === 1 ? '' : 's'}${activeText}.`;
+        updateStatsDisplay();
       }
 
       function applyFilter() {
@@ -1184,12 +1569,15 @@
         } catch (error) {
           console.error('Failed to load sales log:', error);
           if (errorEl) {
-            errorEl.textContent = error?.message || 'Unable to load sales history.';
+            errorEl.textContent = error?.message || t('errorGeneric');
             errorEl.hidden = false;
           }
           tableWrapper.hidden = true;
-          emptyEl.hidden = true;
-          statsEl.textContent = 'Unable to load sales.';
+          if (emptyEl) emptyEl.hidden = true;
+          renderState.total = 0;
+          renderState.visible = 0;
+          renderState.description = '';
+          renderState.emptyReason = 'error';
         } finally {
           setLoading(false);
         }
@@ -1220,7 +1608,15 @@
         });
       }
 
+      if (languageToggle) {
+        languageToggle.addEventListener('change', (event) => {
+          applyLanguage(event?.target?.value);
+        });
+      }
+
       updateQuickFilterState();
+      setLoading(true);
+      refreshLanguageDependentText();
       loadSales();
     })();
   </script>

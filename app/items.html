@@ -80,6 +80,42 @@
       gap: 12px;
       flex-wrap: wrap;
     }
+    .language-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(37, 150, 190, 0.2);
+      box-shadow: inset 0 0 0 1px rgba(37, 150, 190, 0.12);
+    }
+    .language-toggle select {
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent-dark);
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      padding: 0;
+    }
+    .language-toggle select option {
+      color: var(--text);
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
 
     .brand-logo {
       height: 56px;
@@ -743,6 +779,55 @@
       text-align: center;
       font-size: 0.98rem;
     }
+    body.rtl {
+      direction: rtl;
+      font-family: 'Amiri', 'Inter', system-ui, -apple-system, Segoe UI, sans-serif;
+    }
+    body.rtl header {
+      text-align: right;
+      align-items: flex-end;
+    }
+    body.rtl .header-top {
+      justify-content: flex-start;
+    }
+    body.rtl .page-nav {
+      direction: rtl;
+      justify-content: flex-end;
+    }
+    body.rtl .filter-grid,
+    body.rtl .sort-options,
+    body.rtl .view-toggle,
+    body.rtl .status-row,
+    body.rtl .items-grid,
+    body.rtl .item-card__meta-row {
+      direction: rtl;
+    }
+    body.rtl .filter-group,
+    body.rtl .sort-options,
+    body.rtl .view-toggle,
+    body.rtl .status-row,
+    body.rtl .results-header {
+      text-align: right;
+    }
+    body.rtl .sort-chip__title,
+    body.rtl .toggle-pill__label,
+    body.rtl .item-card__price,
+    body.rtl .item-card__badge-row,
+    body.rtl .item-card__description {
+      text-align: right;
+    }
+    body.rtl .item-card__header {
+      flex-direction: row-reverse;
+    }
+    body.rtl .item-card__price {
+      align-items: flex-start;
+    }
+    body.rtl .item-card__meta-entry {
+      justify-content: space-between;
+    }
+    body.rtl .item-card__sku {
+      justify-content: center;
+    }
 
     @media (max-width: 1100px) {
       .items-grid[data-view="compact"] {
@@ -792,44 +877,51 @@
       <div class="header-top">
         <img src="../assets/logo-website-test.jpg" alt="Veridian Atelier logo" class="brand-logo" />
         <nav class="page-nav" aria-label="Workspace navigation">
-          <a class="nav-link" href="./index.html">Scanner</a>
-          <a class="nav-link active" href="./items.html" aria-current="page">Inventory</a>
-          <a class="nav-link" href="./sales.html">Sales log</a>
-          <a class="nav-link" href="./purchases.html">Purchase log</a>
-          <a class="nav-link" href="./statement.html">Gold statement</a>
+          <a class="nav-link" href="./index.html" data-i18n="navScanner">Scanner</a>
+          <a class="nav-link active" href="./items.html" aria-current="page" data-i18n="navInventory">Inventory</a>
+          <a class="nav-link" href="./sales.html" data-i18n="navSales">Sales log</a>
+          <a class="nav-link" href="./purchases.html" data-i18n="navPurchases">Purchase log</a>
+          <a class="nav-link" href="./statement.html" data-i18n="navStatement">Gold statement</a>
         </nav>
+        <div class="language-toggle">
+          <label for="languageToggle" class="sr-only" data-i18n="languageLabel">Language</label>
+          <select id="languageToggle" aria-label="Select language">
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
       </div>
-      <h1 class="hero-title">Inventory explorer</h1>
-      <p class="hero-subtitle">Browse the current collection, refine by category and target price, and pick the layout that suits the conversation.</p>
+      <h1 class="hero-title" data-i18n="heroTitle">Inventory explorer</h1>
+      <p class="hero-subtitle" data-i18n="heroSubtitle">Browse the current collection, refine by category and target price, and pick the layout that suits the conversation.</p>
     </header>
 
-    <section class="glass-card filter-card" aria-label="Inventory filters">
+    <section class="glass-card filter-card" id="filtersSection" aria-label="Inventory filters">
       <div class="filter-grid">
         <div class="filter-group">
-          <label for="categoryFilter">Category</label>
+          <label for="categoryFilter" data-i18n="filterCategoryLabel">Category</label>
           <select id="categoryFilter" name="category">
-            <option value="">All categories</option>
+            <option value="" data-i18n="filterCategoryAll">All categories</option>
           </select>
         </div>
         <div class="filter-group">
-          <label for="availabilityFilter">Availability</label>
+          <label for="availabilityFilter" data-i18n="filterAvailabilityLabel">Availability</label>
           <select id="availabilityFilter" name="availability">
-            <option value="">All items</option>
-            <option value="available">Available</option>
-            <option value="not-available">Not available</option>
+            <option value="" data-i18n="filterAvailabilityAll">All items</option>
+            <option value="available" data-i18n="filterAvailabilityAvailable">Available</option>
+            <option value="not-available" data-i18n="filterAvailabilityNotAvailable">Not available</option>
           </select>
         </div>
         <div class="filter-group">
-          <label for="priceMin">Price range</label>
+          <label for="priceMin" data-i18n="filterPriceLabel">Price range</label>
           <div class="range-inputs">
             <input type="number" id="priceMin" placeholder="Min" min="0" step="0.01" inputmode="decimal">
-            <span>to</span>
+            <span data-i18n="filterPriceTo">to</span>
             <input type="number" id="priceMax" placeholder="Max" min="0" step="0.01" inputmode="decimal">
           </div>
         </div>
       </div>
       <fieldset class="sort-options">
-        <legend>Sort by</legend>
+        <legend data-i18n="sortLegend">Sort by</legend>
         <div
           class="sort-chips"
           data-sort-group
@@ -849,9 +941,9 @@
           >
             <span class="sort-chip__title">
               <span class="sort-chip__badge" aria-hidden="true">#</span>
-              SKU
+              <span class="sort-chip__label" data-sort-label></span>
             </span>
-            <span class="sort-chip__subtitle">Catalog order</span>
+            <span class="sort-chip__subtitle" data-sort-subtitle></span>
           </button>
           <button
             type="button"
@@ -865,9 +957,9 @@
           >
             <span class="sort-chip__title">
               <span class="sort-chip__badge" aria-hidden="true">↑</span>
-              Price
+              <span class="sort-chip__label" data-sort-label></span>
             </span>
-            <span class="sort-chip__subtitle">Low → High</span>
+            <span class="sort-chip__subtitle" data-sort-subtitle></span>
           </button>
           <button
             type="button"
@@ -881,9 +973,9 @@
           >
             <span class="sort-chip__title">
               <span class="sort-chip__badge" aria-hidden="true">↓</span>
-              Price
+              <span class="sort-chip__label" data-sort-label></span>
             </span>
-            <span class="sort-chip__subtitle">High → Low</span>
+            <span class="sort-chip__subtitle" data-sort-subtitle></span>
           </button>
           <button
             type="button"
@@ -897,9 +989,9 @@
           >
             <span class="sort-chip__title">
               <span class="sort-chip__badge" aria-hidden="true">⇧</span>
-              Weight
+              <span class="sort-chip__label" data-sort-label></span>
             </span>
-            <span class="sort-chip__subtitle">Light → Heavy</span>
+            <span class="sort-chip__subtitle" data-sort-subtitle></span>
           </button>
           <button
             type="button"
@@ -913,38 +1005,38 @@
           >
             <span class="sort-chip__title">
               <span class="sort-chip__badge" aria-hidden="true">⇩</span>
-              Weight
+              <span class="sort-chip__label" data-sort-label></span>
             </span>
-            <span class="sort-chip__subtitle">Heavy → Light</span>
+            <span class="sort-chip__subtitle" data-sort-subtitle></span>
           </button>
         </div>
-        <p class="sort-options__current" id="sortSelection" aria-live="polite">Sorting by Price (Low to High)</p>
+        <p class="sort-options__current" id="sortSelection" aria-live="polite" data-i18n-dynamic>Sorting by Price (Low to High)</p>
       </fieldset>
-      <div class="view-toggle" role="radiogroup" aria-label="Display mode">
+      <div class="view-toggle" role="radiogroup" aria-label="Display mode" id="viewToggleGroup">
         <label class="toggle-pill">
           <input type="radio" name="viewMode" value="compact" checked>
           <span class="toggle-pill__surface" aria-hidden="true"></span>
-          <span class="toggle-pill__label">Compact</span>
+          <span class="toggle-pill__label" data-i18n="viewModeCompact">Compact</span>
         </label>
         <label class="toggle-pill">
           <input type="radio" name="viewMode" value="detailed">
           <span class="toggle-pill__surface" aria-hidden="true"></span>
-          <span class="toggle-pill__label">Detailed</span>
+          <span class="toggle-pill__label" data-i18n="viewModeDetailed">Detailed</span>
         </label>
       </div>
       <div class="status-row">
-        <div id="itemsStatus" aria-live="polite">Loading inventory…</div>
+        <div id="itemsStatus" aria-live="polite" data-i18n="statusLoading" data-i18n-dynamic>Loading inventory…</div>
         <div id="goldStatus" aria-live="polite"></div>
       </div>
       <div>
-        <button type="button" id="resetFilters">Reset filters</button>
+        <button type="button" id="resetFilters" data-i18n="resetFilters">Reset filters</button>
       </div>
     </section>
 
-    <section class="glass-card results-card" aria-label="Inventory results">
+    <section class="glass-card results-card" id="resultsSection" aria-label="Inventory results">
       <div class="results-header">
-        <h2>Items</h2>
-        <span class="results-count" id="resultsCount">0 items</span>
+        <h2 data-i18n="resultsHeading">Items</h2>
+        <span class="results-count" id="resultsCount" data-i18n-dynamic>0 items</span>
       </div>
       <div class="items-grid" id="itemsGrid" role="list" data-view="compact"></div>
     </section>
@@ -984,13 +1076,432 @@
       const resultsCount = document.getElementById('resultsCount');
       const itemsStatus = document.getElementById('itemsStatus');
       const goldStatus = document.getElementById('goldStatus');
+      const languageToggle = document.getElementById('languageToggle');
+      const filtersSection = document.getElementById('filtersSection');
+      const resultsSection = document.getElementById('resultsSection');
+      const viewToggleGroup = document.getElementById('viewToggleGroup');
+      const i18nElements = document.querySelectorAll('[data-i18n]');
+
+      const translations = {
+        en: {
+          pageTitle: 'Veridian Atelier • Inventory Explorer',
+          languageLabel: 'Language',
+          languageSelectAria: 'Select language',
+          navScanner: 'Scanner',
+          navInventory: 'Inventory',
+          navSales: 'Sales log',
+          navPurchases: 'Purchase log',
+          navStatement: 'Gold statement',
+          heroTitle: 'Inventory explorer',
+          heroSubtitle:
+            'Browse the current collection, refine by category and target price, and pick the layout that suits the conversation.',
+          filtersSectionAria: 'Inventory filters',
+          filterCategoryLabel: 'Category',
+          filterCategoryAll: 'All categories',
+          filterAvailabilityLabel: 'Availability',
+          filterAvailabilityAll: 'All items',
+          filterAvailabilityAvailable: 'Available',
+          filterAvailabilityNotAvailable: 'Not available',
+          filterPriceLabel: 'Price range',
+          filterPriceTo: 'to',
+          filterPriceMinPlaceholder: 'Min',
+          filterPriceMaxPlaceholder: 'Max',
+          sortLegend: 'Sort by',
+          sortAriaLabel: 'Sort inventory by',
+          sortOptionSku: 'SKU',
+          sortOptionSkuSubtitle: 'Catalog order',
+          sortOptionSkuShort: 'SKU',
+          sortAnnouncementSku: 'Sorted by SKU (ascending)',
+          sortOptionPrice: 'Price',
+          sortOptionPriceAscSubtitle: 'Low → High',
+          sortOptionPriceAscShort: 'Price ↑',
+          sortAnnouncementPriceAsc: 'Sorted by price low to high',
+          sortOptionPriceDescSubtitle: 'High → Low',
+          sortOptionPriceDescShort: 'Price ↓',
+          sortAnnouncementPriceDesc: 'Sorted by price high to low',
+          sortOptionWeight: 'Weight',
+          sortOptionWeightAscSubtitle: 'Light → Heavy',
+          sortOptionWeightAscShort: 'Weight ↑',
+          sortAnnouncementWeightAsc: 'Sorted by weight light to heavy',
+          sortOptionWeightDescSubtitle: 'Heavy → Light',
+          sortOptionWeightDescShort: 'Weight ↓',
+          sortAnnouncementWeightDesc: 'Sorted by weight heavy to light',
+          sortCurrent: 'Sorting by {label}',
+          statusLoading: 'Loading inventory…',
+          statusNoData: 'No inventory data available yet.',
+          statusSummary: 'Showing <strong>{visible}</strong> of <strong>{total}</strong> items',
+          resultsHeading: 'Items',
+          resultsCountSingular: '{count} item',
+          resultsCountPlural: '{count} items',
+          resetFilters: 'Reset filters',
+          viewModeCompact: 'Compact',
+          viewModeDetailed: 'Detailed',
+          viewToggleAria: 'Display mode',
+          goldStatusWithPrice: 'Gold price {price}',
+          goldStatusUpdated: 'updated {time}',
+          goldStatusUnavailable: 'Gold price unavailable — prices shown use sheet data only.',
+          goldStatusSeparator: ' • ',
+          photoUnavailable: 'Photo unavailable',
+          photoAltNamed: '{name} photo',
+          photoAltItem: 'Item photo',
+          skuLabel: 'SKU {value}',
+          itemDefaultName: 'Item',
+          priceSheet: 'Sheet price',
+          priceEstimated: 'Estimated price',
+          priceNotAvailable: 'Not available',
+          metaWeight: 'Weight',
+          metaKarat: 'Karat',
+          metaCategory: 'Category',
+          metaFees: 'Fees',
+          metaStatus: 'Status',
+          metaPerGram: 'Per gram',
+          badgeUpdated: 'Updated {value}',
+          unitGram: 'g',
+          weightDisplay: '{value} g',
+          perGramDisplay: '{value} / g',
+          emptyFilters:
+            'No items match your filters yet. Adjust the filters or reset them to see the full collection.',
+          emptyNoRows: 'No inventory rows are available yet.',
+          errorStatus: 'Unable to load inventory. Please refresh after checking your connection.',
+          errorEmpty: 'We could not reach the inventory service. Please try again in a moment.'
+        },
+        ar: {
+          pageTitle: 'Veridian Atelier • مستكشف المخزون',
+          languageLabel: 'اللغة',
+          languageSelectAria: 'اختيار اللغة',
+          navScanner: 'الماسح',
+          navInventory: 'المخزون',
+          navSales: 'سجل المبيعات',
+          navPurchases: 'سجل المشتريات',
+          navStatement: 'بيان الذهب',
+          heroTitle: 'مستكشف المخزون',
+          heroSubtitle:
+            'تصفح التشكيلة الحالية، وقم بتصفية النتائج حسب الفئة والسعر المستهدف، واختر العرض الأنسب للحوار.',
+          filtersSectionAria: 'مرشحات المخزون',
+          filterCategoryLabel: 'الفئة',
+          filterCategoryAll: 'جميع الفئات',
+          filterAvailabilityLabel: 'التوفر',
+          filterAvailabilityAll: 'جميع القطع',
+          filterAvailabilityAvailable: 'متوفر',
+          filterAvailabilityNotAvailable: 'غير متوفر',
+          filterPriceLabel: 'نطاق السعر',
+          filterPriceTo: 'إلى',
+          filterPriceMinPlaceholder: 'الحد الأدنى',
+          filterPriceMaxPlaceholder: 'الحد الأقصى',
+          sortLegend: 'ترتيب حسب',
+          sortAriaLabel: 'ترتيب المخزون حسب',
+          sortOptionSku: 'رمز الصنف',
+          sortOptionSkuSubtitle: 'ترتيب الكتالوج',
+          sortOptionSkuShort: 'رمز',
+          sortAnnouncementSku: 'تم الترتيب حسب رمز الصنف تصاعديًا',
+          sortOptionPrice: 'السعر',
+          sortOptionPriceAscSubtitle: 'منخفض → مرتفع',
+          sortOptionPriceAscShort: 'السعر ↑',
+          sortAnnouncementPriceAsc: 'تم الترتيب حسب السعر من الأقل إلى الأعلى',
+          sortOptionPriceDescSubtitle: 'مرتفع → منخفض',
+          sortOptionPriceDescShort: 'السعر ↓',
+          sortAnnouncementPriceDesc: 'تم الترتيب حسب السعر من الأعلى إلى الأقل',
+          sortOptionWeight: 'الوزن',
+          sortOptionWeightAscSubtitle: 'خفيف → ثقيل',
+          sortOptionWeightAscShort: 'الوزن ↑',
+          sortAnnouncementWeightAsc: 'تم الترتيب حسب الوزن من الأخف إلى الأثقل',
+          sortOptionWeightDescSubtitle: 'ثقيل → خفيف',
+          sortOptionWeightDescShort: 'الوزن ↓',
+          sortAnnouncementWeightDesc: 'تم الترتيب حسب الوزن من الأثقل إلى الأخف',
+          sortCurrent: 'يتم الترتيب حسب {label}',
+          statusLoading: 'جاري تحميل المخزون…',
+          statusNoData: 'لا تتوفر بيانات مخزون بعد.',
+          statusSummary: 'عرض <strong>{visible}</strong> من أصل <strong>{total}</strong> قطعة',
+          resultsHeading: 'القطع',
+          resultsCountSingular: '{count} قطعة',
+          resultsCountPlural: '{count} قطع',
+          resetFilters: 'إعادة تعيين المرشحات',
+          viewModeCompact: 'عرض مضغوط',
+          viewModeDetailed: 'عرض تفصيلي',
+          viewToggleAria: 'وضع العرض',
+          goldStatusWithPrice: 'سعر الذهب {price}',
+          goldStatusUpdated: 'تم التحديث في {time}',
+          goldStatusUnavailable: 'تعذر الحصول على سعر الذهب — يتم استخدام بيانات الجدول فقط.',
+          goldStatusSeparator: ' • ',
+          photoUnavailable: 'الصورة غير متاحة',
+          photoAltNamed: 'صورة {name}',
+          photoAltItem: 'صورة القطعة',
+          skuLabel: 'رمز الصنف {value}',
+          itemDefaultName: 'قطعة',
+          priceSheet: 'سعر الجدول',
+          priceEstimated: 'سعر تقديري',
+          priceNotAvailable: 'غير متاح',
+          metaWeight: 'الوزن',
+          metaKarat: 'العيار',
+          metaCategory: 'الفئة',
+          metaFees: 'الأجور',
+          metaStatus: 'الحالة',
+          metaPerGram: 'لكل غرام',
+          badgeUpdated: 'تم التحديث {value}',
+          unitGram: 'غ',
+          weightDisplay: '{value} غ',
+          perGramDisplay: '{value} / غ',
+          emptyFilters:
+            'لا توجد قطع مطابقة للمرشحات الحالية. عدّل المرشحات أو أعد تعيينها لمشاهدة المجموعة كاملة.',
+          emptyNoRows: 'لا توجد صفوف مخزون متاحة بعد.',
+          errorStatus: 'تعذر تحميل المخزون. يرجى التحديث بعد التحقق من الاتصال.',
+          errorEmpty: 'تعذر الوصول إلى خدمة المخزون. حاول مرة أخرى بعد قليل.'
+        }
+      };
+
+      let currentLanguage = localStorage.getItem('statementLanguage') === 'ar' ? 'ar' : 'en';
+
+      function t(key, replacements) {
+        const langTable = translations[currentLanguage] || translations.en;
+        const template = key in langTable ? langTable[key] : translations.en[key] || key;
+        if (!replacements) return template;
+        return template.replace(/\{(\w+)\}/g, (match, token) => {
+          if (Object.prototype.hasOwnProperty.call(replacements, token)) {
+            return replacements[token];
+          }
+          return match;
+        });
+      }
+
+      function getLocale() {
+        return currentLanguage === 'ar' ? 'ar-EG' : undefined;
+      }
+
+      function formatNumber(value) {
+        const numeric = Number(value);
+        if (!Number.isFinite(numeric)) return String(value ?? '');
+        const locale = getLocale();
+        return numeric.toLocaleString(locale);
+      }
+
+      function formatCurrency(value) {
+        const numeric = Number(value);
+        if (!Number.isFinite(numeric)) return t('priceNotAvailable');
+        const locale = getLocale();
+        return numeric.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
+
+      function formatWeightDisplay(value) {
+        if (!Number.isFinite(value)) return '';
+        const locale = getLocale();
+        const formatted = value.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        return t('weightDisplay', { value: formatted });
+      }
+
+      function formatPerGram(value) {
+        if (!Number.isFinite(value)) return '';
+        const locale = getLocale();
+        const formatted = value.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        return t('perGramDisplay', { value: formatted });
+      }
+
+      function updateLanguageAttributes() {
+        document.documentElement.lang = currentLanguage === 'ar' ? 'ar' : 'en';
+        document.documentElement.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
+        document.body.classList.toggle('rtl', currentLanguage === 'ar');
+      }
+
+      function renderStaticText() {
+        document.title = t('pageTitle');
+        i18nElements.forEach((element) => {
+          if (!(element instanceof HTMLElement)) return;
+          if (element.hasAttribute('data-i18n-dynamic')) return;
+          const key = element.getAttribute('data-i18n');
+          if (!key) return;
+          element.textContent = t(key);
+        });
+
+        if (languageToggle) {
+          languageToggle.value = currentLanguage;
+          languageToggle.setAttribute('aria-label', t('languageSelectAria'));
+        }
+
+        if (filtersSection) {
+          filtersSection.setAttribute('aria-label', t('filtersSectionAria'));
+        }
+
+        if (resultsSection) {
+          resultsSection.setAttribute('aria-label', t('resultsHeading'));
+        }
+
+        if (sortGroup) {
+          sortGroup.setAttribute('aria-label', t('sortAriaLabel'));
+        }
+
+        if (viewToggleGroup) {
+          viewToggleGroup.setAttribute('aria-label', t('viewToggleAria'));
+        }
+
+        if (priceMinInput) {
+          priceMinInput.placeholder = t('filterPriceMinPlaceholder');
+        }
+        if (priceMaxInput) {
+          priceMaxInput.placeholder = t('filterPriceMaxPlaceholder');
+        }
+      }
+
+      function updateFilterOptionLabels() {
+        if (categorySelect) {
+          const defaultOption = categorySelect.querySelector('option[value=""]');
+          if (defaultOption) {
+            defaultOption.textContent = t('filterCategoryAll');
+          }
+        }
+        if (availabilitySelect) {
+          const defaultOption = availabilitySelect.querySelector('option[value=""]');
+          const availableOption = availabilitySelect.querySelector('option[value="available"]');
+          const notAvailableOption = availabilitySelect.querySelector('option[value="not-available"]');
+          if (defaultOption) defaultOption.textContent = t('filterAvailabilityAll');
+          if (availableOption) availableOption.textContent = t('filterAvailabilityAvailable');
+          if (notAvailableOption) notAvailableOption.textContent = t('filterAvailabilityNotAvailable');
+        }
+      }
+
+      function updateSortLabels() {
+        sortButtons.forEach((button) => {
+          const index = clampSortIndex(button.getAttribute('data-sort-index'));
+          const option = SORT_OPTIONS[index] ?? SORT_OPTIONS[0];
+          const labelEl = button.querySelector('.sort-chip__label');
+          const subtitleEl = button.querySelector('.sort-chip__subtitle');
+          if (labelEl) labelEl.textContent = t(option.labelKey);
+          if (subtitleEl) subtitleEl.textContent = t(option.subtitleKey);
+          if (option.announcementKey) {
+            button.setAttribute('aria-label', t(option.announcementKey));
+          }
+        });
+        if (sortGroup) {
+          sortGroup.setAttribute('aria-label', t('sortAriaLabel'));
+        }
+      }
+
+      const uiState = {
+        statusMode: 'loading',
+        total: 0,
+        visible: 0,
+        emptyType: 'none'
+      };
+
+      function refreshStatusText() {
+        if (!itemsStatus) return;
+        if (uiState.statusMode === 'loading') {
+          itemsStatus.textContent = t('statusLoading');
+          return;
+        }
+        if (uiState.statusMode === 'error') {
+          itemsStatus.textContent = t('errorStatus');
+          return;
+        }
+        if (uiState.statusMode === 'no-data') {
+          itemsStatus.textContent = t('statusNoData');
+          return;
+        }
+        const visibleText = formatNumber(uiState.visible);
+        const totalText = formatNumber(uiState.total);
+        itemsStatus.innerHTML = t('statusSummary', { visible: visibleText, total: totalText });
+      }
+
+      function refreshResultsCount() {
+        if (!resultsCount) return;
+        const count = Number(uiState.visible);
+        const formatted = formatNumber(count);
+        if (count === 1) {
+          resultsCount.textContent = t('resultsCountSingular', { count: formatted });
+        } else {
+          resultsCount.textContent = t('resultsCountPlural', { count: formatted });
+        }
+      }
+
+      function refreshGoldStatus() {
+        if (!goldStatus) return;
+        if (Number.isFinite(state.goldPrice)) {
+          const priceText = formatCurrency(state.goldPrice);
+          const parts = [t('goldStatusWithPrice', { price: priceText })];
+          if (state.goldUpdatedAt) {
+            parts.push(t('goldStatusUpdated', { time: sanitize(state.goldUpdatedAt) }));
+          }
+          goldStatus.textContent = parts.join(t('goldStatusSeparator'));
+        } else {
+          goldStatus.textContent = t('goldStatusUnavailable');
+        }
+      }
+
+      function refreshEmptyMessage() {
+        if (!itemsGrid) return;
+        const emptyEl = itemsGrid.querySelector('.empty-state');
+        if (!emptyEl) return;
+        const type = emptyEl.dataset.emptyType || uiState.emptyType;
+        if (type === 'filters') {
+          emptyEl.textContent = t('emptyFilters');
+        } else if (type === 'no-data') {
+          emptyEl.textContent = t('emptyNoRows');
+        } else if (type === 'error') {
+          emptyEl.textContent = t('errorEmpty');
+        }
+      }
+
+      function refreshLanguageDependentText() {
+        updateLanguageAttributes();
+        renderStaticText();
+        updateFilterOptionLabels();
+        updateSortLabels();
+        const activeIndex = Number.isInteger(state.sortIndex)
+          ? state.sortIndex
+          : RESOLVED_DEFAULT_SORT_INDEX;
+        setSortByIndex(activeIndex, { trigger: false });
+        refreshGoldStatus();
+        refreshStatusText();
+        refreshResultsCount();
+        refreshEmptyMessage();
+        if (state.dataLoaded) {
+          applyFilters();
+        }
+      }
+
+      function applyLanguage(language) {
+        const nextLanguage = translations[language] ? language : 'en';
+        if (currentLanguage !== nextLanguage) {
+          currentLanguage = nextLanguage;
+          localStorage.setItem('statementLanguage', currentLanguage);
+        }
+        refreshLanguageDependentText();
+      }
 
       const SORT_OPTIONS = Object.freeze([
-        { value: 'sku', label: 'SKU', shortLabel: 'SKU', announcement: 'SKU (ascending)' },
-        { value: 'price-asc', label: 'Price (Low to High)', shortLabel: 'Price ↑', announcement: 'Price low to high' },
-        { value: 'price-desc', label: 'Price (High to Low)', shortLabel: 'Price ↓', announcement: 'Price high to low' },
-        { value: 'weight-asc', label: 'Weight (Low to High)', shortLabel: 'Weight ↑', announcement: 'Weight low to high' },
-        { value: 'weight-desc', label: 'Weight (High to Low)', shortLabel: 'Weight ↓', announcement: 'Weight high to low' }
+        {
+          value: 'sku',
+          labelKey: 'sortOptionSku',
+          subtitleKey: 'sortOptionSkuSubtitle',
+          shortKey: 'sortOptionSkuShort',
+          announcementKey: 'sortAnnouncementSku'
+        },
+        {
+          value: 'price-asc',
+          labelKey: 'sortOptionPrice',
+          subtitleKey: 'sortOptionPriceAscSubtitle',
+          shortKey: 'sortOptionPriceAscShort',
+          announcementKey: 'sortAnnouncementPriceAsc'
+        },
+        {
+          value: 'price-desc',
+          labelKey: 'sortOptionPrice',
+          subtitleKey: 'sortOptionPriceDescSubtitle',
+          shortKey: 'sortOptionPriceDescShort',
+          announcementKey: 'sortAnnouncementPriceDesc'
+        },
+        {
+          value: 'weight-asc',
+          labelKey: 'sortOptionWeight',
+          subtitleKey: 'sortOptionWeightAscSubtitle',
+          shortKey: 'sortOptionWeightAscShort',
+          announcementKey: 'sortAnnouncementWeightAsc'
+        },
+        {
+          value: 'weight-desc',
+          labelKey: 'sortOptionWeight',
+          subtitleKey: 'sortOptionWeightDescSubtitle',
+          shortKey: 'sortOptionWeightDescShort',
+          announcementKey: 'sortAnnouncementWeightDesc'
+        }
       ]);
       const DEFAULT_SORT_INDEX = SORT_OPTIONS.findIndex((option) => option.value === 'price-asc');
       const RESOLVED_DEFAULT_SORT_INDEX = DEFAULT_SORT_INDEX >= 0 ? DEFAULT_SORT_INDEX : 0;
@@ -1000,9 +1511,11 @@
         filtered: [],
         viewMode: 'compact',
         sortBy: SORT_OPTIONS[RESOLVED_DEFAULT_SORT_INDEX]?.value ?? SORT_OPTIONS[0].value,
+        sortIndex: RESOLVED_DEFAULT_SORT_INDEX,
         goldPrice: null,
         goldUpdatedAt: '',
-        categoryKey: null
+        categoryKey: null,
+        dataLoaded: false
       };
 
       function normalizeDigits(value = '') {
@@ -1369,55 +1882,70 @@
         return null;
       }
 
-      function formatCount(count) {
-        return `${count} item${count === 1 ? '' : 's'}`;
-      }
-
-      function formatPrice(value, fallbackText = 'Not available') {
+      function formatPrice(value, fallbackText = t('priceNotAvailable')) {
         if (Number.isFinite(value)) {
-          return value.toFixed(2);
+          return formatCurrency(value);
         }
         return fallbackText;
       }
 
       function populateCategoryOptions(rows) {
+        if (!categorySelect) return;
+        const previousValue = categorySelect.value;
         const options = new Map();
         for (const row of rows) {
           const raw = row.__categoryRaw;
           const normalized = row.__categoryNormalized;
           if (!normalized) continue;
           if (!options.has(normalized)) {
-            options.set(normalized, raw || 'Unnamed category');
+            options.set(normalized, raw || '');
           }
         }
-        const entries = Array.from(options.entries()).sort((a, b) => a[1].localeCompare(b[1]));
-        categorySelect.innerHTML = '<option value="">All categories</option>';
+        const locale = getLocale();
+        const entries = Array.from(options.entries()).sort((a, b) => {
+          const labelA = a[1] || '';
+          const labelB = b[1] || '';
+          return labelA.localeCompare(labelB, locale || undefined, { sensitivity: 'base' });
+        });
+
+        categorySelect.innerHTML = '';
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = t('filterCategoryAll');
+        categorySelect.appendChild(defaultOption);
+
         for (const [value, label] of entries) {
           const option = document.createElement('option');
           option.value = value;
           option.textContent = label;
           categorySelect.appendChild(option);
         }
+
+        if (previousValue && options.has(previousValue)) {
+          categorySelect.value = previousValue;
+        } else {
+          categorySelect.value = '';
+        }
       }
 
       function updateStatus() {
-        resultsCount.textContent = formatCount(state.filtered.length);
-        if (state.rows.length) {
-          itemsStatus.innerHTML = `Showing <strong>${state.filtered.length}</strong> of <strong>${state.rows.length}</strong> items`;
-        } else {
-          itemsStatus.textContent = 'No inventory data available yet.';
+        if (!state.dataLoaded) {
+          refreshStatusText();
+          refreshResultsCount();
+          return;
         }
 
-        if (Number.isFinite(state.goldPrice)) {
-          const parts = [`Gold price ${state.goldPrice.toFixed(2)}`];
-          if (state.goldUpdatedAt) parts.push(`updated ${sanitize(state.goldUpdatedAt)}`);
-          goldStatus.textContent = parts.join(' • ');
-        } else {
-          goldStatus.textContent = 'Gold price unavailable — prices shown use sheet data only.';
-        }
+        uiState.total = state.rows.length;
+        uiState.visible = state.filtered.length;
+        uiState.statusMode = state.rows.length ? 'ready' : 'no-data';
+        refreshStatusText();
+        refreshResultsCount();
       }
 
       function applyFilters() {
+        if (!state.dataLoaded) {
+          return;
+        }
         const category = categorySelect.value;
         const availability = availabilitySelect.value;
         const priceMin = extractNumber(priceMinInput.value);
@@ -1527,8 +2055,10 @@
 
       function updateSortDisplay(index) {
         const option = SORT_OPTIONS[index] ?? SORT_OPTIONS[RESOLVED_DEFAULT_SORT_INDEX] ?? SORT_OPTIONS[0];
+        const labelText = t(option.labelKey);
+        const shortLabelText = option.shortKey ? t(option.shortKey) : labelText;
         if (sortSelection) {
-          sortSelection.textContent = `Sorting by ${option.label}`;
+          sortSelection.textContent = t('sortCurrent', { label: labelText });
         }
         if (sortGroup) {
           sortGroup.setAttribute('data-active-index', String(index));
@@ -1542,7 +2072,7 @@
           if (isActive && sortGroup) {
             const buttonId = button.id || '';
             sortGroup.setAttribute('aria-activedescendant', buttonId);
-            sortGroup.setAttribute('data-active-label', option.shortLabel || option.label);
+            sortGroup.setAttribute('data-active-label', shortLabelText);
           }
         });
       }
@@ -1551,6 +2081,7 @@
         const resolvedIndex = clampSortIndex(index);
         const option = SORT_OPTIONS[resolvedIndex] ?? SORT_OPTIONS[RESOLVED_DEFAULT_SORT_INDEX] ?? SORT_OPTIONS[0];
         state.sortBy = option.value;
+        state.sortIndex = resolvedIndex;
         updateSortDisplay(resolvedIndex);
         if (trigger) {
           sortFiltered();
@@ -1588,12 +2119,12 @@
           media.innerHTML = '';
           const placeholder = document.createElement('div');
           placeholder.className = 'item-card__photo item-card__photo--placeholder';
-          placeholder.textContent = 'Photo unavailable';
+          placeholder.textContent = t('photoUnavailable');
           media.appendChild(placeholder);
         };
 
         if (row.__photoUrl) {
-          const altText = row.__name ? `${row.__name} photo` : 'Item photo';
+          const altText = row.__name ? t('photoAltNamed', { name: row.__name }) : t('photoAltItem');
           const image = document.createElement('img');
           image.className = 'item-card__photo';
           image.loading = 'lazy';
@@ -1643,13 +2174,13 @@
         if (row.__sku) {
           const skuChip = document.createElement('span');
           skuChip.className = 'item-card__sku';
-          skuChip.textContent = `SKU ${row.__sku}`;
+          skuChip.textContent = t('skuLabel', { value: row.__sku });
           titleBlock.appendChild(skuChip);
         }
 
         const title = document.createElement('h3');
         title.className = 'item-card__name';
-        title.textContent = row.__name || 'Item';
+        title.textContent = row.__name || t('itemDefaultName');
         titleBlock.appendChild(title);
 
         header.appendChild(titleBlock);
@@ -1657,9 +2188,15 @@
         const priceBlock = document.createElement('div');
         priceBlock.className = 'item-card__price';
         const priceLabel = document.createElement('span');
-        priceLabel.textContent = row.__priceSource === 'sheet' ? 'Sheet price' : 'Estimated price';
+        if (row.__priceSource === 'sheet') {
+          priceLabel.textContent = t('priceSheet');
+        } else if (row.__priceSource === 'estimated') {
+          priceLabel.textContent = t('priceEstimated');
+        } else {
+          priceLabel.textContent = t('priceNotAvailable');
+        }
         const priceValue = document.createElement('strong');
-        priceValue.textContent = row.__priceDisplay;
+        priceValue.textContent = formatPrice(row.__price, row.__priceFallback || t('priceNotAvailable'));
         priceBlock.appendChild(priceLabel);
         priceBlock.appendChild(priceValue);
         header.appendChild(priceBlock);
@@ -1671,14 +2208,18 @@
 
         const primaryMeta = document.createElement('div');
         primaryMeta.className = 'item-card__meta-row';
-        if (row.__weightDisplay) {
-          primaryMeta.appendChild(createMetaRow('Weight', row.__weightDisplay));
+        const weightDisplay = Number.isFinite(row.__weight)
+          ? formatWeightDisplay(row.__weight)
+          : '';
+        const weightValue = weightDisplay || row.__weightRaw;
+        if (weightValue) {
+          primaryMeta.appendChild(createMetaRow(t('metaWeight'), weightValue));
         }
         if (row.__karat) {
-          primaryMeta.appendChild(createMetaRow('Karat', row.__karat));
+          primaryMeta.appendChild(createMetaRow(t('metaKarat'), row.__karat));
         }
         if (row.__categoryRaw) {
-          primaryMeta.appendChild(createMetaRow('Category', row.__categoryRaw));
+          primaryMeta.appendChild(createMetaRow(t('metaCategory'), row.__categoryRaw));
         }
         metaList.appendChild(primaryMeta);
 
@@ -1686,13 +2227,21 @@
           const secondaryMeta = document.createElement('div');
           secondaryMeta.className = 'item-card__meta-row';
           if (row.__fees) {
-            secondaryMeta.appendChild(createMetaRow('Fees', row.__fees));
+            secondaryMeta.appendChild(createMetaRow(t('metaFees'), row.__fees));
           }
-          if (row.__availability) {
-            secondaryMeta.appendChild(createMetaRow('Status', row.__availability));
+          const availabilityText = row.__availabilityState === 'available'
+            ? t('filterAvailabilityAvailable')
+            : row.__availabilityState === 'not-available'
+              ? t('filterAvailabilityNotAvailable')
+              : row.__availabilityRaw;
+          if (availabilityText) {
+            secondaryMeta.appendChild(createMetaRow(t('metaStatus'), availabilityText));
           }
-          if (row.__perGramDisplay) {
-            secondaryMeta.appendChild(createMetaRow('Per gram', row.__perGramDisplay));
+          const perGramDisplay = Number.isFinite(row.__perGram)
+            ? formatPerGram(row.__perGram)
+            : '';
+          if (perGramDisplay) {
+            secondaryMeta.appendChild(createMetaRow(t('metaPerGram'), perGramDisplay));
           }
           if (secondaryMeta.childElementCount) {
             metaList.appendChild(secondaryMeta);
@@ -1714,7 +2263,15 @@
           for (const badge of row.__badges) {
             const span = document.createElement('span');
             span.className = 'chip';
-            span.textContent = badge;
+            if (badge.type === 'availability') {
+              span.textContent = badge.state === 'available'
+                ? t('filterAvailabilityAvailable')
+                : t('filterAvailabilityNotAvailable');
+            } else if (badge.type === 'timestamp') {
+              span.textContent = t('badgeUpdated', { value: badge.value });
+            } else if (badge.value) {
+              span.textContent = badge.value;
+            }
             badgeRow.appendChild(span);
           }
           body.appendChild(badgeRow);
@@ -1725,18 +2282,32 @@
       }
 
       function renderItems() {
-        itemsGrid.innerHTML = '';
+        if (!itemsGrid) return;
         itemsGrid.dataset.view = state.viewMode;
+
+        if (!state.dataLoaded) {
+          return;
+        }
+
+        itemsGrid.innerHTML = '';
+
         if (!state.filtered.length) {
           const empty = document.createElement('p');
           empty.className = 'empty-state';
-          empty.textContent = state.rows.length
-            ? 'No items match your filters yet. Adjust the filters or reset them to see the full collection.'
-            : 'No inventory rows are available yet.';
+          if (state.rows.length) {
+            empty.dataset.emptyType = 'filters';
+            empty.textContent = t('emptyFilters');
+            uiState.emptyType = 'filters';
+          } else {
+            empty.dataset.emptyType = 'no-data';
+            empty.textContent = t('emptyNoRows');
+            uiState.emptyType = 'no-data';
+          }
           itemsGrid.appendChild(empty);
           return;
         }
 
+        uiState.emptyType = 'none';
         for (const row of state.filtered) {
           itemsGrid.appendChild(createItemCard(row));
         }
@@ -1748,17 +2319,17 @@
         let priceValue = priceInfo?.total ?? NaN;
         let perGramValue = priceInfo?.perGram ?? NaN;
         let priceSource = 'estimated';
-        let priceDisplay = formatPrice(priceValue);
+        let priceFallbackDisplay = '';
         const weightValue = extractNumber(normalized.weight);
+        const weightRaw = normalized.weight ? sanitize(normalized.weight) : '';
 
         if (!Number.isFinite(priceValue)) {
           const fallback = findExistingPrice(normalized);
           if (fallback) {
             priceValue = fallback.numeric;
-            priceDisplay = formatPrice(priceValue, sanitize(fallback.display));
+            priceFallbackDisplay = sanitize(fallback.display);
             priceSource = 'sheet';
           } else {
-            priceDisplay = formatPrice(NaN);
             priceSource = 'unknown';
           }
         }
@@ -1774,36 +2345,39 @@
         const categoryNormalized = normalizeCategoryValue(categoryRaw);
         const availabilityDisplay = sanitize(normalized.availability ?? '');
         const availabilityState = normalizeAvailabilityState(availabilityDisplay);
+        const timestamp = normalized.timestamp ? sanitize(normalized.timestamp) : '';
+
+        const badges = [];
+        if (availabilityState === 'available' || availabilityState === 'not-available') {
+          badges.push({ type: 'availability', state: availabilityState });
+        } else if (availabilityDisplay) {
+          badges.push({ type: 'text', value: availabilityDisplay });
+        }
+        if (timestamp) {
+          badges.push({ type: 'timestamp', value: timestamp });
+        }
 
         const parsed = {
           ...normalized,
           __name: sanitize(normalized.name ?? normalized['piece type | نوع القطعة'] ?? ''),
           __sku: sanitize(normalized.sku ?? ''),
           __weight: Number.isFinite(weightValue) ? weightValue : NaN,
-          __weightDisplay: Number.isFinite(weightValue)
-            ? `${weightValue.toFixed(2)} g`
-            : (normalized.weight ? sanitize(normalized.weight) : ''),
+          __weightRaw: weightRaw,
           __karat: sanitize(normalized.karat ?? ''),
           __fees: sanitize(normalized.fees ?? ''),
           __description: sanitize(normalized.description ?? ''),
-          __availability: availabilityDisplay,
+          __availabilityRaw: availabilityDisplay,
           __availabilityState: availabilityState,
           __categoryRaw: sanitize(categoryRaw ?? ''),
           __categoryNormalized: categoryNormalized,
           __price: Number.isFinite(priceValue) ? priceValue : NaN,
-          __priceDisplay: priceDisplay,
           __priceSource: priceSource,
-          __perGramDisplay: Number.isFinite(perGramValue) ? `${perGramValue.toFixed(2)} / g` : '',
+          __priceFallback: priceFallbackDisplay,
+          __perGram: Number.isFinite(perGramValue) ? perGramValue : NaN,
           __photoUrl: normalizePhotoUrl(normalized.photo),
-          __badges: []
+          __badges: badges,
+          __timestamp: timestamp
         };
-
-        if (parsed.__availability) {
-          parsed.__badges.push(parsed.__availability);
-        }
-        if (normalized.timestamp) {
-          parsed.__badges.push(`Updated ${sanitize(normalized.timestamp)}`);
-        }
 
         return parsed;
       }
@@ -1815,6 +2389,7 @@
           return parsed;
         });
         populateCategoryOptions(state.rows);
+        state.dataLoaded = true;
         applyFilters();
       }
 
@@ -1856,6 +2431,11 @@
       }
 
       function attachListeners() {
+        if (languageToggle) {
+          languageToggle.addEventListener('change', (event) => {
+            applyLanguage(event.target.value);
+          });
+        }
         categorySelect.addEventListener('change', applyFilters);
         availabilitySelect.addEventListener('change', applyFilters);
         priceMinInput.addEventListener('input', applyFilters);
@@ -1917,27 +2497,46 @@
         } else {
           setSortByIndex(RESOLVED_DEFAULT_SORT_INDEX, { trigger: false });
         }
-        itemsStatus.textContent = 'Loading inventory…';
+        uiState.statusMode = 'loading';
+        uiState.total = 0;
+        uiState.visible = 0;
+        refreshStatusText();
+        refreshGoldStatus();
 
         try {
           const [inventoryData] = await Promise.all([fetchInventory(), fetchGoldPrice()]);
           const rows = Array.isArray(inventoryData) ? inventoryData : [];
           state.categoryKey = detectCategoryKey(rows);
           enrichRows(rows);
+          refreshGoldStatus();
         } catch (error) {
           console.error('Inventory load failed:', error);
-          itemsStatus.textContent = 'Unable to load inventory. Please refresh after checking your connection.';
-          itemsGrid.innerHTML = '';
-          const empty = document.createElement('p');
-          empty.className = 'empty-state';
-          empty.textContent = 'We could not reach the inventory service. Please try again in a moment.';
-          itemsGrid.appendChild(empty);
+          state.rows = [];
+          state.filtered = [];
+          state.dataLoaded = false;
+          uiState.statusMode = 'error';
+          uiState.total = 0;
+          uiState.visible = 0;
+          refreshStatusText();
+          refreshResultsCount();
+          if (itemsGrid) {
+            itemsGrid.innerHTML = '';
+            const empty = document.createElement('p');
+            empty.className = 'empty-state';
+            empty.dataset.emptyType = 'error';
+            empty.textContent = t('errorEmpty');
+            itemsGrid.appendChild(empty);
+            uiState.emptyType = 'error';
+            refreshEmptyMessage();
+          }
+          refreshGoldStatus();
           return;
         }
 
         updateStatus();
       }
 
+      refreshLanguageDependentText();
       initialize();
     })();
   </script>
