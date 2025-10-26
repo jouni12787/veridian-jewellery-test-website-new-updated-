@@ -68,6 +68,7 @@
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
+      width: 100%;
     }
     .language-toggle {
       display: inline-flex;
@@ -497,7 +498,7 @@
     }
     body.rtl header {
       text-align: right;
-      align-items: flex-end;
+      align-items: stretch;
     }
     body.rtl .header-top {
       justify-content: space-between;
@@ -531,6 +532,7 @@
     }
     @media (max-width: 720px) {
       .header-top { justify-content: center; }
+      body.rtl .header-top { justify-content: center; }
       .page-nav {
         width: 100%;
         justify-content: flex-start;
