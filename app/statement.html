@@ -76,6 +76,46 @@
       flex-wrap: wrap;
     }
 
+    .language-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(37, 150, 190, 0.2);
+      box-shadow: inset 0 0 0 1px rgba(37, 150, 190, 0.12);
+    }
+
+    .language-toggle select {
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent-dark);
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      padding: 0;
+    }
+
+    .language-toggle select option {
+      color: var(--text);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     .brand-logo {
       height: 56px;
       width: auto;
@@ -372,6 +412,37 @@
       margin-top: 10px;
     }
 
+    body.rtl {
+      direction: rtl;
+      font-family: 'Amiri', 'Inter', system-ui, -apple-system, Segoe UI, sans-serif;
+    }
+
+    body.rtl header {
+      text-align: right;
+      align-items: flex-end;
+    }
+
+    body.rtl .header-top {
+      justify-content: flex-start;
+    }
+
+    body.rtl .page-nav {
+      direction: rtl;
+      justify-content: flex-end;
+    }
+
+    body.rtl .data-row {
+      flex-direction: row-reverse;
+    }
+
+    body.rtl .data-label {
+      text-align: right;
+    }
+
+    body.rtl .data-value {
+      text-align: left;
+    }
+
     @media (max-width: 720px) {
       body { padding-top: 60px; }
       header { text-align: center; align-items: center; }
@@ -400,15 +471,22 @@
       <div class="header-top">
         <img src="../assets/logo-website-test.jpg" alt="Veridian Atelier logo" class="brand-logo" />
         <nav class="page-nav" aria-label="Workspace navigation">
-          <a class="nav-link" href="./index.html">Scanner</a>
-          <a class="nav-link" href="./items.html">Inventory</a>
-          <a class="nav-link" href="./sales.html">Sales log</a>
-          <a class="nav-link" href="./purchases.html">Purchase log</a>
-          <a class="nav-link active" href="./statement.html" aria-current="page">Gold statement</a>
+          <a class="nav-link" href="./index.html" data-i18n="navScanner">Scanner</a>
+          <a class="nav-link" href="./items.html" data-i18n="navInventory">Inventory</a>
+          <a class="nav-link" href="./sales.html" data-i18n="navSales">Sales log</a>
+          <a class="nav-link" href="./purchases.html" data-i18n="navPurchases">Purchase log</a>
+          <a class="nav-link active" href="./statement.html" aria-current="page" data-i18n="navStatement">Gold statement</a>
         </nav>
+        <div class="language-toggle">
+          <label for="languageToggle" class="sr-only" data-i18n="languageLabel">Language</label>
+          <select id="languageToggle" aria-label="Select language">
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
       </div>
-      <h1 class="hero-title">Gold Inventory Dashboard</h1>
-      <p class="hero-subtitle">Real-time overview of gold inventory, sales, purchases, and financial metrics.</p>
+      <h1 class="hero-title" data-i18n="heroTitle">Gold Inventory Dashboard</h1>
+      <p class="hero-subtitle" data-i18n="heroSubtitle">Real-time overview of gold inventory, sales, purchases, and financial metrics.</p>
     </header>
 
     <section class="glass-card" aria-label="Gold inventory summary">
@@ -417,21 +495,21 @@
       </div>
 
       <div class="data-section">
-        <h2 class="section-title">Gold Inventory by Karat</h2>
+        <h2 class="section-title" data-i18n="sectionInventoryByKarat">Gold Inventory by Karat</h2>
         <div class="data-grid" id="inventoryData">
           <!-- Inventory data will be populated by JavaScript -->
         </div>
       </div>
 
       <div class="data-section">
-        <h2 class="section-title">Today's Transactions</h2>
+        <h2 class="section-title" data-i18n="sectionTransactionsToday">Today's Transactions</h2>
         <div class="data-grid" id="transactionData">
           <!-- Transaction data will be populated by JavaScript -->
         </div>
       </div>
 
       <div class="highlight-card">
-        <h3 class="highlight-title">Financial Summary</h3>
+        <h3 class="highlight-title" data-i18n="highlightTitle">Financial Summary</h3>
         <div class="highlight-grid" id="financialData">
           <!-- Financial data will be populated by JavaScript -->
         </div>
@@ -443,9 +521,9 @@
           <path d="M1 20v-6h6"></path>
           <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
         </svg>
-        Refresh Data
+        <span data-i18n="refreshButton">Refresh Data</span>
       </button>
-      <p class="last-updated" id="lastUpdated">Last updated: Loading...</p>
+      <p class="last-updated" id="lastUpdated">Loading latest data…</p>
     </section>
   </div>
 
@@ -454,18 +532,207 @@
       'use strict';
 
       const STATEMENT_ENDPOINT = '/api/statement';
-      
+
       const summaryStats = document.getElementById('summaryStats');
       const inventoryData = document.getElementById('inventoryData');
       const transactionData = document.getElementById('transactionData');
       const financialData = document.getElementById('financialData');
       const refreshButton = document.getElementById('refreshData');
       const lastUpdated = document.getElementById('lastUpdated');
+      const languageToggle = document.getElementById('languageToggle');
+      const i18nElements = document.querySelectorAll('[data-i18n]');
+
+      const translations = {
+        en: {
+          pageTitle: 'Veridian Atelier • Gold Inventory Dashboard',
+          languageLabel: 'Language',
+          languageSelectAria: 'Select language',
+          navScanner: 'Scanner',
+          navInventory: 'Inventory',
+          navSales: 'Sales log',
+          navPurchases: 'Purchase log',
+          navStatement: 'Gold statement',
+          heroTitle: 'Gold Inventory Dashboard',
+          heroSubtitle: 'Real-time overview of gold inventory, sales, purchases, and financial metrics.',
+          sectionInventoryByKarat: 'Gold Inventory by Karat',
+          sectionTransactionsToday: "Today's Transactions",
+          highlightTitle: 'Financial Summary',
+          refreshButton: 'Refresh Data',
+          notAvailable: 'N/A',
+          soldLabel: 'sold',
+          purchasedLabel: 'purchased',
+          summaryTotalGoldInventory: 'Total Gold Inventory',
+          summaryTotalGoldInventorySubtitle: 'Across all karats',
+          summaryAvailableGold: 'Available Gold',
+          summaryAvailableGoldSubtitle: 'Ready for sale',
+          summaryTodaySales: "Today's Sales",
+          summaryTodaySalesSubtitle: 'Total Revenue',
+          summaryTodayPurchases: "Today's Purchases",
+          summaryTodayPurchasesSubtitle: 'Total Cost',
+          summaryNetProfitToday: 'Net Profit Today',
+          summaryNetProfitTodaySubtitle: 'After making fees',
+          inventory18kTitle: '18 Karat Gold',
+          inventory21kTitle: '21 Karat Gold',
+          inventory22kTitle: '22 Karat Gold',
+          inventory24kTitle: '24 Karat Gold',
+          labelTotalWeight: 'Total Weight',
+          labelSoldWeight: 'Sold Weight',
+          labelAvailableWeight: 'Available Weight',
+          cardTodaySalesTitle: "Today's Sales",
+          cardTodayPurchasesTitle: "Today's Purchases",
+          templateSold: '{karat} Sold',
+          templateRevenue: '{karat} Revenue',
+          templatePurchased: '{karat} Purchased',
+          templateCost: '{karat} Cost',
+          highlightMorningUsdBalance: 'Morning USD Balance',
+          highlightMorningLbpBalance: 'Morning LBP Balance',
+          highlightTodayTotalMoney: "Today's Total Money",
+          highlightLbpToUsdRate: 'LBP to USD Rate',
+          highlightTotalAmount18k: 'Total Amount of 18K (كسر)',
+          highlightTotalAmount21k: 'Total Amount of 21K (كسر)',
+          highlightProfitMonth: 'Profit This Month',
+          highlightProfitWeek: 'Profit This Week',
+          highlightProfitToday: 'Profit Today',
+          currencyUsdPrefix: '$',
+          currencyUsdSuffix: '',
+          currencyLbp: 'LBP',
+          weightUnit: 'g',
+          lastUpdatedPrefix: 'Last updated:',
+          loadingMessage: 'Loading latest data…',
+          errorMessage: 'Error loading data. Please try again.',
+          noDataMessage: 'No data available for the statement.'
+        },
+        ar: {
+          pageTitle: 'فيريديان أتيليه • لوحة مراقبة الذهب',
+          languageLabel: 'اللغة',
+          languageSelectAria: 'اختيار اللغة',
+          navScanner: 'الماسح',
+          navInventory: 'المخزون',
+          navSales: 'سجل المبيعات',
+          navPurchases: 'سجل المشتريات',
+          navStatement: 'بيان الذهب',
+          heroTitle: 'لوحة مراقبة مخزون الذهب',
+          heroSubtitle: 'نظرة فورية على المخزون والمبيعات والمشتريات والمؤشرات المالية.',
+          sectionInventoryByKarat: 'المخزون حسب العيار',
+          sectionTransactionsToday: 'حركات اليوم',
+          highlightTitle: 'الملخص المالي',
+          refreshButton: 'تحديث البيانات',
+          notAvailable: 'غير متوفر',
+          soldLabel: 'مباع',
+          purchasedLabel: 'مُشترى',
+          summaryTotalGoldInventory: 'إجمالي مخزون الذهب',
+          summaryTotalGoldInventorySubtitle: 'جميع الأعيرة',
+          summaryAvailableGold: 'الذهب المتاح',
+          summaryAvailableGoldSubtitle: 'جاهز للبيع',
+          summaryTodaySales: 'مبيعات اليوم',
+          summaryTodaySalesSubtitle: 'إجمالي الإيرادات',
+          summaryTodayPurchases: 'مشتريات اليوم',
+          summaryTodayPurchasesSubtitle: 'إجمالي التكاليف',
+          summaryNetProfitToday: 'صافي ربح اليوم',
+          summaryNetProfitTodaySubtitle: 'بعد المصاريف والخدمات',
+          inventory18kTitle: 'ذهب عيار 18',
+          inventory21kTitle: 'ذهب عيار 21',
+          inventory22kTitle: 'ذهب عيار 22',
+          inventory24kTitle: 'ذهب عيار 24',
+          labelTotalWeight: 'إجمالي الوزن',
+          labelSoldWeight: 'الوزن المبيع',
+          labelAvailableWeight: 'الوزن المتاح',
+          cardTodaySalesTitle: 'مبيعات اليوم',
+          cardTodayPurchasesTitle: 'مشتريات اليوم',
+          templateSold: 'الوزن المبيع من {karat}',
+          templateRevenue: 'إيرادات {karat}',
+          templatePurchased: 'الوزن المشتَرى من {karat}',
+          templateCost: 'تكلفة {karat}',
+          highlightMorningUsdBalance: 'رصيد الصباح بالدولار',
+          highlightMorningLbpBalance: 'رصيد الصباح بالليرة',
+          highlightTodayTotalMoney: 'إجمالي السيولة اليوم',
+          highlightLbpToUsdRate: 'سعر تحويل الليرة للدولار',
+          highlightTotalAmount18k: 'إجمالي قيمة عيار 18 (كسر)',
+          highlightTotalAmount21k: 'إجمالي قيمة عيار 21 (كسر)',
+          highlightProfitMonth: 'ربح هذا الشهر',
+          highlightProfitWeek: 'ربح هذا الأسبوع',
+          highlightProfitToday: 'ربح اليوم',
+          currencyUsdPrefix: '',
+          currencyUsdSuffix: 'دولار أمريكي',
+          currencyLbp: 'ل.ل',
+          weightUnit: 'غ',
+          lastUpdatedPrefix: 'آخر تحديث:',
+          loadingMessage: 'جاري تحميل أحدث البيانات…',
+          errorMessage: 'حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مجددًا.',
+          noDataMessage: 'لا توجد بيانات متاحة لهذا البيان.'
+        }
+      };
+
+      let currentLanguage = localStorage.getItem('statementLanguage') === 'ar' ? 'ar' : 'en';
+      let latestData = null;
+      let lastUpdatedTime = null;
+      let lastUpdatedStatus = 'loading';
+
+      function t(key) {
+        const langTable = translations[currentLanguage] || translations.en;
+        if (key in langTable) {
+          return langTable[key];
+        }
+        return translations.en[key] || key;
+      }
+
+      function getLocale() {
+        return currentLanguage === 'ar' ? 'ar-EG' : undefined;
+      }
+
+      function updateLanguageAttributes() {
+        document.documentElement.lang = currentLanguage === 'ar' ? 'ar' : 'en';
+        document.documentElement.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
+        document.body.classList.toggle('rtl', currentLanguage === 'ar');
+      }
+
+      function renderStaticText() {
+        document.title = t('pageTitle');
+        i18nElements.forEach(element => {
+          const key = element.getAttribute('data-i18n');
+          if (key) {
+            element.textContent = t(key);
+          }
+        });
+
+        if (languageToggle) {
+          languageToggle.value = currentLanguage;
+          languageToggle.setAttribute('aria-label', t('languageSelectAria'));
+        }
+      }
+
+      function updateLastUpdatedLabel() {
+        if (!lastUpdated) return;
+
+        switch (lastUpdatedStatus) {
+          case 'success':
+            if (lastUpdatedTime) {
+              const locale = getLocale();
+              lastUpdated.textContent = `${t('lastUpdatedPrefix')} ${lastUpdatedTime.toLocaleString(locale)}`;
+            }
+            break;
+          case 'error':
+            lastUpdated.textContent = t('errorMessage');
+            break;
+          case 'no-data':
+            lastUpdated.textContent = t('noDataMessage');
+            break;
+          default:
+            lastUpdated.textContent = t('loadingMessage');
+            break;
+        }
+      }
+
+      function setLastUpdatedStatus(status, time = null) {
+        lastUpdatedStatus = status;
+        lastUpdatedTime = time;
+        updateLastUpdatedLabel();
+      }
 
       // Format numbers with commas and fixed decimal places
       function formatNumber(value) {
-        if (typeof value !== 'number' || isNaN(value)) return 'N/A';
-        return value.toLocaleString(undefined, {
+        if (typeof value !== 'number' || isNaN(value)) return t('notAvailable');
+        return value.toLocaleString(getLocale(), {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2
         });
@@ -473,21 +740,38 @@
 
       // Format currency values
       function formatCurrency(value) {
-        if (typeof value !== 'number' || isNaN(value)) return 'N/A';
-        return '$' + formatNumber(value);
+        if (typeof value !== 'number' || isNaN(value)) return t('notAvailable');
+        const formatted = value.toLocaleString(getLocale(), {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+        const prefix = t('currencyUsdPrefix');
+        const suffix = t('currencyUsdSuffix');
+        if (prefix) {
+          return `${prefix}${formatted}`;
+        }
+        if (suffix) {
+          return `${formatted} ${suffix}`;
+        }
+        return formatted;
+      }
+
+      function formatLbp(value) {
+        if (typeof value !== 'number' || isNaN(value)) return t('notAvailable');
+        return `${formatNumber(value)} ${t('currencyLbp')}`;
       }
 
       // Format weight values
       function formatWeight(value) {
-        if (typeof value !== 'number' || isNaN(value)) return 'N/A';
-        return formatNumber(value) + ' g';
+        if (typeof value !== 'number' || isNaN(value)) return t('notAvailable');
+        return `${formatNumber(value)} ${t('weightUnit')}`;
       }
 
       // Extract numeric value from string
       function extractNumber(value) {
         if (typeof value === 'number') return value;
         if (typeof value !== 'string') return NaN;
-        
+
         // Remove any non-numeric characters except decimal point and minus sign
         const numericString = value.replace(/[^\d.-]/g, '');
         const num = parseFloat(numericString);
@@ -498,25 +782,25 @@
       function createStatCard(title, value, subtitle = '') {
         const card = document.createElement('div');
         card.className = 'stat-card';
-        
+
         const titleEl = document.createElement('p');
         titleEl.className = 'stat-card__title';
         titleEl.textContent = title;
-        
+
         const valueEl = document.createElement('p');
         valueEl.className = 'stat-card__value';
         valueEl.textContent = value;
-        
+
         card.appendChild(titleEl);
         card.appendChild(valueEl);
-        
+
         if (subtitle) {
           const subtitleEl = document.createElement('p');
           subtitleEl.className = 'stat-card__subtitle';
           subtitleEl.textContent = subtitle;
           card.appendChild(subtitleEl);
         }
-        
+
         return card;
       }
 
@@ -524,42 +808,42 @@
       function createDataCard(icon, title, data) {
         const card = document.createElement('div');
         card.className = 'data-card';
-        
+
         const header = document.createElement('div');
         header.className = 'data-card__header';
-        
+
         const iconEl = document.createElement('div');
         iconEl.className = 'data-card__icon';
         iconEl.innerHTML = icon;
-        
+
         const titleEl = document.createElement('h3');
         titleEl.className = 'data-card__title';
         titleEl.textContent = title;
-        
+
         header.appendChild(iconEl);
         header.appendChild(titleEl);
         card.appendChild(header);
-        
+
         const content = document.createElement('div');
         content.className = 'data-card__content';
-        
+
         data.forEach(item => {
           const row = document.createElement('div');
           row.className = 'data-row';
-          
+
           const label = document.createElement('span');
           label.className = 'data-label';
           label.textContent = item.label;
-          
+
           const value = document.createElement('span');
           value.className = 'data-value';
           value.textContent = item.value;
-          
+
           row.appendChild(label);
           row.appendChild(value);
           content.appendChild(row);
         });
-        
+
         card.appendChild(content);
         return card;
       }
@@ -568,56 +852,58 @@
       function createHighlightItem(label, value) {
         const item = document.createElement('div');
         item.className = 'highlight-item';
-        
+
         const labelEl = document.createElement('p');
         labelEl.className = 'highlight-label';
         labelEl.textContent = label;
-        
+
         const valueEl = document.createElement('p');
         valueEl.className = 'highlight-value';
         valueEl.textContent = value;
-        
+
         item.appendChild(labelEl);
         item.appendChild(valueEl);
         return item;
       }
 
-      // Process and display the data
-      function displayData(data) {
-        if (!Array.isArray(data) || !data.length) {
-          throw new Error('Unexpected response structure');
-        }
+      function formatWithKarat(templateKey, karat) {
+        return t(templateKey).replace('{karat}', karat);
+      }
 
-        const row = data[0];
-        
-        // Clear existing content
+      // Process and display the data
+      function renderData(data) {
         summaryStats.innerHTML = '';
         inventoryData.innerHTML = '';
         transactionData.innerHTML = '';
         financialData.innerHTML = '';
-        
+
+        if (!Array.isArray(data) || !data.length || typeof data[0] !== 'object') {
+          return false;
+        }
+
+        const row = data[0];
+
         // Extract and calculate values
         const total18kWeight = extractNumber(row['total 18k gold weight  (gram)']);
         const sold18kWeight = extractNumber(row['sold 18 k gold weight   (gram)']);
         const available18kWeight = extractNumber(row['available 18 k gold weight   (gram)']);
-        
+
         const total21kWeight = extractNumber(row['total 21k gold weight    (gram)']);
         const sold21kWeight = extractNumber(row['sold 21 k gold weight    (gram)']);
         const available21kWeight = extractNumber(row['available 21 k gold weight   (gram)']);
-        
+
         const total22kWeight = extractNumber(row['total 22k gold weight    (gram)']);
         const sold22kWeight = extractNumber(row['sold 22 k gold weight    (gram)']);
         const available22kWeight = extractNumber(row['available 22 k gold weight   (gram)']);
-        
+
         const total24kWeight = extractNumber(row['total 24k gold weight    (gram)']);
         const sold24kWeight = extractNumber(row['sold 24 k gold weight    (gram)']);
         const available24kWeight = extractNumber(row['available 24 k gold weight   (gram)']);
-        
+
         // Calculate totals
         const totalGoldWeight = total18kWeight + total21kWeight + total22kWeight + total24kWeight;
-        const totalSoldWeight = sold18kWeight + sold21kWeight + sold22kWeight + sold24kWeight;
         const totalAvailableWeight = available18kWeight + available21kWeight + available22kWeight + available24kWeight;
-        
+
         // Today's transactions
         const todaySold18kWeight = extractNumber(row['today total sold weight of 18 k (gram)']);
         const todaySold18kPrice = extractNumber(row['today total sold price of 18 k ($)']);
@@ -627,7 +913,7 @@
         const todaySold22kPrice = extractNumber(row['today total sold price of 22 k ($)']);
         const todaySold24kWeight = extractNumber(row['today total sold weight of 24 k (gram)']);
         const todaySold24kPrice = extractNumber(row['today total sold price of 24 k ($)']);
-        
+
         const todayPurchased18kWeight = extractNumber(row['today total purchased weight of 18 k (gram)']);
         const todayPurchased18kAmount = extractNumber(row['today total purchased amount of 18 k ($)']);
         const todayPurchased21kWeight = extractNumber(row['today total purchased weight of 21 k (gram)']);
@@ -636,8 +922,7 @@
         const todayPurchased22kAmount = extractNumber(row['today total purchased amount of 22 k ($)']);
         const todayPurchased24kWeight = extractNumber(row['today total purchased weight of 24 k (gram)']);
         const todayPurchased24kAmount = extractNumber(row['today total purchased amount of 24 k ($)']);
-        
-        // Financial data
+
         const outOfStoreUSD = extractNumber(row['out of the store today for services $']);
         const outOfStoreLBP = extractNumber(row['out of the store today for services LBP']);
         const liraToDollar = extractNumber(row['money from lira to dollar']);
@@ -649,171 +934,185 @@
         const profitMonth = extractNumber(row['profit this months']);
         const profitWeek = extractNumber(row['profit this week ']);
         const profitToday = extractNumber(row['profit today ']);
-        
-        // Calculate totals for today
+
         const todayTotalSoldWeight = todaySold18kWeight + todaySold21kWeight + todaySold22kWeight + todaySold24kWeight;
         const todayTotalSoldPrice = todaySold18kPrice + todaySold21kPrice + todaySold22kPrice + todaySold24kPrice;
         const todayTotalPurchasedWeight = todayPurchased18kWeight + todayPurchased21kWeight + todayPurchased22kWeight + todayPurchased24kWeight;
         const todayTotalPurchasedAmount = todayPurchased18kAmount + todayPurchased21kAmount + todayPurchased22kAmount + todayPurchased24kAmount;
-        
+
+        const soldWeightLabel = `${formatWeight(todayTotalSoldWeight)} ${t('soldLabel')}`;
+        const purchasedWeightLabel = `${formatWeight(todayTotalPurchasedWeight)} ${t('purchasedLabel')}`;
+
         // Summary Stats
         summaryStats.appendChild(createStatCard(
-          'Total Gold Inventory', 
+          t('summaryTotalGoldInventory'),
           formatWeight(totalGoldWeight),
-          'Across all karats'
-        ));
-        
-        summaryStats.appendChild(createStatCard(
-          'Available Gold', 
-          formatWeight(totalAvailableWeight),
-          'Ready for sale'
-        ));
-        
-        summaryStats.appendChild(createStatCard(
-          'Today\'s Sales', 
-          formatCurrency(todayTotalSoldPrice),
-          formatWeight(todayTotalSoldWeight) + ' sold'
-        ));
-        
-        summaryStats.appendChild(createStatCard(
-          'Today\'s Purchases',
-          formatCurrency(todayTotalPurchasedAmount),
-          formatWeight(todayTotalPurchasedWeight) + ' purchased'
+          t('summaryTotalGoldInventorySubtitle')
         ));
 
         summaryStats.appendChild(createStatCard(
-          'Net Profit Today',
-          formatCurrency(profitToday),
-          'After making fees'
+          t('summaryAvailableGold'),
+          formatWeight(totalAvailableWeight),
+          t('summaryAvailableGoldSubtitle')
         ));
-        
+
+        summaryStats.appendChild(createStatCard(
+          t('summaryTodaySales'),
+          formatCurrency(todayTotalSoldPrice),
+          soldWeightLabel
+        ));
+
+        summaryStats.appendChild(createStatCard(
+          t('summaryTodayPurchases'),
+          formatCurrency(todayTotalPurchasedAmount),
+          purchasedWeightLabel
+        ));
+
+        summaryStats.appendChild(createStatCard(
+          t('summaryNetProfitToday'),
+          formatCurrency(profitToday),
+          t('summaryNetProfitTodaySubtitle')
+        ));
+
         // Inventory Data
         inventoryData.appendChild(createDataCard(
           '18K',
-          '18 Karat Gold',
+          t('inventory18kTitle'),
           [
-            { label: 'Total Weight', value: formatWeight(total18kWeight) },
-            { label: 'Sold Weight', value: formatWeight(sold18kWeight) },
-            { label: 'Available Weight', value: formatWeight(available18kWeight) }
+            { label: t('labelTotalWeight'), value: formatWeight(total18kWeight) },
+            { label: t('labelSoldWeight'), value: formatWeight(sold18kWeight) },
+            { label: t('labelAvailableWeight'), value: formatWeight(available18kWeight) }
           ]
         ));
-        
+
         inventoryData.appendChild(createDataCard(
           '21K',
-          '21 Karat Gold',
+          t('inventory21kTitle'),
           [
-            { label: 'Total Weight', value: formatWeight(total21kWeight) },
-            { label: 'Sold Weight', value: formatWeight(sold21kWeight) },
-            { label: 'Available Weight', value: formatWeight(available21kWeight) }
+            { label: t('labelTotalWeight'), value: formatWeight(total21kWeight) },
+            { label: t('labelSoldWeight'), value: formatWeight(sold21kWeight) },
+            { label: t('labelAvailableWeight'), value: formatWeight(available21kWeight) }
           ]
         ));
-        
+
         inventoryData.appendChild(createDataCard(
           '22K',
-          '22 Karat Gold',
+          t('inventory22kTitle'),
           [
-            { label: 'Total Weight', value: formatWeight(total22kWeight) },
-            { label: 'Sold Weight', value: formatWeight(sold22kWeight) },
-            { label: 'Available Weight', value: formatWeight(available22kWeight) }
+            { label: t('labelTotalWeight'), value: formatWeight(total22kWeight) },
+            { label: t('labelSoldWeight'), value: formatWeight(sold22kWeight) },
+            { label: t('labelAvailableWeight'), value: formatWeight(available22kWeight) }
           ]
         ));
-        
+
         inventoryData.appendChild(createDataCard(
           '24K',
-          '24 Karat Gold',
+          t('inventory24kTitle'),
           [
-            { label: 'Total Weight', value: formatWeight(total24kWeight) },
-            { label: 'Sold Weight', value: formatWeight(sold24kWeight) },
-            { label: 'Available Weight', value: formatWeight(available24kWeight) }
+            { label: t('labelTotalWeight'), value: formatWeight(total24kWeight) },
+            { label: t('labelSoldWeight'), value: formatWeight(sold24kWeight) },
+            { label: t('labelAvailableWeight'), value: formatWeight(available24kWeight) }
           ]
         ));
-        
+
         // Transaction Data
         transactionData.appendChild(createDataCard(
           '💰',
-          'Today\'s Sales',
+          t('cardTodaySalesTitle'),
           [
-            { label: '18K Sold', value: formatWeight(todaySold18kWeight) },
-            { label: '18K Revenue', value: formatCurrency(todaySold18kPrice) },
-            { label: '21K Sold', value: formatWeight(todaySold21kWeight) },
-            { label: '21K Revenue', value: formatCurrency(todaySold21kPrice) },
-            { label: '22K Sold', value: formatWeight(todaySold22kWeight) },
-            { label: '22K Revenue', value: formatCurrency(todaySold22kPrice) },
-            { label: '24K Sold', value: formatWeight(todaySold24kWeight) },
-            { label: '24K Revenue', value: formatCurrency(todaySold24kPrice) }
+            { label: formatWithKarat('templateSold', '18K'), value: formatWeight(todaySold18kWeight) },
+            { label: formatWithKarat('templateRevenue', '18K'), value: formatCurrency(todaySold18kPrice) },
+            { label: formatWithKarat('templateSold', '21K'), value: formatWeight(todaySold21kWeight) },
+            { label: formatWithKarat('templateRevenue', '21K'), value: formatCurrency(todaySold21kPrice) },
+            { label: formatWithKarat('templateSold', '22K'), value: formatWeight(todaySold22kWeight) },
+            { label: formatWithKarat('templateRevenue', '22K'), value: formatCurrency(todaySold22kPrice) },
+            { label: formatWithKarat('templateSold', '24K'), value: formatWeight(todaySold24kWeight) },
+            { label: formatWithKarat('templateRevenue', '24K'), value: formatCurrency(todaySold24kPrice) }
           ]
         ));
-        
+
         transactionData.appendChild(createDataCard(
           '🛒',
-          'Today\'s Purchases',
+          t('cardTodayPurchasesTitle'),
           [
-            { label: '18K Purchased', value: formatWeight(todayPurchased18kWeight) },
-            { label: '18K Cost', value: formatCurrency(todayPurchased18kAmount) },
-            { label: '21K Purchased', value: formatWeight(todayPurchased21kWeight) },
-            { label: '21K Cost', value: formatCurrency(todayPurchased21kAmount) },
-            { label: '22K Purchased', value: formatWeight(todayPurchased22kWeight) },
-            { label: '22K Cost', value: formatCurrency(todayPurchased22kAmount) },
-            { label: '24K Purchased', value: formatWeight(todayPurchased24kWeight) },
-            { label: '24K Cost', value: formatCurrency(todayPurchased24kAmount) }
+            { label: formatWithKarat('templatePurchased', '18K'), value: formatWeight(todayPurchased18kWeight) },
+            { label: formatWithKarat('templateCost', '18K'), value: formatCurrency(todayPurchased18kAmount) },
+            { label: formatWithKarat('templatePurchased', '21K'), value: formatWeight(todayPurchased21kWeight) },
+            { label: formatWithKarat('templateCost', '21K'), value: formatCurrency(todayPurchased21kAmount) },
+            { label: formatWithKarat('templatePurchased', '22K'), value: formatWeight(todayPurchased22kWeight) },
+            { label: formatWithKarat('templateCost', '22K'), value: formatCurrency(todayPurchased22kAmount) },
+            { label: formatWithKarat('templatePurchased', '24K'), value: formatWeight(todayPurchased24kWeight) },
+            { label: formatWithKarat('templateCost', '24K'), value: formatCurrency(todayPurchased24kAmount) }
           ]
         ));
-        
+
         // Financial Data
         financialData.appendChild(createHighlightItem(
-          'Morning USD Balance',
+          t('highlightMorningUsdBalance'),
           formatCurrency(morningUSD)
         ));
-        
+
         financialData.appendChild(createHighlightItem(
-          'Morning LBP Balance',
-          formatNumber(morningLBP) + ' LBP'
+          t('highlightMorningLbpBalance'),
+          formatLbp(morningLBP)
         ));
-        
+
         financialData.appendChild(createHighlightItem(
-          'Today\'s Total Money',
+          t('highlightTodayTotalMoney'),
           formatCurrency(todayTotalMoney)
         ));
-        
+
         financialData.appendChild(createHighlightItem(
-          'LBP to USD Rate',
+          t('highlightLbpToUsdRate'),
           formatNumber(liraToDollar)
         ));
-        
+
         financialData.appendChild(createHighlightItem(
-          'Total Amount of 18K (كسر)',
+          t('highlightTotalAmount18k'),
           formatCurrency(todayDiff18k)
         ));
 
         financialData.appendChild(createHighlightItem(
-          'Total Amount of 21K (كسر)',
+          t('highlightTotalAmount21k'),
           formatCurrency(todayDiff21k)
         ));
 
         financialData.appendChild(createHighlightItem(
-          'Profit This Month',
+          t('highlightProfitMonth'),
           formatCurrency(profitMonth)
         ));
 
         financialData.appendChild(createHighlightItem(
-          'Profit This Week',
+          t('highlightProfitWeek'),
           formatCurrency(profitWeek)
         ));
 
         financialData.appendChild(createHighlightItem(
-          'Profit Today',
+          t('highlightProfitToday'),
           formatCurrency(profitToday)
         ));
-        
-        // Update last updated time
-        lastUpdated.textContent = 'Last updated: ' + new Date().toLocaleString();
+
+        return true;
+      }
+
+      function applyLanguage(language) {
+        currentLanguage = translations[language] ? language : 'en';
+        localStorage.setItem('statementLanguage', currentLanguage);
+        updateLanguageAttributes();
+        renderStaticText();
+
+        if (latestData) {
+          renderData(latestData);
+        }
+
+        updateLastUpdatedLabel();
       }
 
       // Fetch data from the secure statement API
       async function fetchData() {
         try {
           if (refreshButton) refreshButton.disabled = true;
-          lastUpdated.textContent = 'Loading latest data…';
+          setLastUpdatedStatus('loading');
 
           const response = await fetch(STATEMENT_ENDPOINT, { credentials: 'include' });
 
@@ -828,10 +1127,18 @@
           }
 
           const data = await response.json();
-          displayData(data);
+          const hasData = renderData(data);
+
+          if (hasData) {
+            latestData = data;
+            setLastUpdatedStatus('success', new Date());
+          } else {
+            latestData = null;
+            setLastUpdatedStatus('no-data');
+          }
         } catch (error) {
           console.error('Error fetching data:', error);
-          lastUpdated.textContent = 'Error loading data. Please try again.';
+          setLastUpdatedStatus('error');
         } finally {
           if (refreshButton) refreshButton.disabled = false;
         }
@@ -839,17 +1146,30 @@
 
       // Initialize the page
       function initialize() {
+        updateLanguageAttributes();
+        renderStaticText();
+        updateLastUpdatedLabel();
         fetchData();
+
         if (refreshButton) {
           refreshButton.addEventListener('click', fetchData);
+        }
+
+        if (languageToggle) {
+          languageToggle.addEventListener('change', event => {
+            applyLanguage(event.target.value);
+          });
         }
 
         // Auto-refresh every 5 minutes
         setInterval(fetchData, 5 * 60 * 1000);
       }
 
+      // Apply persisted language preference before initialization
+      applyLanguage(currentLanguage);
       initialize();
     })();
   </script>
+
 </body>
 </html>
