@@ -79,6 +79,46 @@
       flex-wrap: wrap;
     }
 
+    .language-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(37, 150, 190, 0.2);
+      box-shadow: inset 0 0 0 1px rgba(37, 150, 190, 0.12);
+    }
+
+    .language-toggle select {
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent-dark);
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      padding: 0;
+    }
+
+    .language-toggle select option {
+      color: var(--text);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     .brand-logo {
       height: 56px;
       width: auto;
@@ -317,6 +357,48 @@
       color: var(--muted);
     }
 
+    body.rtl {
+      direction: rtl;
+      font-family: 'Amiri', 'Inter', system-ui, -apple-system, Segoe UI, sans-serif;
+    }
+
+    body.rtl header {
+      text-align: right;
+      align-items: flex-end;
+    }
+
+    body.rtl .header-top {
+      justify-content: flex-start;
+    }
+
+    body.rtl .page-nav {
+      direction: rtl;
+      justify-content: flex-end;
+    }
+
+    body.rtl .filter-form,
+    body.rtl .quick-filters {
+      flex-direction: row-reverse;
+    }
+
+    body.rtl .clear-btn {
+      margin-left: 0;
+      margin-right: auto;
+    }
+
+    body.rtl table {
+      direction: rtl;
+    }
+
+    body.rtl th,
+    body.rtl td {
+      text-align: right;
+    }
+
+    body.rtl td::before {
+      text-align: left;
+    }
+
     @media (max-width: 720px) {
       .header-top { justify-content: center; }
       .page-nav {
@@ -370,34 +452,41 @@
       <div class="header-top">
         <img src="../assets/logo-website-test.jpg" alt="Veridian Atelier logo" class="brand-logo" />
         <nav class="page-nav" aria-label="Workspace navigation">
-          <a class="nav-link" href="./index.html">Scanner</a>
-          <a class="nav-link" href="./items.html">Inventory</a>
-          <a class="nav-link" href="./sales.html">Sales log</a>
-          <a class="nav-link active" href="./purchases.html" aria-current="page">Purchase log</a>
-          <a class="nav-link" href="./statement.html">Gold statement</a>
+          <a class="nav-link" href="./index.html" data-i18n="navScanner">Scanner</a>
+          <a class="nav-link" href="./items.html" data-i18n="navInventory">Inventory</a>
+          <a class="nav-link" href="./sales.html" data-i18n="navSales">Sales log</a>
+          <a class="nav-link active" href="./purchases.html" aria-current="page" data-i18n="navPurchases">Purchase log</a>
+          <a class="nav-link" href="./statement.html" data-i18n="navStatement">Gold statement</a>
         </nav>
+        <div class="language-toggle">
+          <label for="languageToggle" class="sr-only" data-i18n="languageLabel">Language</label>
+          <select id="languageToggle" aria-label="Select language">
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
       </div>
-      <h1 class="hero-title">Purchase log</h1>
-      <p class="hero-subtitle">Audit today&apos;s purchased gold, including karat, weight, and how much was paid for every entry.</p>
+      <h1 class="hero-title" data-i18n="heroTitle">Purchase log</h1>
+      <p class="hero-subtitle" data-i18n="heroSubtitle">Audit today&apos;s purchased gold, including karat, weight, and how much was paid for every entry.</p>
     </header>
 
-    <section class="glass-card filter-card" aria-label="Purchase filters">
+    <section class="glass-card filter-card" id="filtersSection" aria-label="Purchase filters">
       <form id="filterForm" class="filter-form" novalidate>
-        <label for="purchaseDateFilter">Filter by purchase date</label>
+        <label for="purchaseDateFilter" data-i18n="filterLabel">Filter by purchase date</label>
         <div class="filter-input-group">
           <input type="date" id="purchaseDateFilter" name="purchaseDate" />
-          <div class="quick-filters" role="group" aria-label="Quick date filters">
-            <button type="button" class="quick-filter-btn" data-quick-filter="today">Today</button>
-            <button type="button" class="quick-filter-btn" data-quick-filter="yesterday">Yesterday</button>
-            <button type="button" class="quick-filter-btn" data-quick-filter="week">This week</button>
+          <div class="quick-filters" id="quickFiltersGroup" role="group" aria-label="Quick date filters">
+            <button type="button" class="quick-filter-btn" data-quick-filter="today" data-i18n="filterToday">Today</button>
+            <button type="button" class="quick-filter-btn" data-quick-filter="yesterday" data-i18n="filterYesterday">Yesterday</button>
+            <button type="button" class="quick-filter-btn" data-quick-filter="week" data-i18n="filterWeek">This week</button>
           </div>
         </div>
-        <button type="button" id="clearFilterBtn" class="clear-btn">Clear</button>
+        <button type="button" id="clearFilterBtn" class="clear-btn" data-i18n="filterClear">Clear</button>
       </form>
       <p id="purchaseStats" class="purchase-stats">Loading purchases…</p>
     </section>
 
-    <section class="glass-card table-card" aria-label="Purchase log">
+    <section class="glass-card table-card" id="tableSection" aria-label="Purchase log">
       <div id="purchaseLoading" class="loading" role="status">Loading purchase history…</div>
       <div id="purchaseError" class="error-message" hidden role="alert"></div>
       <p id="purchaseEmpty" class="empty-state" hidden>No purchases recorded yet.</p>
@@ -405,11 +494,11 @@
         <table class="purchase-table">
           <thead>
             <tr>
-              <th scope="col">Timestamp</th>
-              <th scope="col">Entry type</th>
-              <th scope="col">Weight (g)</th>
-              <th scope="col">Karat</th>
-              <th scope="col">Amount paid</th>
+              <th scope="col" data-i18n="tableTimestamp">Timestamp</th>
+              <th scope="col" data-i18n="tableType">Entry type</th>
+              <th scope="col" data-i18n="tableWeight">Weight (g)</th>
+              <th scope="col" data-i18n="tableKarat">Karat</th>
+              <th scope="col" data-i18n="tableAmount">Amount paid</th>
             </tr>
           </thead>
           <tbody id="purchaseTableBody"></tbody>
@@ -418,9 +507,11 @@
     </section>
   </div>
 
+
   <script>
     (function () {
       const PURCHASES_ENDPOINT = '/api/purchases';
+
       const filterForm = document.getElementById('filterForm');
       const dateInput = document.getElementById('purchaseDateFilter');
       const quickButtons = Array.from(document.querySelectorAll('.quick-filter-btn'));
@@ -431,9 +522,18 @@
       const emptyEl = document.getElementById('purchaseEmpty');
       const loadingEl = document.getElementById('purchaseLoading');
       const errorEl = document.getElementById('purchaseError');
+      const languageToggle = document.getElementById('languageToggle');
+      const filtersSection = document.getElementById('filtersSection');
+      const tableSection = document.getElementById('tableSection');
+      const quickFiltersGroup = document.getElementById('quickFiltersGroup');
+      const i18nElements = document.querySelectorAll('[data-i18n]');
 
       let allPurchases = [];
+      let currentFilteredEntries = [];
+      let currentFilter = { dateStr: '', quickLabel: '' };
       let activeQuickFilter = '';
+      let statsState = { type: 'loading', filter: { dateStr: '', quickLabel: '' } };
+      let errorState = { visible: false, type: 'none', message: '' };
 
       const WEEK_LENGTH = 7;
 
@@ -442,6 +542,150 @@
       const KEY_WEIGHT = 'Gold Weight (grams) | وزن الذهب (غرام)';
       const KEY_KARAT = 'Karat (Purity) | العيار';
       const KEY_AMOUNT = 'كمية النقود المدفوعة';
+
+      const translations = {
+        en: {
+          pageTitle: 'Veridian Atelier • Purchase Log',
+          languageLabel: 'Language',
+          languageSelectAria: 'Select language',
+          navScanner: 'Scanner',
+          navInventory: 'Inventory',
+          navSales: 'Sales log',
+          navPurchases: 'Purchase log',
+          navStatement: 'Gold statement',
+          heroTitle: 'Purchase log',
+          heroSubtitle: "Audit today's purchased gold, including karat, weight, and how much was paid for every entry.",
+          filterLabel: 'Filter by purchase date',
+          quickFiltersAria: 'Quick date filters',
+          filterToday: 'Today',
+          filterYesterday: 'Yesterday',
+          filterWeek: 'This week',
+          filterClear: 'Clear',
+          statsLoading: 'Loading purchases…',
+          statsNoPurchases: 'No purchases recorded yet.',
+          statsNoMatches: 'No purchases match the selected filter ({description}).',
+          statsSummarySingle: 'Showing {count} purchase',
+          statsSummaryPlural: 'Showing {count} purchases',
+          statsSummaryWeight: '{weight} g total weight',
+          statsSummaryAmount: '{amount} total paid',
+          statsSummaryWithDescription: '{summary} ({description})',
+          statsSeparator: ' • ',
+          filterDescriptionToday: 'today',
+          filterDescriptionYesterday: 'yesterday',
+          filterDescriptionWeek: 'this week',
+          loadingMessage: 'Loading purchase history…',
+          errorGeneric: 'Unable to load purchase history.',
+          errorStats: 'Unable to load purchases.',
+          tableTimestamp: 'Timestamp',
+          tableType: 'Entry type',
+          tableWeight: 'Weight (g)',
+          tableKarat: 'Karat',
+          tableAmount: 'Amount paid',
+          emptyState: 'No purchases recorded yet.',
+          purchaseSectionAria: 'Purchase log',
+          filtersSectionAria: 'Purchase filters'
+        },
+        ar: {
+          pageTitle: 'Veridian Atelier • سجل المشتريات',
+          languageLabel: 'اللغة',
+          languageSelectAria: 'اختيار اللغة',
+          navScanner: 'الماسح',
+          navInventory: 'المخزون',
+          navSales: 'سجل المبيعات',
+          navPurchases: 'سجل المشتريات',
+          navStatement: 'بيان الذهب',
+          heroTitle: 'سجل المشتريات',
+          heroSubtitle: 'راجع مشتريات الذهب اليوم بما في ذلك العيار والوزن والمبلغ المدفوع لكل إدخال.',
+          filterLabel: 'تصفية حسب تاريخ الشراء',
+          quickFiltersAria: 'مرشحات التواريخ السريعة',
+          filterToday: 'اليوم',
+          filterYesterday: 'أمس',
+          filterWeek: 'هذا الأسبوع',
+          filterClear: 'مسح',
+          statsLoading: 'جاري تحميل المشتريات…',
+          statsNoPurchases: 'لم يتم تسجيل أي مشتريات بعد.',
+          statsNoMatches: 'لا توجد مشتريات مطابقة لمرشح البحث المحدد ({description}).',
+          statsSummarySingle: 'عرض عملية شراء واحدة',
+          statsSummaryPlural: 'عرض {count} عمليات شراء',
+          statsSummaryWeight: 'إجمالي الوزن {weight} غرام',
+          statsSummaryAmount: 'إجمالي المدفوع {amount}',
+          statsSummaryWithDescription: '{summary} ({description})',
+          statsSeparator: ' • ',
+          filterDescriptionToday: 'اليوم',
+          filterDescriptionYesterday: 'أمس',
+          filterDescriptionWeek: 'هذا الأسبوع',
+          loadingMessage: 'جاري تحميل سجل المشتريات…',
+          errorGeneric: 'تعذر تحميل سجل المشتريات.',
+          errorStats: 'تعذر تحميل بيانات المشتريات.',
+          tableTimestamp: 'الطابع الزمني',
+          tableType: 'نوع الإدخال',
+          tableWeight: 'الوزن (غرام)',
+          tableKarat: 'العيار',
+          tableAmount: 'المبلغ المدفوع',
+          emptyState: 'لم يتم تسجيل أي مشتريات بعد.',
+          purchaseSectionAria: 'سجل المشتريات',
+          filtersSectionAria: 'مرشحات المشتريات'
+        }
+      };
+
+      let currentLanguage = localStorage.getItem('statementLanguage') === 'ar' ? 'ar' : 'en';
+
+      function t(key, replacements) {
+        const langTable = translations[currentLanguage] || translations.en;
+        const template = key in langTable ? langTable[key] : translations.en[key] || key;
+        if (!replacements) return template;
+        return template.replace(/\{(\w+)\}/g, (match, token) => {
+          if (token in replacements) {
+            return replacements[token];
+          }
+          return match;
+        });
+      }
+
+      function getLocale() {
+        return currentLanguage === 'ar' ? 'ar-EG' : undefined;
+      }
+
+      function updateLanguageAttributes() {
+        document.documentElement.lang = currentLanguage === 'ar' ? 'ar' : 'en';
+        document.documentElement.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
+        document.body.classList.toggle('rtl', currentLanguage === 'ar');
+      }
+
+      function renderStaticText() {
+        document.title = t('pageTitle');
+        i18nElements.forEach((element) => {
+          const key = element.getAttribute('data-i18n');
+          if (key) {
+            element.textContent = t(key);
+          }
+        });
+
+        if (languageToggle) {
+          languageToggle.value = currentLanguage;
+          languageToggle.setAttribute('aria-label', t('languageSelectAria'));
+        }
+
+        if (filtersSection) {
+          filtersSection.setAttribute('aria-label', t('filtersSectionAria'));
+        }
+
+        if (tableSection) {
+          tableSection.setAttribute('aria-label', t('purchaseSectionAria'));
+        }
+
+        if (quickFiltersGroup) {
+          quickFiltersGroup.setAttribute('aria-label', t('quickFiltersAria'));
+        }
+      }
+      function updateLoadingAndEmptyText() {
+        if (loadingEl && !loadingEl.hidden) {
+          loadingEl.textContent = t('loadingMessage');
+        }
+        if (emptyEl && !emptyEl.hidden) {
+          emptyEl.textContent = t('emptyState');
+        }
+      }
 
       function normalizeEntry(entry) {
         const normalized = {};
@@ -490,7 +734,7 @@
 
       function formatDateTime(date) {
         if (!date || Number.isNaN(date.getTime())) return '';
-        return date.toLocaleString(undefined, {
+        return date.toLocaleString(getLocale(), {
           year: 'numeric',
           month: 'short',
           day: 'numeric',
@@ -501,25 +745,29 @@
 
       function formatWeight(weight) {
         if (weight === null || weight === undefined || Number.isNaN(weight)) return '—';
-        return `${weight.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        return `${weight.toLocaleString(getLocale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       }
 
       function formatAmount(amount) {
         if (amount === null || amount === undefined || Number.isNaN(amount)) return '—';
-        return amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        return amount.toLocaleString(getLocale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       }
 
       function describeFilter(dateStr, quickLabel) {
         if (quickLabel) {
-          if (quickLabel === 'today') return 'today';
-          if (quickLabel === 'yesterday') return 'yesterday';
-          if (quickLabel === 'week') return 'this week';
+          if (quickLabel === 'today') return t('filterDescriptionToday');
+          if (quickLabel === 'yesterday') return t('filterDescriptionYesterday');
+          if (quickLabel === 'week') return t('filterDescriptionWeek');
         }
         if (!dateStr) return '';
         try {
           const date = new Date(`${dateStr}T00:00:00`);
           if (!Number.isNaN(date.getTime())) {
-            return date.toLocaleDateString();
+            return date.toLocaleDateString(getLocale(), {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            });
           }
         } catch (error) {
           return '';
@@ -527,50 +775,93 @@
         return '';
       }
 
-      function renderStats(entries, dateStr, quickLabel) {
-        if (!entries.length) {
-          const description = describeFilter(dateStr, quickLabel);
-          statsEl.textContent = description
-            ? `No purchases match the selected filter (${description}).`
-            : 'No purchases recorded yet.';
-          return;
+      function buildStatsSummary(state) {
+        const countFormatted = state.count.toLocaleString(getLocale());
+        const countKey = state.count === 1 ? 'statsSummarySingle' : 'statsSummaryPlural';
+        const summaryParts = [t(countKey, { count: countFormatted })];
+
+        if (state.totalWeight) {
+          const weightFormatted = formatWeight(state.totalWeight);
+          summaryParts.push(t('statsSummaryWeight', { weight: weightFormatted }));
         }
 
-        const totalWeight = entries.reduce((sum, entry) => sum + (entry.weight || 0), 0);
-        const totalAmount = entries.reduce((sum, entry) => sum + (entry.amount || 0), 0);
-        const description = describeFilter(dateStr, quickLabel);
-        const parts = [`Showing ${entries.length} purchase${entries.length === 1 ? '' : 's'}`];
-        if (totalWeight) {
-          parts.push(`${totalWeight.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} g total weight`);
+        if (state.totalAmount) {
+          const amountFormatted = formatAmount(state.totalAmount);
+          summaryParts.push(t('statsSummaryAmount', { amount: amountFormatted }));
         }
-        if (totalAmount) {
-          parts.push(`${totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} total paid`);
+
+        const summary = summaryParts.join(t('statsSeparator'));
+        const description = describeFilter(state.filter?.dateStr || '', state.filter?.quickLabel || '');
+        return description ? t('statsSummaryWithDescription', { summary, description }) : summary;
+      }
+
+      function updateStatsText() {
+        if (!statsEl) return;
+
+        switch (statsState.type) {
+          case 'loading':
+            statsEl.textContent = t('statsLoading');
+            break;
+          case 'empty':
+            statsEl.textContent = t('statsNoPurchases');
+            break;
+          case 'noMatch': {
+            const description = describeFilter(statsState.filter?.dateStr || '', statsState.filter?.quickLabel || '');
+            statsEl.textContent = description ? t('statsNoMatches', { description }) : t('statsNoPurchases');
+            break;
+          }
+          case 'summary':
+            statsEl.textContent = buildStatsSummary(statsState);
+            break;
+          case 'error':
+            statsEl.textContent = t('errorStats');
+            break;
+          default:
+            statsEl.textContent = '';
+            break;
         }
-        statsEl.textContent = description ? `${parts.join(' • ')} (${description})` : parts.join(' • ');
       }
 
       function clearTable() {
-        while (tableBody.firstChild) {
+        while (tableBody && tableBody.firstChild) {
           tableBody.removeChild(tableBody.firstChild);
         }
       }
 
       function renderTable(entries) {
+        if (!tableBody) return;
         clearTable();
         if (!entries.length) return;
-        for (const entry of entries) {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td data-label="Timestamp">${entry.timestamp ? formatDateTime(entry.timestamp) : (entry.timestampString || '—')}</td>
-            <td data-label="Entry type">${entry.type || '—'}</td>
-            <td data-label="Weight (g)">${formatWeight(entry.weight)}</td>
-            <td data-label="Karat">${entry.karat || '—'}</td>
-            <td data-label="Amount paid">${formatAmount(entry.amount)}</td>
-          `;
-          tableBody.appendChild(row);
-        }
-      }
 
+        const labels = {
+          timestamp: t('tableTimestamp'),
+          type: t('tableType'),
+          weight: t('tableWeight'),
+          karat: t('tableKarat'),
+          amount: t('tableAmount')
+        };
+
+        entries.forEach((entry) => {
+          const row = document.createElement('tr');
+
+          const cells = [
+            { label: labels.timestamp, value: entry.timestamp ? formatDateTime(entry.timestamp) : entry.timestampString || '—' },
+            { label: labels.type, value: entry.type || '—' },
+            { label: labels.weight, value: formatWeight(entry.weight) },
+            { label: labels.karat, value: entry.karat || '—' },
+            { label: labels.amount, value: formatAmount(entry.amount) }
+          ];
+
+          cells.forEach(({ label, value }) => {
+            const cell = document.createElement('td');
+            cell.setAttribute('data-label', label);
+            cell.textContent = value;
+            row.appendChild(cell);
+          });
+
+          tableBody.appendChild(row);
+        });
+      }
       function setQuickFilterState(active) {
         activeQuickFilter = active;
         quickButtons.forEach((button) => {
@@ -585,11 +876,14 @@
       }
 
       function applyFilter({ dateStr = '', quickLabel = '' } = {}) {
+        currentFilter = { dateStr, quickLabel };
         setQuickFilterState(quickLabel);
-        if (dateStr) {
-          dateInput.value = dateStr;
-        } else if (!quickLabel) {
-          dateInput.value = '';
+        if (dateInput) {
+          if (dateStr) {
+            dateInput.value = dateStr;
+          } else if (!quickLabel) {
+            dateInput.value = '';
+          }
         }
 
         const subset = dateStr
@@ -598,18 +892,35 @@
             ? filterByWeek(allPurchases)
             : allPurchases.slice();
 
-        const hasResults = subset.length > 0;
-        renderStats(subset, dateStr, quickLabel);
+        currentFilteredEntries = subset;
 
-        if (hasResults) {
-          tableWrapper.hidden = false;
-          emptyEl.hidden = true;
+        if (subset.length) {
+          statsState = {
+            type: 'summary',
+            count: subset.length,
+            totalWeight: subset.reduce((sum, entry) => sum + (entry.weight || 0), 0),
+            totalAmount: subset.reduce((sum, entry) => sum + (entry.amount || 0), 0),
+            filter: { dateStr, quickLabel }
+          };
+          if (tableWrapper) tableWrapper.hidden = false;
+          if (emptyEl) {
+            emptyEl.hidden = true;
+          }
           renderTable(subset);
         } else {
-          tableWrapper.hidden = true;
-          emptyEl.hidden = false;
+          const hasDescription = Boolean(describeFilter(dateStr, quickLabel));
+          statsState = hasDescription
+            ? { type: 'noMatch', filter: { dateStr, quickLabel } }
+            : { type: 'empty', filter: { dateStr, quickLabel } };
+          if (tableWrapper) tableWrapper.hidden = true;
+          if (emptyEl) {
+            emptyEl.textContent = t('emptyState');
+            emptyEl.hidden = false;
+          }
           clearTable();
         }
+
+        updateStatsText();
       }
 
       function filterByWeek(entries) {
@@ -633,6 +944,7 @@
       }
 
       function setDateToToday() {
+        if (!dateInput) return;
         const todayKey = toDateKey(new Date());
         if (todayKey) {
           dateInput.value = todayKey;
@@ -640,14 +952,24 @@
       }
 
       async function fetchPurchases() {
-        loadingEl.hidden = false;
-        tableWrapper.hidden = true;
-        emptyEl.hidden = true;
-        errorEl.hidden = true;
-        statsEl.textContent = 'Loading purchases…';
-
         try {
-          const response = await fetch(PURCHASES_ENDPOINT, { credentials: 'include' });
+          if (loadingEl) {
+            loadingEl.hidden = false;
+            loadingEl.textContent = t('loadingMessage');
+          }
+          if (emptyEl) emptyEl.hidden = true;
+          if (tableWrapper) tableWrapper.hidden = true;
+          if (errorEl) errorEl.hidden = true;
+          errorState = { visible: false, type: 'none', message: '' };
+          statsState = { type: 'loading', filter: currentFilter };
+          updateStatsText();
+
+          const response = await fetch(PURCHASES_ENDPOINT, {
+            credentials: 'include',
+            headers: {
+              'Cache-Control': 'no-cache'
+            }
+          });
 
           if (response.status === 401) {
             sessionStorage.removeItem('authenticated');
@@ -705,40 +1027,56 @@
           const todayKey = toDateKey(new Date());
           const hasToday = allPurchases.some((entry) => entry.dateKey === todayKey);
 
-          loadingEl.hidden = true;
+          if (loadingEl) loadingEl.hidden = true;
 
           if (!allPurchases.length) {
-            statsEl.textContent = 'No purchases recorded yet.';
-            emptyEl.hidden = false;
-            tableWrapper.hidden = true;
+            statsState = { type: 'empty', filter: { dateStr: '', quickLabel: '' } };
+            updateStatsText();
+            if (emptyEl) {
+              emptyEl.textContent = t('emptyState');
+              emptyEl.hidden = false;
+            }
+            if (tableWrapper) tableWrapper.hidden = true;
             return;
           }
 
           if (hasToday && todayKey) {
             applyFilter({ dateStr: todayKey, quickLabel: 'today' });
           } else {
-            dateInput.value = '';
+            if (dateInput) dateInput.value = '';
             applyFilter();
           }
         } catch (error) {
           console.error('Failed to load purchase log:', error);
-          loadingEl.hidden = true;
-          tableWrapper.hidden = true;
-          emptyEl.hidden = true;
-          errorEl.hidden = false;
-          errorEl.textContent = error?.message || 'Unable to load purchase history.';
-          statsEl.textContent = 'Unable to load purchases.';
+          if (loadingEl) loadingEl.hidden = true;
+          if (tableWrapper) tableWrapper.hidden = true;
+          if (emptyEl) emptyEl.hidden = true;
+          if (errorEl) {
+            errorEl.hidden = false;
+            const message = error?.message || '';
+            const isCustom = Boolean(message);
+            errorEl.textContent = message || t('errorGeneric');
+            errorState = {
+              visible: true,
+              type: isCustom ? 'custom' : 'default',
+              message
+            };
+          }
+          statsState = { type: 'error', filter: currentFilter };
+          updateStatsText();
         }
       }
-
       function handleDateChange() {
+        if (!dateInput) return;
         const value = dateInput.value;
         setQuickFilterState('');
         applyFilter({ dateStr: value, quickLabel: '' });
       }
 
       function handleClear() {
-        dateInput.value = '';
+        if (dateInput) {
+          dateInput.value = '';
+        }
         applyFilter();
       }
 
@@ -748,7 +1086,7 @@
 
         if (quickFilter === 'today') {
           setDateToToday();
-          applyFilter({ dateStr: dateInput.value, quickLabel: 'today' });
+          applyFilter({ dateStr: dateInput ? dateInput.value : '', quickLabel: 'today' });
           return;
         }
 
@@ -756,7 +1094,7 @@
           const date = new Date();
           date.setDate(date.getDate() - 1);
           const key = toDateKey(date);
-          if (key) {
+          if (key && dateInput) {
             dateInput.value = key;
             applyFilter({ dateStr: key, quickLabel: 'yesterday' });
           }
@@ -764,16 +1102,47 @@
         }
 
         if (quickFilter === 'week') {
-          dateInput.value = '';
+          if (dateInput) {
+            dateInput.value = '';
+          }
           applyFilter({ dateStr: '', quickLabel: 'week' });
         }
       }
 
+      function applyLanguage(language) {
+        currentLanguage = translations[language] ? language : 'en';
+        localStorage.setItem('statementLanguage', currentLanguage);
+        updateLanguageAttributes();
+        renderStaticText();
+        updateStatsText();
+        updateLoadingAndEmptyText();
+        renderTable(currentFilteredEntries);
+
+        if (errorState.visible && errorEl) {
+          if (errorState.type === 'default') {
+            errorEl.textContent = t('errorGeneric');
+          } else {
+            errorEl.textContent = errorState.message;
+          }
+        }
+      }
+
       filterForm.addEventListener('submit', (event) => event.preventDefault());
-      dateInput.addEventListener('change', handleDateChange);
-      clearBtn.addEventListener('click', handleClear);
+      if (dateInput) {
+        dateInput.addEventListener('change', handleDateChange);
+      }
+      if (clearBtn) {
+        clearBtn.addEventListener('click', handleClear);
+      }
       quickButtons.forEach((button) => button.addEventListener('click', handleQuickFilter));
 
+      if (languageToggle) {
+        languageToggle.addEventListener('change', (event) => {
+          applyLanguage(event.target.value);
+        });
+      }
+
+      applyLanguage(currentLanguage);
       setDateToToday();
       fetchPurchases();
     })();
