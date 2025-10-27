@@ -35,20 +35,36 @@ export default async function handler(req, res) {
     if (!process.env.SELL_API_URL) return res.status(500).json({ error: 'SELL_API_URL not set' });
     if (!process.env.SELL_API_TOKEN) return res.status(500).json({ error: 'SELL_API_TOKEN not set' });
 
+    const trimmedSku = String(sku).trim();
+    const trimmedEmployee = String(employee).trim();
+    const safeNotes = typeof notes === 'string' ? notes : '';
+    const saleTimestamp = timestamp
+      ? String(timestamp).trim()
+      : new Date().toISOString();
+    const availabilityValue = availability
+      ? String(availability).trim()
+      : 'No';
+
+    const salePayload = {
+      sku: trimmedSku,
+      employee: trimmedEmployee,
+      soldBy: trimmedEmployee,
+      price: numPrice,
+      soldPrice: numPrice,
+      notes: safeNotes,
+      availability: availabilityValue,
+      status: availabilityValue,
+      timestamp: saleTimestamp,
+      soldDate: saleTimestamp
+    };
+
     const upstream = await fetch(process.env.SELL_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-Token': process.env.SELL_API_TOKEN
       },
-      body: JSON.stringify({
-        sku: String(sku).trim(),
-        employee: String(employee).trim(),
-        price: numPrice,
-        notes: notes ?? '',
-        timestamp: timestamp ?? ''
-        // Remove 'availability' since your Apps Script doesn't use it
-      })
+      body: JSON.stringify(salePayload)
     });
 
     const text = await upstream.text(); // read text so we can show real reason
