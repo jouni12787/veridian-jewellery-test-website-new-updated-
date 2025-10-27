@@ -4,6 +4,21 @@ async function parseJSONBody(req) {
     if (typeof req.body === 'string') {
       try { return JSON.parse(req.body); } catch { return {}; }
     }
+    if (
+      Buffer.isBuffer(req.body) ||
+      req.body instanceof Uint8Array ||
+      req.body instanceof ArrayBuffer
+    ) {
+      try {
+        const rawBuffer = Buffer.isBuffer(req.body) ? req.body : Buffer.from(req.body);
+        return JSON.parse(rawBuffer.toString('utf8'));
+      } catch {
+        return {};
+      }
+    }
+    if (typeof req.body === 'object') {
+      return req.body;
+    }
     return req.body;
   }
   const chunks = [];
