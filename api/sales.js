@@ -139,15 +139,17 @@ async function handlePost(req, res) {
     });
 
     const text = await upstream.text();
-    if (!upstream.ok) {
-      let parsed;
+    let parsedBody = null;
+    if (text) {
       try {
-        parsed = text ? JSON.parse(text) : null;
+        parsedBody = JSON.parse(text);
       } catch (err) {
-        parsed = null;
+        parsedBody = null;
       }
+    }
 
-      const details = parsed?.error ?? parsed ?? text.slice(0, 500);
+    if (!upstream.ok) {
+      const details = parsedBody?.error ?? parsedBody ?? text.slice(0, 500);
       const payload = { error: `Upstream failed ${upstream.status}`, details };
 
       if (upstream.status === 401) {
@@ -158,12 +160,38 @@ async function handlePost(req, res) {
       return res.status(502).json(payload);
     }
 
-    try {
-      const data = text ? JSON.parse(text) : {};
-      return res.status(200).json({ success: true, data });
-    } catch {
-      return res.status(200).json({ success: true, message: text });
+    if (parsedBody && typeof parsedBody === 'object') {
+      const successField = parsedBody.success;
+      const okField = parsedBody.ok;
+      const statusField = typeof parsedBody.status === 'string'
+        ? parsedBody.status.trim().toLowerCase()
+        : '';
+      const errorField = parsedBody.error;
+
+      const hasExplicitFailure =
+        (typeof successField === 'boolean' && successField === false) ||
+        (typeof successField === 'string' && successField.trim().toLowerCase() === 'false') ||
+        (typeof okField === 'boolean' && okField === false) ||
+        (statusField && ['error', 'failed', 'fail', 'unauthorized', 'forbidden'].includes(statusField)) ||
+        (typeof errorField === 'string' && errorField.trim().length > 0) ||
+        (errorField && typeof errorField === 'object');
+
+      if (hasExplicitFailure) {
+        const message =
+          (typeof errorField === 'string' && errorField.trim().length > 0)
+            ? errorField.trim()
+            : (typeof parsedBody.message === 'string' && parsedBody.message.trim().length > 0)
+              ? parsedBody.message.trim()
+              : 'Sales endpoint indicated a failure.';
+
+        console.error('Sales submit reported failure despite 2xx response:', parsedBody);
+        return res.status(502).json({ error: message, details: parsedBody });
+      }
+
+      return res.status(200).json({ success: true, data: parsedBody });
     }
+
+    return res.status(200).json({ success: true, message: text });
   } catch (e) {
     console.error('Sale handler error:', e);
     return res.status(500).json({ error: 'Internal server error' });
