@@ -115,6 +115,7 @@ async function handlePost(req, res) {
       : 'No';
 
     const salePayload = {
+      token: SALES_SUBMIT_TOKEN,
       sku: trimmedSku,
       employee: trimmedEmployee,
       soldBy: trimmedEmployee,
