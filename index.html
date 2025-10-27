@@ -150,23 +150,15 @@
     </form>
   </main>
   <script>
-    async function redirectIfAuthenticated() {
+    async function clearExistingSession() {
       try {
-        const response = await fetch('/api/session', { credentials: 'include' });
-        if (!response.ok) {
-          return;
-        }
-
-        const data = await response.json();
-        if (data?.authenticated) {
-          window.location.replace('app/index.html');
-        }
+        await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
       } catch (error) {
-        console.warn('Unable to verify session status.', error);
+        console.warn('Unable to clear existing session.', error);
       }
     }
 
-    redirectIfAuthenticated();
+    clearExistingSession();
 
     const FORM = document.getElementById('loginForm');
     const PASSWORD_FIELD = document.getElementById('password');
