@@ -123,8 +123,6 @@
       border: 1px solid rgba(37, 150, 190, 0.25);
       box-shadow: 0 18px 32px -22px rgba(37, 150, 190, 0.45);
       max-width: 100%;
-      flex: 1 1 auto;
-      min-width: 0;
       overflow-x: auto;
       overflow-y: hidden;
       scroll-snap-type: x proximity;
@@ -531,8 +529,18 @@
       font-size: 0.95rem;
     }
     @media (max-width: 720px) {
-      .header-top { justify-content: center; }
-      body.rtl .header-top { justify-content: center; }
+      header {
+        text-align: center;
+        align-items: center;
+      }
+      .header-top {
+        width: 100%;
+        display: grid;
+        justify-items: center;
+      }
+      body.rtl .header-top {
+        justify-items: center;
+      }
       .page-nav {
         width: 100%;
         justify-content: flex-start;
