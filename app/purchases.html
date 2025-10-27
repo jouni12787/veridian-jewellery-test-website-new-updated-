@@ -20,7 +20,35 @@
     http-equiv="Content-Security-Policy"
     content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self' https://api.gold-api.com; child-src 'self' https://drive.google.com https://*.googleusercontent.com; frame-src 'self' https://drive.google.com https://*.googleusercontent.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
   >
-  <script>if (sessionStorage.getItem('authenticated') !== 'true') { window.location.replace('../index.html'); }</script>
+  <script>
+    window.__redirectToLogin = function redirectToLogin() {
+      window.location.replace('../index.html');
+    };
+
+    window.handleUnauthorized = async function handleUnauthorized() {
+      try {
+        await fetch('../api/logout', { method: 'POST', credentials: 'include' });
+      } catch (error) {
+        console.warn('Failed to notify logout.', error);
+      }
+      window.__redirectToLogin();
+    };
+
+    (async () => {
+      try {
+        const response = await fetch('../api/session', { credentials: 'include' });
+        if (!response.ok) {
+          throw new Error('Session invalid');
+        }
+        const data = await response.json();
+        if (!data?.authenticated) {
+          throw new Error('Unauthenticated');
+        }
+      } catch (error) {
+        window.__redirectToLogin();
+      }
+    })();
+  </script>
   <style>
     :root {
       --pad: 18px;
@@ -984,8 +1012,7 @@
           });
 
           if (response.status === 401) {
-            sessionStorage.removeItem('authenticated');
-            window.location.replace('../index.html');
+            window.handleUnauthorized?.();
             return;
           }
 

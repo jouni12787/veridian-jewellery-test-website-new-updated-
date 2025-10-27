@@ -18,7 +18,35 @@
     http-equiv="Content-Security-Policy"
     content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self' https://api.gold-api.com; child-src 'self' https://drive.google.com https://*.googleusercontent.com; frame-src 'self' https://drive.google.com https://*.googleusercontent.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
   >
-  <script>if (sessionStorage.getItem('authenticated') !== 'true') { window.location.replace('../index.html'); }</script>
+  <script>
+    window.__redirectToLogin = function redirectToLogin() {
+      window.location.replace('../index.html');
+    };
+
+    window.handleUnauthorized = async function handleUnauthorized() {
+      try {
+        await fetch('../api/logout', { method: 'POST', credentials: 'include' });
+      } catch (error) {
+        console.warn('Failed to notify logout.', error);
+      }
+      window.__redirectToLogin();
+    };
+
+    (async () => {
+      try {
+        const response = await fetch('../api/session', { credentials: 'include' });
+        if (!response.ok) {
+          throw new Error('Session invalid');
+        }
+        const data = await response.json();
+        if (!data?.authenticated) {
+          throw new Error('Unauthenticated');
+        }
+      } catch (error) {
+        window.__redirectToLogin();
+      }
+    })();
+  </script>
   <style>
     :root {
       --pad: 18px;
@@ -2451,26 +2479,6 @@
     };
   }
 
-async function login(password) {
-  try {
-    console.log('Sending login request...');
-    const response = await fetch(AUTH_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ password })
-    });
-
-    const result = await response.json();
-    console.log('Login response:', result);
-    return result;
-  } catch (error) {
-    console.error('Login fetch error:', error);
-    return { success: false, error: t('loginNetworkError') };
-  }
-}
-
 async function fetchInventory() {
   try {
     console.log('Fetching inventory...');
@@ -2481,6 +2489,7 @@ async function fetchInventory() {
     if (!response.ok) {
       if (response.status === 401) {
         showToast(t('toastAuthRequired'), 'error');
+        window.handleUnauthorized?.();
         throw new Error(t('errorAuthFailed'));
       }
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -2542,30 +2551,6 @@ async function recordSale(saleData) {
   }
 }
 
-// Add this debug function
-async function testSaleAPI() {
-  const testData = {
-    sku: '100001',
-    employee: 'Test Employee',
-    price: '1000',
-    notes: 'Test sale',
-    token: 'ghandourjuwelrytOasASDWaaa124w'
-  };
-
-  console.log('Testing sale API with:', testData);
-
-  try {
-    const result = await recordSale(testData);
-    console.log('Test API response:', result);
-    return result;
-  } catch (error) {
-    console.error('Test API error:', error);
-    return { error: error.message };
-  }
-}
-
-
- 
   // ========= SHEET STATE / HELPERS =========
   let sheetRows = [];
   let skuIndex = new Map();
@@ -3558,8 +3543,7 @@ async function testSaleAPI() {
           const errorMessage = result?.error || result?.details?.error || t('errorSaleGeneric');
           if (result?.status === 401) {
             showToast(t('toastSessionExpired'), 'error');
-            try { sessionStorage.removeItem('authenticated'); } catch {}
-            setTimeout(() => { window.location.replace('../index.html'); }, 1200);
+            setTimeout(() => { window.handleUnauthorized?.(); }, 600);
           } else {
             showToast(errorMessage, 'error');
           }

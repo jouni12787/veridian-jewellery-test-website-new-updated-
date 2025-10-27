@@ -150,10 +150,23 @@
     </form>
   </main>
   <script>
-    // Check if already authenticated
-    if (sessionStorage.getItem('authenticated') === 'true') {
-      window.location.replace('app/index.html');
+    async function redirectIfAuthenticated() {
+      try {
+        const response = await fetch('/api/session', { credentials: 'include' });
+        if (!response.ok) {
+          return;
+        }
+
+        const data = await response.json();
+        if (data?.authenticated) {
+          window.location.replace('app/index.html');
+        }
+      } catch (error) {
+        console.warn('Unable to verify session status.', error);
+      }
     }
+
+    redirectIfAuthenticated();
 
     const FORM = document.getElementById('loginForm');
     const PASSWORD_FIELD = document.getElementById('password');
@@ -173,7 +186,8 @@
       try {
         const response = await fetch('/api/auth', {
           method: 'POST',
-          headers: { 
+          credentials: 'same-origin',
+          headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ 
@@ -184,9 +198,9 @@
         const data = await response.json();
 
         if (response.ok && data.success) {
-          sessionStorage.setItem('authenticated', 'true');
           window.location.href = 'app/index.html';
         } else {
+          ERROR.textContent = data?.message || 'Incorrect password. Please try again.';
           ERROR.classList.add('visible');
           PASSWORD_FIELD.value = '';
           PASSWORD_FIELD.focus();
