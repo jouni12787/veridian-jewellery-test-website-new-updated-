@@ -699,7 +699,7 @@
         ...(window.APP_CONFIG && typeof window.APP_CONFIG === 'object' ? window.APP_CONFIG : {})
       });
 
-      const INVENTORY_ENDPOINT = APP_CONFIG.inventoryEndpoint;
+      const SALES_ENDPOINT = APP_CONFIG.salesEndpoint;
 
       const statsEl = document.getElementById('salesStats');
       const tableBody = document.getElementById('salesTableBody');
@@ -1583,7 +1583,7 @@
       async function loadSales() {
         setLoading(true);
         try {
-          const response = await fetch(INVENTORY_ENDPOINT, { credentials: 'include' });
+          const response = await fetch(SALES_ENDPOINT, { credentials: 'include' });
           if (response.status === 401) {
             window.handleUnauthorized?.();
             return;
