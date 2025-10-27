@@ -2970,11 +2970,11 @@ async function recordSale(saleData) {
     }
 
     // Use the direct image URL for Google Drive
-    const imgSrc = `https://drive.google.com/uc?export=view&id=${id}`;
+    const imgSrc = `https://drive.google.com/uc?export=download&id=${id}`;
     const iframeSrc = `https://drive.google.com/file/d/${id}/preview`;
 
     return {
-      html: `<img id="itemPhoto" src="${imgSrc}" alt="Item photo" crossorigin="anonymous" onerror="this.style.display='none'">`,
+      html: `<img id="itemPhoto" src="${imgSrc}" alt="Item photo" crossorigin="anonymous" referrerpolicy="no-referrer" onerror="this.style.display='none'">`,
       id,
       iframeSrc
     };
@@ -3026,15 +3026,93 @@ async function recordSale(saleData) {
     renderScanHistory();
   }
 
- async function loadSheet() {
-  try {
-    const data = await fetchInventory();
-    processSheetData(data);
-  } catch (error) {
-    showToast(t('toastAuthRequired'), 'error');
-    // Redirect to login or show auth overlay
+  async function loadSheet() {
+    try {
+      const data = await fetchInventory();
+      processSheetData(data);
+    } catch (error) {
+      showToast(t('toastAuthRequired'), 'error');
+      // Redirect to login or show auth overlay
+    }
   }
-}
+
+  function applyLocalSaleUpdate(skuValue, {
+    availability = 'Sold',
+    employee = '',
+    timestamp = '',
+    priceDisplay = '',
+    notes = ''
+  } = {}) {
+    const normalizedSku = normalizeSku(skuValue);
+    if (!normalizedSku) return null;
+
+    const existing = skuIndex.get(normalizedSku);
+    if (!existing) return null;
+
+    const clone = { ...existing };
+
+    const setMatchingKeys = (matcher, value) => {
+      if (typeof value === 'undefined') return;
+      for (const key of Object.keys(clone)) {
+        if (matcher(key)) {
+          clone[key] = value;
+        }
+      }
+    };
+
+    setMatchingKeys((key) => {
+      const lower = key.toLowerCase();
+      return key === 'availability' || lower.includes('status') || key.includes('حالة');
+    }, availability);
+
+    setMatchingKeys((key) => {
+      const lower = key.toLowerCase();
+      return key === 'soldby'
+        || lower.includes('soldby')
+        || lower.includes('sold by')
+        || key.includes('أسم البائع')
+        || key.includes('اسم البائع');
+    }, employee);
+
+    setMatchingKeys((key) => {
+      const lower = key.toLowerCase();
+      return key === 'solddate'
+        || lower.includes('solddate')
+        || lower.includes('sale date')
+        || key.includes('تاريخ المبيع');
+    }, timestamp);
+
+    setMatchingKeys((key) => {
+      const lower = key.toLowerCase();
+      return key === 'soldprice'
+        || lower.includes('soldprice')
+        || lower.includes('sell price')
+        || lower.includes('sale price')
+        || lower.includes('sold amount')
+        || lower.includes('sale amount')
+        || key.includes('مبلغ البيع');
+    }, priceDisplay);
+
+    setMatchingKeys((key) => {
+      const lower = key.toLowerCase();
+      return key === 'notes' || lower.includes('notes') || key.includes('ملاحظات');
+    }, notes);
+
+    clone['availability'] = availability;
+    clone['soldby'] = employee;
+    clone['solddate'] = timestamp;
+    clone['soldprice'] = priceDisplay;
+    clone['notes'] = notes;
+
+    skuIndex.set(normalizedSku, clone);
+
+    const existingIndex = sheetRows.findIndex((row) => normalizeSku(row[skuKeyName]) === normalizedSku);
+    if (existingIndex !== -1) {
+      sheetRows[existingIndex] = clone;
+    }
+
+    return clone;
+  }
 
   function readScanHistory() {
     try {
@@ -3503,14 +3581,6 @@ async function recordSale(saleData) {
       const notesInput = prompt(t('promptNotes'));
       const notes = notesInput ? String(notesInput).trim() : "";
 
-      const saleContext = {
-        sku: String(sku),
-        employee,
-        priceDisplay: priceText,
-        notes,
-        defaultStatus: 'Sold'
-      };
-
       try {
         const formatSaleTimestamp = (date = new Date()) => {
           const pad = (value) => String(value).padStart(2, '0');
@@ -3518,6 +3588,15 @@ async function recordSale(saleData) {
         };
 
         const timestamp = formatSaleTimestamp();
+
+        const saleContext = {
+          sku: String(sku),
+          employee,
+          priceDisplay: priceText,
+          notes,
+          defaultStatus: 'Sold',
+          soldDate: timestamp
+        };
 
         const result = await recordSale({
           sku: String(sku),
@@ -3531,11 +3610,35 @@ async function recordSale(saleData) {
         console.log("Sale API reply:", result);
 
         if (result?.success) {
-          await loadSheet(); // refresh Inventory JSON
-          const latest = skuIndex.get(normalizeSku(String(sku)));
+          const normalizedSku = normalizeSku(String(sku));
+          const optimisticRow = applyLocalSaleUpdate(sku, {
+            availability: saleContext.defaultStatus,
+            employee,
+            timestamp,
+            priceDisplay: saleContext.priceDisplay,
+            notes
+          });
+
+          let displayRow = optimisticRow || null;
+
+          if (optimisticRow) {
+            renderItem(optimisticRow);
+          }
+
+          try {
+            await loadSheet(); // refresh Inventory JSON
+          } catch (refreshError) {
+            console.warn('Inventory refresh after sale failed:', refreshError);
+          }
+
+          const latest = skuIndex.get(normalizedSku);
           if (latest) {
             renderItem(latest);
-            notifySaleRecorded(latest, saleContext);
+            displayRow = latest;
+          }
+
+          if (displayRow) {
+            notifySaleRecorded(displayRow, saleContext);
           } else {
             notifySaleRecorded(null, saleContext);
           }
