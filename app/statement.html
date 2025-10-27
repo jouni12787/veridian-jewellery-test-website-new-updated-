@@ -13,7 +13,35 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#2596be">
-  <script>if (sessionStorage.getItem('authenticated') !== 'true') { window.location.replace('../index.html'); }</script>
+  <script>
+    window.__redirectToLogin = function redirectToLogin() {
+      window.location.replace('../index.html');
+    };
+
+    window.handleUnauthorized = async function handleUnauthorized() {
+      try {
+        await fetch('../api/logout', { method: 'POST', credentials: 'include' });
+      } catch (error) {
+        console.warn('Failed to notify logout.', error);
+      }
+      window.__redirectToLogin();
+    };
+
+    (async () => {
+      try {
+        const response = await fetch('../api/session', { credentials: 'include' });
+        if (!response.ok) {
+          throw new Error('Session invalid');
+        }
+        const data = await response.json();
+        if (!data?.authenticated) {
+          throw new Error('Unauthenticated');
+        }
+      } catch (error) {
+        window.__redirectToLogin();
+      }
+    })();
+  </script>
   <style>
     :root {
       --pad: 18px;
@@ -1117,8 +1145,7 @@
           const response = await fetch(STATEMENT_ENDPOINT, { credentials: 'include' });
 
           if (response.status === 401) {
-            sessionStorage.removeItem('authenticated');
-            window.location.replace('../index.html');
+            window.handleUnauthorized?.();
             return;
           }
 
