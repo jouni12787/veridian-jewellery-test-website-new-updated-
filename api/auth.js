@@ -7,24 +7,33 @@ const rateLimitState = new Map();
 
 function getClientKey(req) {
   const forwarded = req.headers['x-forwarded-for'];
+  let ip = 'unknown';
   if (typeof forwarded === 'string' && forwarded.length > 0) {
-    return forwarded.split(',')[0].trim();
+    ip = forwarded.split(',')[0].trim();
+  } else if (req.socket?.remoteAddress) {
+    ip = req.socket.remoteAddress;
   }
-  return req.socket?.remoteAddress || 'unknown';
+
+  const userAgent = req.headers['user-agent'] || 'unknown-user-agent';
+  const secChUa = req.headers['sec-ch-ua'] || 'unknown-ch-ua';
+
+  return `${ip}|${userAgent}|${secChUa}`;
 }
 
-function isRateLimited(key, now) {
+function consumeRateLimit(key, now) {
   const entry = rateLimitState.get(key);
   if (!entry || entry.reset <= now) {
-    rateLimitState.set(key, { count: 1, reset: now + RATE_LIMIT_WINDOW_MS });
-    return false;
+    const reset = now + RATE_LIMIT_WINDOW_MS;
+    rateLimitState.set(key, { count: 1, reset });
+    return { limited: false, retryAfterMs: reset - now };
   }
 
   entry.count += 1;
   if (entry.count > RATE_LIMIT_ATTEMPTS) {
-    return true;
+    return { limited: true, retryAfterMs: Math.max(0, entry.reset - now) };
   }
-  return false;
+
+  return { limited: false, retryAfterMs: Math.max(0, entry.reset - now) };
 }
 
 function clearRateLimitOnSuccess(key) {
@@ -72,10 +81,27 @@ export default async function handler(req, res) {
 
   const clientKey = getClientKey(req);
   const now = Date.now();
-  if (isRateLimited(clientKey, now)) {
-    return res
-      .status(429)
-      .json({ success: false, message: 'Too many attempts. Please try again later.' });
+  const rateLimit = consumeRateLimit(clientKey, now);
+  if (rateLimit.limited) {
+    const retryAfterSeconds = Math.max(1, Math.ceil(rateLimit.retryAfterMs / 1000));
+    const minutes = Math.floor(retryAfterSeconds / 60);
+    const seconds = retryAfterSeconds % 60;
+    const parts = [];
+    if (minutes > 0) {
+      parts.push(`${minutes} minute${minutes === 1 ? '' : 's'}`);
+    }
+    if (seconds > 0) {
+      parts.push(`${seconds} second${seconds === 1 ? '' : 's'}`);
+    }
+    const waitString = parts.join(' and ') || 'a moment';
+
+    res.setHeader('Retry-After', String(retryAfterSeconds));
+
+    return res.status(429).json({
+      success: false,
+      message: `Too many attempts. Please try again in ${waitString}.`,
+      retryAfterSeconds
+    });
   }
 
   try {
