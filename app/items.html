@@ -580,6 +580,15 @@
       box-shadow: 0 25px 48px -20px rgba(37, 150, 190, 0.45);
     }
 
+    .item-card[data-interactive="true"] {
+      cursor: pointer;
+    }
+
+    .item-card:focus-visible {
+      outline: 3px solid rgba(37, 150, 190, 0.45);
+      outline-offset: 4px;
+    }
+
     .item-card__media {
       position: relative;
       border-radius: 18px;
@@ -806,6 +815,85 @@
       color: var(--muted);
       text-align: center;
       font-size: 0.98rem;
+    }
+
+    .item-details-dialog {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(20px, 6vw, 40px);
+      background: rgba(15, 42, 52, 0.45);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .item-details-dialog.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .item-details-dialog__surface {
+      position: relative;
+      width: min(540px, 100%);
+      max-height: min(90vh, 720px);
+      overflow: hidden auto;
+      border-radius: 30px;
+      border: 1px solid rgba(37, 150, 190, 0.28);
+      background: linear-gradient(140deg, rgba(255, 255, 255, 0.96) 0%, rgba(229, 246, 251, 0.92) 100%);
+      box-shadow: 0 40px 70px -35px rgba(37, 150, 190, 0.6);
+      padding: clamp(20px, 4vw, 32px);
+      display: grid;
+      gap: clamp(18px, 3vw, 26px);
+    }
+
+    .item-details-dialog__close {
+      position: absolute;
+      top: 16px;
+      inset-inline-end: 16px;
+      border: none;
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent-dark);
+      cursor: pointer;
+      box-shadow: 0 14px 32px -20px rgba(37, 150, 190, 0.45);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .item-details-dialog__close:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 20px 36px -24px rgba(37, 150, 190, 0.5);
+    }
+
+    .item-details-dialog__close:focus-visible {
+      outline: 2px solid rgba(37, 150, 190, 0.6);
+      outline-offset: 3px;
+    }
+
+    .item-details-dialog__body {
+      display: grid;
+    }
+
+    .item-details-dialog__body .item-card {
+      box-shadow: none;
+      border: 1px solid rgba(37, 150, 190, 0.28);
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    .item-details-dialog__body .item-card:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    body.dialog-open {
+      overflow: hidden;
     }
     body.rtl {
       direction: rtl;
@@ -1058,6 +1146,23 @@
     </section>
   </div>
 
+  <div
+    class="item-details-dialog"
+    id="itemDetailsDialog"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+    aria-labelledby="itemDetailsHeading"
+  >
+    <div class="item-details-dialog__surface" role="document">
+      <h2 class="sr-only" id="itemDetailsHeading" data-i18n="detailsHeading">Item details</h2>
+      <button type="button" class="item-details-dialog__close" id="itemDetailsClose" data-i18n="detailsClose">
+        Close details
+      </button>
+      <div class="item-details-dialog__body" id="itemDetailsContainer"></div>
+    </div>
+  </div>
+
   <script>
     (function () {
       'use strict';
@@ -1094,6 +1199,9 @@
       const languageToggle = document.getElementById('languageToggle');
       const filtersSection = document.getElementById('filtersSection');
       const resultsSection = document.getElementById('resultsSection');
+      const itemDetailsDialog = document.getElementById('itemDetailsDialog');
+      const itemDetailsContainer = document.getElementById('itemDetailsContainer');
+      const itemDetailsClose = document.getElementById('itemDetailsClose');
       const i18nElements = document.querySelectorAll('[data-i18n]');
 
       const translations = {
@@ -1148,6 +1256,8 @@
           resultsCountSingular: '{count} item',
           resultsCountPlural: '{count} items',
           resetFilters: 'Reset filters',
+          detailsHeading: 'Item details',
+          detailsClose: 'Close details',
           viewModeCompact: 'Compact',
           goldStatusWithPrice: 'Gold price {price}',
           goldStatusUpdated: 'updated {time}',
@@ -1228,6 +1338,8 @@
           resultsCountSingular: '{count} قطعة',
           resultsCountPlural: '{count} قطع',
           resetFilters: 'إعادة تعيين المرشحات',
+          detailsHeading: 'تفاصيل القطعة',
+          detailsClose: 'إغلاق التفاصيل',
           viewModeCompact: 'عرض مضغوط',
           goldStatusWithPrice: 'سعر الذهب {price}',
           goldStatusUpdated: 'تم التحديث في {time}',
@@ -1458,6 +1570,11 @@
         refreshStatusText();
         refreshResultsCount();
         refreshEmptyMessage();
+        if (isItemDetailsOpen() && lastOpenedDetailsRow && itemDetailsContainer) {
+          itemDetailsContainer.innerHTML = '';
+          const detailCard = createItemCard(lastOpenedDetailsRow, 'detailed', { interactive: false, role: 'article' });
+          itemDetailsContainer.appendChild(detailCard);
+        }
         if (state.dataLoaded) {
           applyFilters();
         }
@@ -1523,6 +1640,9 @@
         categoryKey: null,
         dataLoaded: false
       };
+
+      let lastFocusedDetailsTrigger = null;
+      let lastOpenedDetailsRow = null;
 
       function normalizeDigits(value = '') {
         return String(value ?? '')
@@ -2113,10 +2233,17 @@
         return wrapper;
       }
 
-      function createItemCard(row) {
+      function createItemCard(row, viewMode = state.viewMode, options = {}) {
+        const { interactive = viewMode === 'compact', role = 'listitem' } = options;
         const card = document.createElement('article');
-        card.className = `item-card item-card--${state.viewMode}`;
-        card.setAttribute('role', 'listitem');
+        card.className = `item-card item-card--${viewMode}`;
+        card.setAttribute('role', role);
+        if (interactive) {
+          card.dataset.interactive = 'true';
+          card.tabIndex = 0;
+          card.setAttribute('aria-haspopup', 'dialog');
+          card.setAttribute('aria-expanded', 'false');
+        }
 
         const media = document.createElement('div');
         media.className = 'item-card__media';
@@ -2229,7 +2356,7 @@
         }
         metaList.appendChild(primaryMeta);
 
-        if (state.viewMode === 'detailed') {
+        if (viewMode === 'detailed') {
           const secondaryMeta = document.createElement('div');
           secondaryMeta.className = 'item-card__meta-row';
           if (row.__fees) {
@@ -2256,7 +2383,7 @@
 
         body.appendChild(metaList);
 
-        if (state.viewMode === 'detailed' && row.__description) {
+        if (viewMode === 'detailed' && row.__description) {
           const description = document.createElement('p');
           description.className = 'item-card__description';
           description.textContent = row.__description;
@@ -2284,8 +2411,92 @@
         }
 
         card.appendChild(body);
+
+        if (interactive) {
+          const handleClick = () => {
+            openItemDetails(row, card);
+          };
+
+          const handleKeydown = (event) => {
+            const key = event.key;
+            if (key !== 'Enter' && key !== ' ') {
+              return;
+            }
+            event.preventDefault();
+            openItemDetails(row, card);
+          };
+
+          card.addEventListener('click', handleClick);
+          card.addEventListener('keydown', handleKeydown);
+        }
+
         return card;
       }
+
+      function isItemDetailsOpen() {
+        return Boolean(itemDetailsDialog && itemDetailsDialog.classList.contains('is-visible'));
+      }
+
+      function openItemDetails(row, triggerElement) {
+        if (!itemDetailsDialog || !itemDetailsContainer) return;
+
+        lastFocusedDetailsTrigger = triggerElement instanceof HTMLElement ? triggerElement : null;
+        if (lastFocusedDetailsTrigger) {
+          lastFocusedDetailsTrigger.setAttribute('aria-expanded', 'true');
+        }
+
+        lastOpenedDetailsRow = row;
+
+        itemDetailsContainer.innerHTML = '';
+        const detailCard = createItemCard(row, 'detailed', { interactive: false, role: 'article' });
+        itemDetailsContainer.appendChild(detailCard);
+
+        itemDetailsDialog.classList.add('is-visible');
+        itemDetailsDialog.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('dialog-open');
+
+        if (itemDetailsClose) {
+          itemDetailsClose.focus();
+        }
+      }
+
+      function closeItemDetails() {
+        if (!itemDetailsDialog || !itemDetailsContainer) return;
+
+        itemDetailsDialog.classList.remove('is-visible');
+        itemDetailsDialog.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('dialog-open');
+        itemDetailsContainer.innerHTML = '';
+
+        if (lastFocusedDetailsTrigger && document.body.contains(lastFocusedDetailsTrigger)) {
+          lastFocusedDetailsTrigger.setAttribute('aria-expanded', 'false');
+          lastFocusedDetailsTrigger.focus();
+        }
+
+        lastFocusedDetailsTrigger = null;
+        lastOpenedDetailsRow = null;
+      }
+
+      if (itemDetailsDialog) {
+        itemDetailsDialog.addEventListener('click', (event) => {
+          if (event.target === itemDetailsDialog) {
+            closeItemDetails();
+          }
+        });
+      }
+
+      if (itemDetailsClose) {
+        itemDetailsClose.addEventListener('click', () => {
+          closeItemDetails();
+        });
+      }
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && isItemDetailsOpen()) {
+          event.preventDefault();
+          closeItemDetails();
+        }
+      });
 
       function renderItems() {
         if (!itemsGrid) return;
