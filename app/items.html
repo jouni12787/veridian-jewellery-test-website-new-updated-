@@ -843,12 +843,30 @@
       max-height: min(90vh, 720px);
       overflow: hidden auto;
       border-radius: 30px;
-      border: 1px solid rgba(37, 150, 190, 0.28);
-      background: linear-gradient(140deg, rgba(255, 255, 255, 0.96) 0%, rgba(229, 246, 251, 0.92) 100%);
-      box-shadow: 0 40px 70px -35px rgba(37, 150, 190, 0.6);
+      border: 1px solid rgba(37, 150, 190, 0.3);
+      border-inline-end: 2px solid rgba(37, 150, 190, 0.48);
+      background:
+        radial-gradient(circle at 100% 18%, rgba(37, 150, 190, 0.16), transparent 55%),
+        linear-gradient(140deg, rgba(255, 255, 255, 0.97) 0%, rgba(229, 246, 251, 0.93) 100%);
+      box-shadow:
+        0 40px 70px -35px rgba(37, 150, 190, 0.6),
+        20px 0 36px -28px rgba(37, 150, 190, 0.5),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.45);
       padding: clamp(20px, 4vw, 32px);
       display: grid;
       gap: clamp(18px, 3vw, 26px);
+    }
+
+    .item-details-dialog__surface::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      border-inline-end: 1px solid rgba(19, 94, 120, 0.55);
+      box-shadow: inset -12px 0 22px -20px rgba(37, 150, 190, 0.45);
+      mix-blend-mode: multiply;
+      opacity: 0.8;
     }
 
     .item-details-dialog__close {
