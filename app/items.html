@@ -1040,18 +1040,6 @@
         </div>
         <p class="sort-options__current" id="sortSelection" aria-live="polite" data-i18n-dynamic>Sorting by Price (Low to High)</p>
       </fieldset>
-      <div class="view-toggle" role="radiogroup" aria-label="Display mode" id="viewToggleGroup">
-        <label class="toggle-pill">
-          <input type="radio" name="viewMode" value="compact" checked>
-          <span class="toggle-pill__surface" aria-hidden="true"></span>
-          <span class="toggle-pill__label" data-i18n="viewModeCompact">Compact</span>
-        </label>
-        <label class="toggle-pill">
-          <input type="radio" name="viewMode" value="detailed">
-          <span class="toggle-pill__surface" aria-hidden="true"></span>
-          <span class="toggle-pill__label" data-i18n="viewModeDetailed">Detailed</span>
-        </label>
-      </div>
       <div class="status-row">
         <div id="itemsStatus" aria-live="polite" data-i18n="statusLoading" data-i18n-dynamic>Loading inventory…</div>
         <div id="goldStatus" aria-live="polite"></div>
@@ -1096,7 +1084,6 @@
       const priceMinInput = document.getElementById('priceMin');
       const priceMaxInput = document.getElementById('priceMax');
       const resetFiltersBtn = document.getElementById('resetFilters');
-      const viewModeInputs = document.querySelectorAll('input[name="viewMode"]');
       const sortGroup = document.querySelector('[data-sort-group]');
       const sortButtons = Array.from(document.querySelectorAll('[data-sort-button]'));
       const sortSelection = document.getElementById('sortSelection');
@@ -1107,7 +1094,6 @@
       const languageToggle = document.getElementById('languageToggle');
       const filtersSection = document.getElementById('filtersSection');
       const resultsSection = document.getElementById('resultsSection');
-      const viewToggleGroup = document.getElementById('viewToggleGroup');
       const i18nElements = document.querySelectorAll('[data-i18n]');
 
       const translations = {
@@ -1163,8 +1149,6 @@
           resultsCountPlural: '{count} items',
           resetFilters: 'Reset filters',
           viewModeCompact: 'Compact',
-          viewModeDetailed: 'Detailed',
-          viewToggleAria: 'Display mode',
           goldStatusWithPrice: 'Gold price {price}',
           goldStatusUpdated: 'updated {time}',
           goldStatusUnavailable: 'Gold price unavailable — prices shown use sheet data only.',
@@ -1245,8 +1229,6 @@
           resultsCountPlural: '{count} قطع',
           resetFilters: 'إعادة تعيين المرشحات',
           viewModeCompact: 'عرض مضغوط',
-          viewModeDetailed: 'عرض تفصيلي',
-          viewToggleAria: 'وضع العرض',
           goldStatusWithPrice: 'سعر الذهب {price}',
           goldStatusUpdated: 'تم التحديث في {time}',
           goldStatusUnavailable: 'تعذر الحصول على سعر الذهب — يتم استخدام بيانات الجدول فقط.',
@@ -1354,10 +1336,6 @@
 
         if (sortGroup) {
           sortGroup.setAttribute('aria-label', t('sortAriaLabel'));
-        }
-
-        if (viewToggleGroup) {
-          viewToggleGroup.setAttribute('aria-label', t('viewToggleAria'));
         }
 
         if (priceMinInput) {
@@ -2469,14 +2447,6 @@
         priceMinInput.addEventListener('input', applyFilters);
         priceMaxInput.addEventListener('input', applyFilters);
         resetFiltersBtn.addEventListener('click', resetFilters);
-        viewModeInputs.forEach((input) => {
-          input.addEventListener('change', (event) => {
-            if (event.target.checked) {
-              state.viewMode = event.target.value === 'detailed' ? 'detailed' : 'compact';
-              renderItems();
-            }
-          });
-        });
         if (sortButtons.length) {
           const findButtonByIndex = (targetIndex) =>
             sortButtons.find((button) => Number.parseInt(button.getAttribute('data-sort-index'), 10) === targetIndex);
