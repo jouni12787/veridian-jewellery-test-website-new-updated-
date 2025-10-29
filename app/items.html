@@ -565,6 +565,11 @@
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
+    .item-card--highlight {
+      box-shadow: 0 0 0 3px rgba(37, 150, 190, 0.35), 0 25px 48px -20px rgba(37, 150, 190, 0.45);
+      transform: translateY(-1px);
+    }
+
     .item-card--compact {
       grid-template-rows: auto 1fr;
       padding: 14px;
@@ -751,13 +756,13 @@
       justify-self: start;
       color: var(--accent-dark);
       font-weight: 600;
-      text-align: left;
+      text-align: start;
       word-break: break-word;
     }
 
     .item-card--compact .item-card__meta {
       justify-items: center;
-      text-align: left;
+      text-align: start;
     }
 
     .item-card--compact .item-card__meta-entry {
@@ -804,6 +809,103 @@
       border: 1px solid rgba(37, 150, 190, 0.25);
       color: var(--accent-dark);
       font-weight: 600;
+    }
+
+    .search-container {
+      display: grid;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .search-container input {
+      width: 100%;
+      border-radius: 16px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1.5px solid rgba(31, 127, 160, 0.16);
+      transition: all 0.3s ease;
+    }
+
+    .search-container input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 150, 190, 0.18);
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .search-container label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .search-results {
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: var(--shadow);
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .search-results[hidden] {
+      display: none;
+    }
+
+    .search-results button.search-result {
+      display: flex;
+      flex-direction: column;
+      text-align: start;
+      gap: 6px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(37, 150, 190, 0.24);
+      border-radius: 16px;
+      color: var(--text);
+      font-weight: 500;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .search-results button.search-result:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px -16px rgba(37, 150, 190, 0.35);
+      border-color: rgba(37, 150, 190, 0.45);
+    }
+
+    .search-results button.search-result:focus-visible {
+      outline: 3px solid rgba(37, 150, 190, 0.45);
+      outline-offset: 2px;
+    }
+
+    .search-result-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .search-result-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .search-empty {
+      margin: 0;
+      text-align: center;
+      padding: 26px 18px;
+      color: var(--warm-gray);
+      font-style: italic;
+      background: rgba(37, 150, 190, 0.08);
+      border-radius: 16px;
+      border: 2px dashed rgba(37, 150, 190, 0.2);
+    }
+
+    .search-results__summary {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--muted);
     }
 
     .empty-state {
@@ -1044,6 +1146,18 @@
       </div>
       <h1 class="hero-title" data-i18n="heroTitle">Inventory explorer</h1>
       <p class="hero-subtitle" data-i18n="heroSubtitle">Browse the current collection, refine by category and target price, and pick the layout that suits the conversation.</p>
+      <div class="search-container">
+        <label class="sr-only" for="inventorySearch" data-i18n="searchLabel">Search inventory</label>
+        <input
+          type="search"
+          id="inventorySearch"
+          name="inventory-search"
+          placeholder="Search items by SKU, category, or description…"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <div id="inventorySearchResults" class="search-results" hidden aria-live="polite"></div>
+      </div>
     </header>
 
     <section class="glass-card filter-card" id="filtersSection" aria-label="Inventory filters">
@@ -1231,6 +1345,9 @@
       const resultsCount = document.getElementById('resultsCount');
       const itemsStatus = document.getElementById('itemsStatus');
       const goldStatus = document.getElementById('goldStatus');
+      const searchInput = document.getElementById('inventorySearch');
+      const searchResultsEl = document.getElementById('inventorySearchResults');
+      const searchLabel = document.querySelector('[data-i18n="searchLabel"]');
       const languageToggle = document.getElementById('languageToggle');
       const filtersSection = document.getElementById('filtersSection');
       const resultsSection = document.getElementById('resultsSection');
@@ -1252,6 +1369,17 @@
           heroTitle: 'Inventory explorer',
           heroSubtitle:
             'Browse the current collection, refine by category and target price, and pick the layout that suits the conversation.',
+          searchLabel: 'Search inventory',
+          searchPlaceholder: 'Search items by SKU, category, or description…',
+          searchHint: 'Type at least two characters to search the inventory.',
+          searchLoading: 'Inventory still loading…',
+          searchNoMatches: 'No items match this search. Adjust the filters or try another term.',
+          searchHiddenMatches: 'All matching items are hidden by the current filters.',
+          searchSummary: '{count} matches shown below.',
+          searchSummarySingular: '1 match shown below.',
+          searchSummaryFiltered: '{visible} of {total} matches shown with current filters.',
+          searchMoreMatches: '+{count} more matches available in the grid.',
+          searchMoreMatchesSingular: '+1 more match available in the grid.',
           filtersSectionAria: 'Inventory filters',
           filterCategoryLabel: 'Category',
           filterCategoryAll: 'All categories',
@@ -1334,6 +1462,17 @@
           heroTitle: 'مستكشف المخزون',
           heroSubtitle:
             'تصفح التشكيلة الحالية، وقم بتصفية النتائج حسب الفئة والسعر المستهدف، واختر العرض الأنسب للحوار.',
+          searchLabel: 'ابحث في المخزون',
+          searchPlaceholder: 'ابحث عن القطع برمز الصنف أو الفئة أو الوصف…',
+          searchHint: 'اكتب حرفين على الأقل لبدء البحث في المخزون.',
+          searchLoading: 'لا يزال المخزون قيد التحميل…',
+          searchNoMatches: 'لا توجد قطع مطابقة لهذا البحث. عدّل المرشحات أو جرّب عبارة أخرى.',
+          searchHiddenMatches: 'جميع القطع المطابقة مخفية بسبب المرشحات الحالية.',
+          searchSummary: '{count} نتيجة معروضة أدناه.',
+          searchSummarySingular: 'نتيجة واحدة معروضة أدناه.',
+          searchSummaryFiltered: '{visible} من {total} نتيجة معروضة وفقًا للمرشحات الحالية.',
+          searchMoreMatches: '+{count} نتيجة إضافية متاحة ضمن الشبكة.',
+          searchMoreMatchesSingular: '+نتيجة إضافية واحدة متاحة ضمن الشبكة.',
           filtersSectionAria: 'مرشحات المخزون',
           filterCategoryLabel: 'الفئة',
           filterCategoryAll: 'جميع الفئات',
@@ -1491,6 +1630,13 @@
         if (priceMaxInput) {
           priceMaxInput.placeholder = t('filterPriceMaxPlaceholder');
         }
+        if (searchInput) {
+          searchInput.placeholder = t('searchPlaceholder');
+        }
+        if (searchLabel) {
+          searchLabel.textContent = t('searchLabel');
+        }
+        updateSearchResultsList();
       }
 
       function updateFilterOptionLabels() {
@@ -1673,8 +1819,15 @@
         goldPrice: null,
         goldUpdatedAt: '',
         categoryKey: null,
+        searchQuery: '',
+        searchQueryNormalized: '',
+        searchActive: false,
+        searchMatchCount: null,
         dataLoaded: false
       };
+
+      let highlightTimeout = null;
+      let lastHighlightedCardId = null;
 
       let lastFocusedDetailsTrigger = null;
       let lastOpenedDetailsRow = null;
@@ -1692,6 +1845,14 @@
           .replace(/\u066B/g, '.').replace(/\u066C/g, ',');
       }
 
+
+      function debounce(func, wait = 200) {
+        let timeoutId;
+        return function debounced(...args) {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(() => func.apply(this, args), wait);
+        };
+      }
       function extractNumber(value) {
         if (typeof value === 'number') {
           return Number.isFinite(value) ? value : NaN;
@@ -1713,6 +1874,12 @@
         return div.textContent;
       }
 
+
+      function createItemUid(row, index) {
+        const sku = (row && row.__sku) || (row && row.sku) || '';
+        const base = sku ? `sku-${sku}` : 'item';
+        return `${base}-${index}`.replace(/[^a-zA-Z0-9_-]+/g, '-').toLowerCase();
+      }
       function normalizePhotoUrl(value) {
         const raw = String(value ?? '').trim();
         if (!raw) return '';
@@ -2093,6 +2260,7 @@
         if (!state.dataLoaded) {
           refreshStatusText();
           refreshResultsCount();
+          updateSearchResultsList();
           return;
         }
 
@@ -2101,10 +2269,176 @@
         uiState.statusMode = state.rows.length ? 'ready' : 'no-data';
         refreshStatusText();
         refreshResultsCount();
+        updateSearchResultsList();
+      }
+
+      function focusCardById(targetId) {
+        if (!targetId) return;
+        const card = document.getElementById(targetId);
+        if (!card) return;
+
+        if (lastHighlightedCardId && lastHighlightedCardId !== targetId) {
+          const previous = document.getElementById(lastHighlightedCardId);
+          if (previous) {
+            previous.classList.remove('item-card--highlight');
+          }
+        }
+
+        card.classList.add('item-card--highlight');
+        lastHighlightedCardId = targetId;
+
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (typeof card.focus === 'function') {
+          card.focus({ preventScroll: true });
+        }
+
+        if (highlightTimeout) {
+          clearTimeout(highlightTimeout);
+        }
+
+        highlightTimeout = setTimeout(() => {
+          card.classList.remove('item-card--highlight');
+          if (lastHighlightedCardId === targetId) {
+            lastHighlightedCardId = null;
+          }
+        }, 1800);
+      }
+
+      function updateSearchResultsList() {
+        if (!searchResultsEl) return;
+
+        const rawQuery = searchInput ? searchInput.value : state.searchQuery || '';
+        const trimmed = rawQuery.trim();
+        searchResultsEl.innerHTML = '';
+
+        if (!trimmed) {
+          searchResultsEl.hidden = true;
+          return;
+        }
+
+        if (!state.searchActive) {
+          const hint = document.createElement('p');
+          hint.className = 'search-empty';
+          hint.textContent = t('searchHint');
+          searchResultsEl.appendChild(hint);
+          searchResultsEl.hidden = false;
+          return;
+        }
+
+        if (!state.dataLoaded) {
+          const loading = document.createElement('p');
+          loading.className = 'search-empty';
+          loading.textContent = t('searchLoading');
+          searchResultsEl.appendChild(loading);
+          searchResultsEl.hidden = false;
+          return;
+        }
+
+        const totalMatches = state.searchMatchCount ?? state.filtered.length;
+        const visibleMatches = state.filtered.length;
+
+        if (!totalMatches) {
+          const empty = document.createElement('p');
+          empty.className = 'search-empty';
+          empty.textContent = t('searchNoMatches');
+          searchResultsEl.appendChild(empty);
+          searchResultsEl.hidden = false;
+          return;
+        }
+
+        if (!visibleMatches) {
+          const hiddenMessage = document.createElement('p');
+          hiddenMessage.className = 'search-empty';
+          hiddenMessage.textContent = t('searchHiddenMatches');
+          searchResultsEl.appendChild(hiddenMessage);
+          searchResultsEl.hidden = false;
+          return;
+        }
+
+        const summary = document.createElement('p');
+        summary.className = 'search-results__summary';
+        if (state.searchMatchCount !== null && state.searchMatchCount !== visibleMatches) {
+          summary.textContent = t('searchSummaryFiltered', {
+            visible: formatNumber(visibleMatches),
+            total: formatNumber(state.searchMatchCount)
+          });
+        } else if (visibleMatches === 1) {
+          summary.textContent = t('searchSummarySingular');
+        } else {
+          summary.textContent = t('searchSummary', { count: formatNumber(visibleMatches) });
+        }
+        searchResultsEl.appendChild(summary);
+
+        const limit = 8;
+        const matches = state.filtered.slice(0, limit);
+
+        const createMetaText = (row) => {
+          const parts = [];
+          if (row.__sku) parts.push(t('skuLabel', { value: row.__sku }));
+          if (row.__categoryRaw) parts.push(row.__categoryRaw);
+          if (row.__availabilityRaw) parts.push(row.__availabilityRaw);
+          let priceText = '';
+          if (Number.isFinite(row.__price)) {
+            priceText = formatPrice(row.__price);
+          } else if (row.__priceFallback) {
+            priceText = row.__priceFallback;
+          }
+          if (priceText) parts.push(priceText);
+          if (row.__description) {
+            const snippet = row.__description.length > 90
+              ? `${row.__description.slice(0, 87)}…`
+              : row.__description;
+            parts.push(snippet);
+          }
+          return parts.filter(Boolean).join(' • ');
+        };
+
+        for (const row of matches) {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'search-result';
+          if (row.__uid) {
+            button.dataset.targetId = row.__uid;
+          }
+
+          const title = document.createElement('span');
+          title.className = 'search-result-title';
+          title.textContent = row.__name || t('itemDefaultName');
+          button.appendChild(title);
+
+          const metaText = createMetaText(row);
+          if (metaText) {
+            const meta = document.createElement('span');
+            meta.className = 'search-result-meta';
+            meta.textContent = metaText;
+            button.appendChild(meta);
+          }
+
+          button.addEventListener('click', () => {
+            if (row.__uid) {
+              focusCardById(row.__uid);
+            }
+          });
+
+          searchResultsEl.appendChild(button);
+        }
+
+        const remainder = totalMatches - matches.length;
+        if (remainder > 0) {
+          const more = document.createElement('p');
+          more.className = 'search-result-meta';
+          more.textContent = t(remainder === 1 ? 'searchMoreMatchesSingular' : 'searchMoreMatches', {
+            count: formatNumber(remainder)
+          });
+          searchResultsEl.appendChild(more);
+        }
+
+        searchResultsEl.hidden = false;
       }
 
       function applyFilters() {
         if (!state.dataLoaded) {
+          updateSearchResultsList();
           return;
         }
         const category = categorySelect.value;
@@ -2112,7 +2446,17 @@
         const priceMin = extractNumber(priceMinInput.value);
         const priceMax = extractNumber(priceMaxInput.value);
 
-        state.filtered = state.rows.filter((row) => {
+        let working = state.rows;
+
+        if (state.searchActive) {
+          const query = state.searchQueryNormalized;
+          working = working.filter((row) => row.__searchHaystack && row.__searchHaystack.includes(query));
+          state.searchMatchCount = working.length;
+        } else {
+          state.searchMatchCount = null;
+        }
+
+        state.filtered = working.filter((row) => {
           if (category && row.__categoryNormalized !== category) {
             return false;
           }
@@ -2273,6 +2617,10 @@
         const card = document.createElement('article');
         card.className = `item-card item-card--${viewMode}`;
         card.setAttribute('role', role);
+        if (row.__uid && role === 'listitem') {
+          card.id = row.__uid;
+        }
+        card.tabIndex = -1;
         if (interactive) {
           card.dataset.interactive = 'true';
           card.tabIndex = 0;
@@ -2541,6 +2889,12 @@
           return;
         }
 
+        if (highlightTimeout) {
+          clearTimeout(highlightTimeout);
+          highlightTimeout = null;
+        }
+        lastHighlightedCardId = null;
+
         itemsGrid.innerHTML = '';
 
         if (!state.filtered.length) {
@@ -2631,6 +2985,23 @@
           __timestamp: timestamp
         };
 
+        const searchTokens = [
+          parsed.__sku,
+          parsed.__name,
+          parsed.__description,
+          parsed.__categoryRaw,
+          parsed.__availabilityRaw,
+          parsed.__fees,
+          parsed.__karat,
+          Number.isFinite(parsed.__price) ? parsed.__price.toString() : '',
+          parsed.__priceFallback,
+          parsed.__timestamp,
+          parsed.__weightRaw
+        ]
+          .filter(Boolean)
+          .join(' ');
+        parsed.__searchHaystack = normalizeDigits(searchTokens).toLowerCase();
+
         return parsed;
       }
 
@@ -2638,6 +3009,7 @@
         state.rows = rows.map((row, index) => {
           const parsed = parseRow(row);
           parsed.__index = index;
+          parsed.__uid = createItemUid(parsed, index);
           return parsed;
         });
         populateCategoryOptions(state.rows);
@@ -2673,11 +3045,31 @@
         }
       }
 
+      function setSearchQuery(rawValue, { trigger = true } = {}) {
+        const value = typeof rawValue === 'string' ? rawValue : '';
+        const normalizedDigits = normalizeDigits(value);
+        const trimmed = normalizedDigits.trim();
+        state.searchQuery = value;
+        state.searchQueryNormalized = trimmed.toLowerCase();
+        state.searchActive = state.searchQueryNormalized.length >= 2;
+        state.searchMatchCount = null;
+        if (trigger) {
+          applyFilters();
+          if (!state.dataLoaded) {
+            updateSearchResultsList();
+          }
+        }
+      }
+
       function resetFilters() {
         categorySelect.value = '';
         availabilitySelect.value = '';
         priceMinInput.value = '';
         priceMaxInput.value = '';
+        if (searchInput) {
+          searchInput.value = '';
+        }
+        setSearchQuery('', { trigger: false });
         setSortByIndex(RESOLVED_DEFAULT_SORT_INDEX, { trigger: false });
         applyFilters();
       }
@@ -2686,6 +3078,25 @@
         if (languageToggle) {
           languageToggle.addEventListener('change', (event) => {
             applyLanguage(event.target.value);
+          });
+        }
+        if (searchInput) {
+          const debouncedSearch = debounce((value) => {
+            setSearchQuery(value);
+          }, 250);
+
+          searchInput.addEventListener('input', (event) => {
+            debouncedSearch(event.target.value);
+          });
+
+          searchInput.addEventListener('search', (event) => {
+            setSearchQuery(event.target.value);
+          });
+
+          searchInput.addEventListener('focus', () => {
+            if (state.searchActive) {
+              updateSearchResultsList();
+            }
           });
         }
         categorySelect.addEventListener('change', applyFilters);
@@ -2734,6 +3145,10 @@
 
       async function initialize() {
         attachListeners();
+        if (searchInput && searchInput.value.trim()) {
+          setSearchQuery(searchInput.value, { trigger: false });
+        }
+        updateSearchResultsList();
         if (sortButtons.length) {
           const activeButton = sortButtons.find((button) => button.classList.contains('is-active'));
           const startingIndex = activeButton?.getAttribute('data-sort-index') ?? RESOLVED_DEFAULT_SORT_INDEX;
@@ -2763,6 +3178,7 @@
           uiState.visible = 0;
           refreshStatusText();
           refreshResultsCount();
+          updateSearchResultsList();
           if (itemsGrid) {
             itemsGrid.innerHTML = '';
             const empty = document.createElement('p');
