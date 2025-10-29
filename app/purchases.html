@@ -108,6 +108,14 @@
       width: 100%;
     }
 
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
     .language-toggle {
       display: inline-flex;
       align-items: center;
@@ -212,6 +220,33 @@
       background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
       color: #fff;
       box-shadow: 0 14px 30px -18px rgba(37, 150, 190, 0.6);
+    }
+
+    .refresh-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      white-space: nowrap;
+      background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 14px 32px -18px rgba(37, 150, 190, 0.55);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .refresh-button svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .refresh-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 40px -18px rgba(37, 150, 190, 0.55);
     }
 
     .hero-title {
@@ -441,6 +476,14 @@
       body.rtl .header-top {
         justify-items: center;
       }
+      .nav-actions {
+        width: 100%;
+        justify-content: center;
+      }
+      .nav-actions .refresh-button {
+        width: 100%;
+        justify-content: center;
+      }
       .page-nav {
         width: 100%;
         justify-content: flex-start;
@@ -491,13 +534,30 @@
     <header>
       <div class="header-top">
         <img src="../assets/logo-website-test.jpg" alt="Veridian Atelier logo" class="brand-logo" />
-        <nav class="page-nav" aria-label="Workspace navigation">
-          <a class="nav-link" href="./index.html" data-i18n="navScanner">Scanner</a>
-          <a class="nav-link" href="./items.html" data-i18n="navInventory">Inventory</a>
-          <a class="nav-link" href="./sales.html" data-i18n="navSales">Sales log</a>
-          <a class="nav-link active" href="./purchases.html" aria-current="page" data-i18n="navPurchases">Purchase log</a>
-          <a class="nav-link" href="./statement.html" data-i18n="navStatement">Gold statement</a>
-        </nav>
+        <div class="nav-actions">
+          <nav class="page-nav" aria-label="Workspace navigation" data-i18n-aria-label="navAria">
+            <a class="nav-link" href="./index.html" data-i18n="navScanner">Scanner</a>
+            <a class="nav-link" href="./items.html" data-i18n="navInventory">Inventory</a>
+            <a class="nav-link" href="./sales.html" data-i18n="navSales">Sales log</a>
+            <a class="nav-link active" href="./purchases.html" aria-current="page" data-i18n="navPurchases">Purchase log</a>
+            <a class="nav-link" href="./statement.html" data-i18n="navStatement">Gold statement</a>
+          </nav>
+          <button
+            type="button"
+            id="refreshButton"
+            class="refresh-button"
+            aria-label="Refresh purchases page"
+            data-i18n-aria-label="navRefreshAria"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <polyline points="1 20 1 14 7 14"></polyline>
+              <path d="M3.51 9a9 9 0 0 1 14.36-3.36L23 10"></path>
+              <path d="M20.49 15a9 9 0 0 1-14.36 3.36L1 14"></path>
+            </svg>
+            <span data-i18n="navRefresh">Refresh</span>
+          </button>
+        </div>
         <div class="language-toggle">
           <label for="languageToggle" class="sr-only" data-i18n="languageLabel">Language</label>
           <select id="languageToggle" aria-label="Select language">
@@ -563,6 +623,7 @@
       const loadingEl = document.getElementById('purchaseLoading');
       const errorEl = document.getElementById('purchaseError');
       const languageToggle = document.getElementById('languageToggle');
+      const navRefreshButton = document.getElementById('refreshButton');
       const filtersSection = document.getElementById('filtersSection');
       const tableSection = document.getElementById('tableSection');
       const quickFiltersGroup = document.getElementById('quickFiltersGroup');
@@ -593,6 +654,8 @@
           navSales: 'Sales log',
           navPurchases: 'Purchase log',
           navStatement: 'Gold statement',
+          navRefresh: 'Refresh',
+          navRefreshAria: 'Refresh purchases page',
           heroTitle: 'Purchase log',
           heroSubtitle: "Audit today's purchased gold, including karat, weight, and how much was paid for every entry.",
           filterLabel: 'Filter by purchase date',
@@ -634,6 +697,8 @@
           navSales: 'سجل المبيعات',
           navPurchases: 'سجل المشتريات',
           navStatement: 'بيان الذهب',
+          navRefresh: 'تحديث',
+          navRefreshAria: 'تحديث صفحة المشتريات',
           heroTitle: 'سجل المشتريات',
           heroSubtitle: 'راجع مشتريات الذهب اليوم بما في ذلك العيار والوزن والمبلغ المدفوع لكل إدخال.',
           filterLabel: 'تصفية حسب تاريخ الشراء',
@@ -1178,6 +1243,12 @@
       if (languageToggle) {
         languageToggle.addEventListener('change', (event) => {
           applyLanguage(event.target.value);
+        });
+      }
+
+      if (navRefreshButton) {
+        navRefreshButton.addEventListener('click', () => {
+          window.location.reload();
         });
       }
 

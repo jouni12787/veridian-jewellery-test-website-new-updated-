@@ -105,6 +105,13 @@
       gap: 12px;
       flex-wrap: wrap;
     }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
     .language-toggle {
       display: inline-flex;
       align-items: center;
@@ -181,6 +188,22 @@
       background: linear-gradient(135deg, var(--ocean-primary), var(--ocean-dark));
       color: #fff;
       box-shadow: 0 14px 30px -18px rgba(37, 150, 190, 0.6);
+    }
+    .refresh-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      white-space: nowrap;
+      background: linear-gradient(135deg, var(--ocean-primary), var(--ocean-dark));
+      color: #fff;
+      box-shadow: 0 14px 32px -18px rgba(37, 150, 190, 0.55);
+    }
+    .refresh-button svg {
+      width: 18px;
+      height: 18px;
     }
     header {
       display: flex;
@@ -1312,9 +1335,17 @@
         display: grid;
         justify-items: center;
       }
+      .nav-actions {
+        width: 100%;
+        justify-content: center;
+      }
       .page-nav {
         width: 100%;
         justify-content: flex-start;
+      }
+      .refresh-button {
+        justify-content: center;
+        width: 100%;
       }
       .brand-logo { height: 46px; }
       .badge-row { justify-content: center; }
@@ -1331,13 +1362,30 @@
     <header>
       <div class="header-top">
         <img src="../assets/logo-website-test.jpg" alt="Veridian Atelier logo" class="brand-logo" />
-        <nav id="pageNav" class="page-nav" aria-label="Workspace navigation">
-          <a class="nav-link active" href="./index.html" aria-current="page" data-i18n="navScanner">Scanner</a>
-          <a class="nav-link" href="./items.html" data-i18n="navInventory">Inventory</a>
-          <a class="nav-link" href="./sales.html" data-i18n="navSales">Sales log</a>
-          <a class="nav-link" href="./purchases.html" data-i18n="navPurchases">Purchase log</a>
-          <a class="nav-link" href="./statement.html" data-i18n="navStatement">Gold statement</a>
-        </nav>
+        <div class="nav-actions">
+          <nav id="pageNav" class="page-nav" aria-label="Workspace navigation" data-i18n-aria-label="navAria">
+            <a class="nav-link active" href="./index.html" aria-current="page" data-i18n="navScanner">Scanner</a>
+            <a class="nav-link" href="./items.html" data-i18n="navInventory">Inventory</a>
+            <a class="nav-link" href="./sales.html" data-i18n="navSales">Sales log</a>
+            <a class="nav-link" href="./purchases.html" data-i18n="navPurchases">Purchase log</a>
+            <a class="nav-link" href="./statement.html" data-i18n="navStatement">Gold statement</a>
+          </nav>
+          <button
+            type="button"
+            id="refreshButton"
+            class="refresh-button"
+            aria-label="Refresh workspace"
+            data-i18n-aria-label="navRefreshAria"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <polyline points="1 20 1 14 7 14"></polyline>
+              <path d="M3.51 9a9 9 0 0 1 14.36-3.36L23 10"></path>
+              <path d="M20.49 15a9 9 0 0 1-14.36 3.36L1 14"></path>
+            </svg>
+            <span data-i18n="navRefresh">Refresh</span>
+          </button>
+        </div>
         <div class="language-toggle">
           <label for="languageToggle" class="sr-only" data-i18n="languageLabel">Language</label>
           <select id="languageToggle" aria-label="Select language">
@@ -1617,6 +1665,7 @@
   const hardwareClear = document.getElementById('hardwareClear');
   const hardwareCard = document.querySelector('.hardware-card');
   const whatsAppLink = document.getElementById('whatsAppLink');
+  const navRefreshButton = document.getElementById('refreshButton');
   const languageToggle = document.getElementById('languageToggle');
   const pageNav = document.getElementById('pageNav');
   const resultsSectionEl = document.getElementById('resultsSection');
@@ -1639,6 +1688,8 @@
       navSales: 'Sales log',
       navPurchases: 'Purchase log',
       navStatement: 'Gold statement',
+      navRefresh: 'Refresh',
+      navRefreshAria: 'Refresh workspace',
       badgeBrand: 'Veridian Atelier',
       heroTitle: 'Instant barcode console',
       heroSubtitle: 'Scan a piece to pull up its story, photos, and live valuation without scrolling.',
@@ -1818,6 +1869,8 @@
       navSales: 'سجل المبيعات',
       navPurchases: 'سجل المشتريات',
       navStatement: 'بيان الذهب',
+      navRefresh: 'تحديث',
+      navRefreshAria: 'تحديث مساحة العمل',
       badgeBrand: 'فيريديان أتيلييه',
       heroTitle: 'منصة الماسح الفورية',
       heroSubtitle: 'امسح القطعة لعرض قصتها وصورها وتقييمها الحي دون الحاجة إلى التمرير.',
@@ -2377,6 +2430,10 @@
     }
     updateHardwareStatus(hardwareEnabled ? t('hardwareStatusIdle') : t('hardwareStatusPaused'));
     hardwareField?.focus();
+  });
+
+  navRefreshButton?.addEventListener('click', () => {
+    window.location.reload();
   });
 
   function flushHardwareBuffer() {
