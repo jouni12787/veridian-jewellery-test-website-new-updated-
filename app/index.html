@@ -1201,44 +1201,9 @@
       display: grid;
       gap: 12px;
     }
-    .item-card-meta-entry {
-      display: grid;
-      grid-template-columns: max-content minmax(0, 1fr);
-      gap: 8px;
-      align-items: baseline;
-    }
-    .item-card-meta-label {
-      color: var(--muted);
+    .item-card-meta strong {
+      color: var(--text);
       font-weight: 600;
-    }
-    .item-card-meta-label::after {
-      content: ':';
-      margin-inline-start: 4px;
-      color: rgba(31, 127, 160, 0.55);
-    }
-    .item-card-meta-value {
-      color: var(--accent-dark);
-      font-weight: 600;
-      justify-self: start;
-      text-align: start;
-      word-break: break-word;
-    }
-    body.rtl .item-card-meta-entry {
-      grid-template-columns: minmax(0, 1fr) max-content;
-    }
-    body.rtl .item-card-meta-value {
-      justify-self: start;
-      text-align: start;
-    }
-    body.rtl .item-card-meta-label::after {
-      content: '';
-      margin-inline-start: 0;
-      margin-inline-end: 0;
-    }
-    body.rtl .item-card-meta-label::before {
-      content: ':';
-      margin-inline-end: 4px;
-      color: rgba(31, 127, 160, 0.55);
     }
     .item-card-description {
       background: rgba(255, 255, 255, 0.7);
@@ -1916,8 +1881,6 @@
       priceGoldLabel: '{source} XAU:',
       priceTimestamp: 'Updated: {time}',
       priceSetTime: 'Set: {time}',
-      detailGoldBase: 'Gold base',
-      detailUpdated: 'Updated',
       linkOpenMedia: 'Open photo/video',
       buttonSell: 'Sell this item',
       chipSold: 'Sold',
@@ -2097,8 +2060,6 @@
       priceGoldLabel: 'سعر XAU {source}:',
       priceTimestamp: 'تم التحديث في {time}',
       priceSetTime: 'تم التعيين في {time}',
-      detailGoldBase: 'سعر الذهب الأساسي',
-      detailUpdated: 'آخر تحديث',
       linkOpenMedia: 'فتح الصورة/الفيديو',
       buttonSell: 'بيع هذه القطعة',
       chipSold: 'مباع',
@@ -3553,79 +3514,28 @@ async function recordSale(saleData) {
     const skuChip = sku ? `<span class="item-card-chip">${t('skuLabel', { value: sanitizeInput(sku) })}</span>` : '';
     const displayName = sanitizeInput(name || t('fallbackItemName'));
 
-    const stripLabelSuffix = (label = '') =>
-      String(label)
-        .replace(/[\s:：﹕︰፡።،٬؛]+$/gu, '')
-        .trim();
-
-    const buildLabel = (labelKey, override) => {
-      const source = override ?? t(labelKey);
-      const stripped = stripLabelSuffix(source);
-      return sanitizeInput(stripped);
+    const metaRow = (labelKey, rawValue, formatter) => {
+      if (!rawValue) return '';
+      const formatted = formatter ? formatter(rawValue) : sanitizeInput(rawValue);
+      return `<div><strong>${t(labelKey)}</strong> ${formatted}</div>`;
     };
 
-    const metaEntries = [];
-    const pushDetail = (labelKey, rawValue, { formatter, labelOverride } = {}) => {
-      if (rawValue === undefined || rawValue === null) return;
-      if (typeof rawValue === 'number') {
-        if (!Number.isFinite(rawValue) || rawValue === 0) return;
-      } else {
-        const trimmed = String(rawValue).trim();
-        if (!trimmed) return;
-      }
+    const metaRows = [
+      metaRow('fieldType', itemType),
+      metaRow('fieldTimestamp', timestamp),
+      metaRow('fieldWeight', weight, (value) => t('fieldWeightUnit', { value: sanitizeInput(value) })),
+      metaRow('fieldKarat', karat),
+      metaRow('fieldFees', fees)
+    ];
 
-      const processed = formatter ? formatter(rawValue) : rawValue;
-      const safeValue = sanitizeInput(processed);
-      if (!safeValue) return;
+    const statusText = isSold ? t('fieldSold') : sanitizeInput(availability || t('fieldAvailable'));
+    metaRows.push(metaRow('fieldStatus', statusText));
+    if (isSold && soldByVal) metaRows.push(metaRow('fieldSoldBy', soldByVal));
+    if (isSold && soldDateVal) metaRows.push(metaRow('fieldSoldDate', soldDateVal));
+    if (isSold && soldPriceVal) metaRows.push(metaRow('fieldSoldPrice', soldPriceVal));
+    if (isSold && notesVal) metaRows.push(metaRow('fieldNotes', notesVal));
 
-      const safeLabel = buildLabel(labelKey, labelOverride);
-      if (!safeLabel) return;
-
-      metaEntries.push(
-        `<div class="item-card-meta-entry"><span class="item-card-meta-label">${safeLabel}</span><span class="item-card-meta-value">${safeValue}</span></div>`
-      );
-    };
-
-    if (priceInfo) {
-      pushDetail('priceEstimated', priceInfo.total, { formatter: (value) => formatNumber(value) });
-    }
-
-    pushDetail('fieldWeight', weight, {
-      formatter: (value) => t('fieldWeightUnit', { value: sanitizeInput(value) })
-    });
-    pushDetail('fieldKarat', karat);
-    pushDetail('fieldFees', fees);
-
-    if (priceInfo) {
-      pushDetail('pricePerGram', priceInfo.perGram, { formatter: (value) => formatNumber(value) });
-    }
-
-    const statusLabel = isSold ? t('fieldSold') : (availability || t('fieldAvailable'));
-    pushDetail('fieldStatus', statusLabel);
-
-    if (Number.isFinite(activePrice)) {
-      const goldSource = stripLabelSuffix(
-        t('priceGoldLabel', { source: isManualGoldActive() ? t('manualSourceLabel') : t('liveSourceLabel') })
-      );
-      const goldDisplay = goldSource
-        ? `${formatNumber(activePrice)} (${goldSource})`
-        : formatNumber(activePrice);
-      pushDetail('detailGoldBase', goldDisplay, { labelOverride: t('detailGoldBase') });
-    }
-
-    if (timestampLabel) {
-      pushDetail('detailUpdated', timestampLabel);
-    }
-
-    pushDetail('fieldType', itemType);
-    pushDetail('fieldTimestamp', timestamp);
-
-    if (isSold && soldByVal) pushDetail('fieldSoldBy', soldByVal);
-    if (isSold && soldDateVal) pushDetail('fieldSoldDate', soldDateVal);
-    if (isSold && soldPriceVal) pushDetail('fieldSoldPrice', soldPriceVal);
-    if (isSold && notesVal) pushDetail('fieldNotes', notesVal);
-
-    const metaHtml = metaEntries.join('');
+    const metaHtml = metaRows.filter(Boolean).join('');
     const descriptionHtml = description ? `<div class="item-card-description">${sanitizeInput(description)}</div>` : '';
 
     const priceBlock = priceInfo
