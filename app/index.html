@@ -1529,44 +1529,35 @@
         aria-label="Live barcode scanner"
         data-i18n-aria-label="scannerAria"
       >
-        <div class="scanner-actions">
-          <button class="refresh-button" id="refreshInventory" type="button">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M23 4v6h-6"></path>
-              <path d="M1 20v-6h6"></path>
-              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-            </svg>
-            <span data-i18n="refreshButton">Refresh Data</span>
-          </button>
+        
+        <video id="preview" playsinline muted></video>
+
+        <div id="hud" aria-label="Camera controls" data-i18n-aria-label="hudAria">
+          <select id="cameraSelect" aria-label="Camera" data-i18n-aria-label="cameraSelectAria" disabled></select>
+          <button id="startBtn" disabled data-i18n="start">Start</button>
+          <button id="stopBtn" disabled data-i18n="stop">Stop</button>
+          <button id="switchBtn" disabled data-i18n="switch">Switch</button>
+          <button id="torchBtn" disabled data-i18n="torchToggle">Toggle torch</button>
         </div>
-      <video id="preview" playsinline muted></video>
 
-      <div id="hud" aria-label="Camera controls" data-i18n-aria-label="hudAria">
-        <select id="cameraSelect" aria-label="Camera" data-i18n-aria-label="cameraSelectAria" disabled></select>
-        <button id="startBtn" disabled data-i18n="start">Start</button>
-        <button id="stopBtn" disabled data-i18n="stop">Stop</button>
-        <button id="switchBtn" disabled data-i18n="switch">Switch</button>
-        <button id="torchBtn" disabled data-i18n="torchToggle">Toggle torch</button>
-      </div>
-
-      <div>
-        <div id="result" data-i18n="resultEmpty" data-i18n-dynamic>No barcode yet…</div>
-        <div id="hint" data-i18n="scanHint">
-          Tip: Serve over HTTPS. On iPhone, allow camera; hold 15–25 cm away; keep the code flat; use Torch.
+        <div>
+          <div id="result" data-i18n="resultEmpty" data-i18n-dynamic>No barcode yet…</div>
+          <div id="hint" data-i18n="scanHint">
+            Tip: Serve over HTTPS. On iPhone, allow camera; hold 15–25 cm away; keep the code flat; use Torch.
+          </div>
         </div>
-      </div>
 
-      <form
-        id="manualForm"
-        aria-label="Manual barcode entry"
-        data-i18n-aria-label="manualFormAria"
-      >
-        <div id="manualEntry">
-          <label for="manualInput" data-i18n="manualLabel">Manual entry:</label>
-          <input
-            type="number"
-            id="manualInput"
-            name="manualInput"
+        <form
+          id="manualForm"
+          aria-label="Manual barcode entry"
+          data-i18n-aria-label="manualFormAria"
+        >
+          <div id="manualEntry">
+            <label for="manualInput" data-i18n="manualLabel">Manual entry:</label>
+            <input
+              type="number"
+              id="manualInput"
+              name="manualInput"
             min="100000"
             max="399999"
             inputmode="numeric"
