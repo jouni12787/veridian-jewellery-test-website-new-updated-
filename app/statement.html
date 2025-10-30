@@ -522,16 +522,24 @@
     }
 
     @media (max-width: 720px) {
-      body { padding-top: 60px; }
-      header { text-align: center; align-items: center; }
+      body {
+        padding: calc(var(--pad) * 1.1) var(--pad) calc(var(--pad) * 1.5);
+      }
+      header {
+        text-align: left;
+        align-items: stretch;
+        gap: 14px;
+      }
       .header-top {
         width: 100%;
-        display: grid;
-        justify-items: center;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
       }
       .nav-actions {
         width: 100%;
-        justify-content: center;
+        justify-content: flex-start;
       }
       .page-nav {
         width: 100%;
@@ -544,7 +552,16 @@
       .language-toggle__panel select {
         flex: 1 1 auto;
       }
-      .brand-logo { height: 46px; }
+      .brand-logo {
+        height: 44px;
+        align-self: center;
+      }
+      body.rtl header {
+        text-align: right;
+      }
+      body.rtl .header-top {
+        align-items: stretch;
+      }
       .stats-grid { grid-template-columns: 1fr; }
       .data-grid { grid-template-columns: 1fr; }
     }
