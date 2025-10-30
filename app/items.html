@@ -582,6 +582,63 @@
       color: var(--accent-dark);
     }
 
+    .gold-price-form {
+      margin-top: 12px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .gold-price-entry {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .gold-price-entry label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .gold-price-entry input {
+      width: 160px;
+    }
+
+    #goldPriceClear {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(37, 150, 190, 0.25);
+      color: var(--accent-dark);
+      box-shadow: none;
+      font-weight: 500;
+    }
+
+    .gold-price-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .gold-price-suggestions span {
+      font-weight: 500;
+    }
+
+    .gold-price-suggestions button {
+      background: rgba(229, 246, 251, 0.9);
+      border: 1px solid rgba(37, 150, 190, 0.25);
+      color: var(--accent-dark);
+      box-shadow: none;
+      padding: 8px 12px;
+      font-size: 0.88rem;
+    }
+
+    .gold-price-suggestions button:disabled {
+      opacity: 0.6;
+    }
+
     .results-card {
       display: grid;
       gap: 18px;
@@ -1385,8 +1442,42 @@
       </fieldset>
       <div class="status-row">
         <div id="itemsStatus" aria-live="polite" data-i18n="statusLoading" data-i18n-dynamic>Loading inventory…</div>
-        <div id="goldStatus" aria-live="polite"></div>
+        <div
+          id="goldStatus"
+          class="gold-status"
+          aria-live="polite"
+          data-i18n="goldStatusLiveDefault"
+          data-i18n-dynamic
+        >Using live price…</div>
       </div>
+      <form id="goldPriceForm" class="gold-price-form" aria-label="Gold price override">
+        <div class="gold-price-entry">
+          <label for="goldPriceInput" data-i18n="goldLabel">Gold price override:</label>
+          <input
+            type="number"
+            id="goldPriceInput"
+            name="goldPriceInput"
+            min="0"
+            step="0.01"
+            inputmode="decimal"
+            placeholder="2300"
+          />
+          <button type="submit" data-i18n="goldApply">Apply</button>
+          <button type="button" id="goldPriceClear" data-i18n="goldUseLive">Use live price</button>
+        </div>
+        <div
+          class="gold-price-suggestions"
+          role="group"
+          aria-label="Quick gold price suggestions"
+          data-i18n-aria-label="goldSuggestionsAria"
+        >
+          <span data-i18n="goldQuickAdd">Quick add:</span>
+          <button type="button" data-gold-suggestion="30" data-i18n="goldSuggestion30">Live + 30</button>
+          <button type="button" data-gold-suggestion="50" data-i18n="goldSuggestion50">Live + 50</button>
+          <button type="button" data-gold-suggestion="70" data-i18n="goldSuggestion70">Live + 70</button>
+          <button type="button" data-gold-suggestion="100" data-i18n="goldSuggestion100">Live + 100</button>
+        </div>
+      </form>
       <div>
         <button type="button" id="resetFilters" data-i18n="resetFilters">Reset filters</button>
       </div>
@@ -1450,7 +1541,12 @@
       const itemsGrid = document.getElementById('itemsGrid');
       const resultsCount = document.getElementById('resultsCount');
       const itemsStatus = document.getElementById('itemsStatus');
-      const goldStatus = document.getElementById('goldStatus');
+      const goldPriceStatus = document.getElementById('goldStatus');
+      const goldPriceForm = document.getElementById('goldPriceForm');
+      const goldPriceInput = document.getElementById('goldPriceInput');
+      const goldPriceClear = document.getElementById('goldPriceClear');
+      const goldSuggestionButtons = Array.from(document.querySelectorAll('[data-gold-suggestion]'));
+      const goldSuggestionsGroup = document.querySelector('.gold-price-suggestions');
       const searchInput = document.getElementById('inventorySearch');
       const searchResultsEl = document.getElementById('inventorySearchResults');
       const searchLabel = document.querySelector('[data-i18n="searchLabel"]');
@@ -1531,6 +1627,25 @@
           detailsHeading: 'Item details',
           detailsClose: 'Close details',
           viewModeCompact: 'Compact',
+          goldFormAria: 'Gold price override',
+          goldLabel: 'Gold price override:',
+          goldPlaceholder: '2300',
+          goldApply: 'Apply',
+          goldUseLive: 'Use live price',
+          goldStatusLiveDefault: 'Using live price…',
+          goldStatusManual: 'Using manual price {price}',
+          goldStatusManualUpdated: 'set {time}',
+          goldStatusLive: 'Using live price {price}',
+          goldStatusLiveUpdated: 'updated {time}',
+          goldStatusWaiting: 'Waiting for live price…',
+          statusSeparator: ' • ',
+          goldSuggestionsAria: 'Quick gold price suggestions',
+          goldQuickAdd: 'Quick add:',
+          goldSuggestion30: 'Live + 30',
+          goldSuggestion50: 'Live + 50',
+          goldSuggestion70: 'Live + 70',
+          goldSuggestion100: 'Live + 100',
+          goldInvalid: 'Enter a valid gold price.',
           goldStatusWithPrice: 'Gold price {price}',
           goldStatusUpdated: 'updated {time}',
           goldStatusUnavailable: 'Gold price unavailable — prices shown use sheet data only.',
@@ -1626,6 +1741,25 @@
           detailsHeading: 'تفاصيل القطعة',
           detailsClose: 'إغلاق التفاصيل',
           viewModeCompact: 'عرض مضغوط',
+          goldFormAria: 'تعديل سعر الذهب',
+          goldLabel: 'سعر الذهب (مخصص):',
+          goldPlaceholder: '2300',
+          goldApply: 'تطبيق',
+          goldUseLive: 'استخدام السعر المباشر',
+          goldStatusLiveDefault: 'يتم استخدام السعر المباشر…',
+          goldStatusManual: 'يتم استخدام السعر المخصص {price}',
+          goldStatusManualUpdated: 'تم تعيينه في {time}',
+          goldStatusLive: 'يتم استخدام السعر المباشر {price}',
+          goldStatusLiveUpdated: 'تم التحديث في {time}',
+          goldStatusWaiting: 'في انتظار السعر المباشر…',
+          statusSeparator: ' • ',
+          goldSuggestionsAria: 'اقتراحات سريعة لسعر الذهب',
+          goldQuickAdd: 'إضافة سريعة:',
+          goldSuggestion30: 'المباشر + 30',
+          goldSuggestion50: 'المباشر + 50',
+          goldSuggestion70: 'المباشر + 70',
+          goldSuggestion100: 'المباشر + 100',
+          goldInvalid: 'أدخل سعر ذهب صالحًا.',
           goldStatusWithPrice: 'سعر الذهب {price}',
           goldStatusUpdated: 'تم التحديث في {time}',
           goldStatusUnavailable: 'تعذر الحصول على سعر الذهب — يتم استخدام بيانات الجدول فقط.',
@@ -1702,6 +1836,27 @@
         return t('perGramDisplay', { value: formatted });
       }
 
+      function isManualGoldActive() {
+        return Number.isFinite(state.goldPriceManual) && state.goldPriceManual > 0;
+      }
+
+      function getActiveGoldPrice() {
+        if (isManualGoldActive()) {
+          return state.goldPriceManual;
+        }
+        return state.goldPrice;
+      }
+
+      function getSuggestionBasePrice() {
+        if (Number.isFinite(state.goldPrice) && state.goldPrice > 0) {
+          return state.goldPrice;
+        }
+        if (Number.isFinite(state.goldPriceManual) && state.goldPriceManual > 0) {
+          return state.goldPriceManual;
+        }
+        return NaN;
+      }
+
       function updateLanguageAttributes() {
         document.documentElement.lang = currentLanguage === 'ar' ? 'ar' : 'en';
         document.documentElement.dir = currentLanguage === 'ar' ? 'rtl' : 'ltr';
@@ -1746,6 +1901,18 @@
         }
         if (searchLabel) {
           searchLabel.textContent = t('searchLabel');
+        }
+        if (goldPriceForm) {
+          goldPriceForm.setAttribute('aria-label', t('goldFormAria'));
+        }
+        if (goldPriceInput) {
+          goldPriceInput.placeholder = t('goldPlaceholder');
+        }
+        if (goldPriceClear) {
+          goldPriceClear.setAttribute('aria-label', t('goldUseLive'));
+        }
+        if (goldSuggestionsGroup) {
+          goldSuggestionsGroup.setAttribute('aria-label', t('goldSuggestionsAria'));
         }
         updateSearchResultsList();
       }
@@ -1822,16 +1989,67 @@
       }
 
       function refreshGoldStatus() {
-        if (!goldStatus) return;
-        if (Number.isFinite(state.goldPrice)) {
-          const priceText = formatCurrency(state.goldPrice);
-          const parts = [t('goldStatusWithPrice', { price: priceText })];
-          if (state.goldUpdatedAt) {
-            parts.push(t('goldStatusUpdated', { time: sanitize(state.goldUpdatedAt) }));
+        if (!goldPriceStatus) return;
+        if (isManualGoldActive()) {
+          const priceText = formatCurrency(state.goldPriceManual);
+          const parts = [t('goldStatusManual', { price: priceText })];
+          if (state.goldManualUpdatedAt) {
+            parts.push(t('goldStatusManualUpdated', { time: sanitize(state.goldManualUpdatedAt) }));
           }
-          goldStatus.textContent = parts.join(t('goldStatusSeparator'));
+          goldPriceStatus.textContent = parts.join(t('statusSeparator'));
+        } else if (Number.isFinite(state.goldPrice) && state.goldPrice > 0) {
+          const priceText = formatCurrency(state.goldPrice);
+          const parts = [t('goldStatusLive', { price: priceText })];
+          if (state.goldUpdatedAt) {
+            parts.push(t('goldStatusLiveUpdated', { time: sanitize(state.goldUpdatedAt) }));
+          }
+          goldPriceStatus.textContent = parts.join(t('statusSeparator'));
         } else {
-          goldStatus.textContent = t('goldStatusUnavailable');
+          goldPriceStatus.textContent = t('goldStatusWaiting');
+        }
+        updateGoldSuggestionButtons();
+      }
+
+      function updateGoldSuggestionButtons() {
+        const base = getSuggestionBasePrice();
+        const enabled = Number.isFinite(base) && base > 0;
+        goldSuggestionButtons.forEach((button) => {
+          if (!(button instanceof HTMLButtonElement)) return;
+          button.disabled = !enabled;
+        });
+      }
+
+      function refreshGoldDerivedFields() {
+        if (!state.dataLoaded) return;
+        if (Array.isArray(state.rawRows) && state.rawRows.length) {
+          enrichRows(state.rawRows.slice());
+        } else {
+          applyFilters();
+        }
+      }
+
+      function setManualGoldPrice(value) {
+        if (!Number.isFinite(value) || value <= 0) {
+          return false;
+        }
+        state.goldPriceManual = value;
+        try {
+          state.goldManualUpdatedAt = new Date().toLocaleString(getLocale());
+        } catch (error) {
+          state.goldManualUpdatedAt = new Date().toLocaleString();
+        }
+        refreshGoldStatus();
+        refreshGoldDerivedFields();
+        return true;
+      }
+
+      function clearManualGoldPrice() {
+        const wasManual = isManualGoldActive();
+        state.goldPriceManual = null;
+        state.goldManualUpdatedAt = '';
+        refreshGoldStatus();
+        if (wasManual) {
+          refreshGoldDerivedFields();
         }
       }
 
@@ -1923,12 +2141,15 @@
 
       const state = {
         rows: [],
+        rawRows: [],
         filtered: [],
         viewMode: 'compact',
         sortBy: SORT_OPTIONS[RESOLVED_DEFAULT_SORT_INDEX]?.value ?? SORT_OPTIONS[0].value,
         sortIndex: RESOLVED_DEFAULT_SORT_INDEX,
         goldPrice: null,
         goldUpdatedAt: '',
+        goldPriceManual: null,
+        goldManualUpdatedAt: '',
         categoryKey: null,
         searchQuery: '',
         searchQueryNormalized: '',
@@ -3032,7 +3253,7 @@
 
       function parseRow(row) {
         const normalized = normalizeRowKeys(row);
-        const priceInfo = computeItemPrice(normalized.weight, normalized.karat, normalized.fees, state.goldPrice);
+        const priceInfo = computeItemPrice(normalized.weight, normalized.karat, normalized.fees, getActiveGoldPrice());
         let priceValue = priceInfo?.total ?? NaN;
         let perGramValue = priceInfo?.perGram ?? NaN;
         let priceSource = 'estimated';
@@ -3117,7 +3338,9 @@
       }
 
       function enrichRows(rows) {
-        state.rows = rows.map((row, index) => {
+        state.rawRows = Array.isArray(rows) ? rows.slice() : [];
+        const sourceRows = Array.isArray(rows) ? rows : [];
+        state.rows = sourceRows.map((row, index) => {
           const parsed = parseRow(row);
           parsed.__index = index;
           parsed.__uid = createItemUid(parsed, index);
@@ -3149,10 +3372,17 @@
             state.goldUpdatedAt = data.updatedAtReadable || data.updatedAt || '';
           } else {
             state.goldPrice = null;
+            state.goldUpdatedAt = '';
           }
         } catch (error) {
           console.warn('Gold price fetch failed:', error);
           state.goldPrice = null;
+          state.goldUpdatedAt = '';
+        } finally {
+          refreshGoldStatus();
+          if (!isManualGoldActive()) {
+            refreshGoldDerivedFields();
+          }
         }
       }
 
@@ -3213,6 +3443,56 @@
             if (state.searchActive) {
               updateSearchResultsList();
             }
+          });
+        }
+        if (goldPriceInput) {
+          goldPriceInput.addEventListener('input', () => {
+            goldPriceInput.setCustomValidity('');
+          });
+        }
+        if (goldPriceForm) {
+          goldPriceForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            if (!goldPriceInput) return;
+            const rawValue = String(goldPriceInput.value ?? '').trim();
+            const value = extractNumber(rawValue);
+            if (!Number.isFinite(value) || value <= 0) {
+              goldPriceInput.setCustomValidity(t('goldInvalid'));
+              if (typeof goldPriceInput.reportValidity === 'function') {
+                goldPriceInput.reportValidity();
+              }
+              goldPriceInput.focus();
+              return;
+            }
+            goldPriceInput.setCustomValidity('');
+            if (setManualGoldPrice(value)) {
+              goldPriceInput.value = '';
+            }
+          });
+        }
+        if (goldPriceClear) {
+          goldPriceClear.addEventListener('click', () => {
+            clearManualGoldPrice();
+            if (goldPriceInput) {
+              goldPriceInput.setCustomValidity('');
+              goldPriceInput.value = '';
+              goldPriceInput.focus();
+            }
+          });
+        }
+        if (goldSuggestionButtons.length) {
+          goldSuggestionButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+              const delta = Number(button.dataset.goldSuggestion || '0');
+              if (!Number.isFinite(delta) || delta <= 0) return;
+              const base = getSuggestionBasePrice();
+              if (!Number.isFinite(base) || base <= 0) return;
+              const newValue = base + delta;
+              if (setManualGoldPrice(newValue) && goldPriceInput) {
+                goldPriceInput.value = '';
+                goldPriceInput.setCustomValidity('');
+              }
+            });
           });
         }
         categorySelect.addEventListener('change', applyFilters);
