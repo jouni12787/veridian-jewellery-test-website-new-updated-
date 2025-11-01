@@ -772,7 +772,7 @@
       border: none;
       border-radius: 999px;
       padding: 10px 18px;
-      background: linear-gradient(135deg, rgba(212, 175, 55, 0.95), rgba(184, 134, 11, 0.95));
+      background: linear-gradient(135deg, rgba(37, 150, 190, 0.95), rgba(31, 127, 160, 0.95));
       color: #fff;
       font-weight: 600;
       font-size: 0.9rem;
@@ -781,14 +781,14 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 14px 28px -18px rgba(212, 175, 55, 0.65);
+      box-shadow: 0 14px 28px -18px rgba(37, 150, 190, 0.55);
       transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
     }
 
     .share-button:hover:not(:disabled),
     .share-button:focus-visible:not(:disabled) {
       transform: translateY(-1px);
-      box-shadow: 0 18px 40px -18px rgba(212, 175, 55, 0.75);
+      box-shadow: 0 18px 40px -18px rgba(31, 127, 160, 0.65);
     }
 
     .share-button:disabled {
@@ -2402,13 +2402,13 @@
         ctx.textBaseline = 'top';
 
         const gradient = ctx.createLinearGradient(0, 0, width, height);
-        gradient.addColorStop(0, '#fefaf0');
-        gradient.addColorStop(1, '#f4e2b8');
+        gradient.addColorStop(0, '#e9f7fb');
+        gradient.addColorStop(1, '#cbe7f5');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
 
         ctx.save();
-        ctx.shadowColor = 'rgba(212, 175, 55, 0.28)';
+        ctx.shadowColor = 'rgba(37, 150, 190, 0.28)';
         ctx.shadowBlur = 60;
         ctx.shadowOffsetY = 40;
         drawRoundedRect(ctx, 60, 60, width - 120, height - 120, 48);
@@ -2460,11 +2460,11 @@
 
         ctx.fillStyle = '#2C2C2C';
         ctx.font = brandNameFont;
-        ctx.fillText('Ghandour Jewellery', brandTextX, brandTextY);
+        ctx.fillText('Veridian Atelier', brandTextX, brandTextY);
 
         ctx.font = taglineFont;
-        ctx.fillStyle = '#8B7D6B';
-        ctx.fillText('Fine gold & bespoke designs', brandTextX, brandTextY + brandNameLineHeight);
+        ctx.fillStyle = '#4f6b78';
+        ctx.fillText('Fine jewellery & bespoke designs', brandTextX, brandTextY + brandNameLineHeight);
 
         cursorY = brandBlockTop + brandBlockHeight + 48;
         ctx.textAlign = 'left';
@@ -2481,7 +2481,7 @@
 
         if (row.__sku) {
           ctx.font = '500 24px "Inter", sans-serif';
-          ctx.fillStyle = '#8B7D6B';
+          ctx.fillStyle = '#4f6b78';
           ctx.fillText(`SKU ${row.__sku}`, innerX, cursorY);
           cursorY += 40;
           ctx.fillStyle = '#2C2C2C';
@@ -2493,7 +2493,7 @@
 
         ctx.save();
         drawRoundedRect(ctx, innerX, photoY, innerWidth, photoAreaHeight, photoRadius);
-        ctx.fillStyle = '#fdf7e5';
+        ctx.fillStyle = '#dff1f8';
         ctx.fill();
         ctx.restore();
 
@@ -2502,7 +2502,7 @@
           ctx.save();
           drawRoundedRect(ctx, innerX, photoY, innerWidth, photoAreaHeight, photoRadius);
           ctx.clip();
-          ctx.fillStyle = '#fdf7e5';
+          ctx.fillStyle = '#dff1f8';
           ctx.fillRect(innerX, photoY, innerWidth, photoAreaHeight);
           const ratio = itemImage.width && itemImage.height ? itemImage.width / itemImage.height : 1;
           let drawWidth = innerWidth;
@@ -2519,10 +2519,10 @@
           ctx.save();
           drawRoundedRect(ctx, innerX, photoY, innerWidth, photoAreaHeight, photoRadius);
           ctx.clip();
-          ctx.fillStyle = '#fdf7e5';
+          ctx.fillStyle = '#dff1f8';
           ctx.fillRect(innerX, photoY, innerWidth, photoAreaHeight);
           ctx.font = '500 28px "Inter", sans-serif';
-          ctx.fillStyle = '#8B7D6B';
+          ctx.fillStyle = '#2596be';
           ctx.textAlign = 'center';
           ctx.fillText('Photo unavailable', centerX, photoY + photoAreaHeight / 2 - 16);
           ctx.fillText('Contact us for more details', centerX, photoY + photoAreaHeight / 2 + 16);
@@ -2582,7 +2582,7 @@
               const columnX = innerX + columnIndex * (columnWidth + columnGap);
 
               ctx.font = labelFont;
-              ctx.fillStyle = '#8B7D6B';
+              ctx.fillStyle = '#4f6b78';
               block.labelLines.forEach((line, index) => {
                 ctx.fillText(line, columnX, rowTop + index * labelLineHeight);
               });
@@ -2610,7 +2610,7 @@
           ctx.fillText('Description', innerX, cursorY);
           cursorY += 44;
           ctx.font = '400 28px "Inter", sans-serif';
-          ctx.fillStyle = '#4a4033';
+          ctx.fillStyle = '#4f6b78';
           const descriptionLines = wrapText(ctx, row.__description, innerWidth);
           for (const line of descriptionLines) {
             ctx.fillText(line, innerX, cursorY);
@@ -2632,7 +2632,7 @@
         }
 
         try {
-          const shareTitle = row.__name || 'Ghandour Jewellery item';
+          const shareTitle = row.__name || 'Veridian Atelier item';
           const shareText = createShareSummaryText(row);
           const attempts = [false, true];
           let blob = null;
