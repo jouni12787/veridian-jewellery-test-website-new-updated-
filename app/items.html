@@ -49,10 +49,15 @@
   <style>
     :root {
       --pad: 18px;
-      --gold-primary: #2596be;
-      --gold-secondary: #2596be;
-      --gold-dark: #1f7fa0;
-      --gold-light: #e6f6fb;
+      /* Shared ocean palette */
+      --ocean-primary: #2596be;
+      --ocean-secondary: #2596be;
+      --ocean-dark: #1f7fa0;
+      --ocean-light: #e6f6fb;
+      --gold-primary: var(--ocean-primary);
+      --gold-secondary: var(--ocean-secondary);
+      --gold-dark: var(--ocean-dark);
+      --gold-light: var(--ocean-light);
       --ivory: #fafdff;
       --charcoal: #1f2a30;
       --warm-gray: #4f6b78;
@@ -60,8 +65,8 @@
       --bg: radial-gradient(circle at 10% 0%, rgba(37, 150, 190, 0.18) 0%, rgba(37, 150, 190, 0.08) 55%, #ffffff 100%);
       --glass: rgba(255, 255, 255, 0.94);
       --card-border: rgba(37, 150, 190, 0.26);
-      --accent: var(--gold-primary);
-      --accent-dark: var(--gold-dark);
+      --accent: var(--ocean-primary);
+      --accent-dark: var(--ocean-dark);
       --text: var(--charcoal);
       --muted: var(--warm-gray);
       --shadow: 0 18px 40px -24px rgba(37, 150, 190, 0.35);
