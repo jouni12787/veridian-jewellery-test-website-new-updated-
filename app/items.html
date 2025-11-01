@@ -756,6 +756,47 @@
       text-align: center;
     }
 
+    .item-card__actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .item-card--compact .item-card__actions {
+      justify-content: center;
+    }
+
+    .share-button {
+      appearance: none;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 18px;
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.95), rgba(184, 134, 11, 0.95));
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 14px 28px -18px rgba(212, 175, 55, 0.65);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    }
+
+    .share-button:hover:not(:disabled),
+    .share-button:focus-visible:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 40px -18px rgba(212, 175, 55, 0.75);
+    }
+
+    .share-button:disabled {
+      cursor: progress;
+      filter: grayscale(0.2);
+      opacity: 0.8;
+    }
+
     .item-card__header {
       display: flex;
       flex-wrap: wrap;
@@ -1525,10 +1566,18 @@
         ...(window.APP_CONFIG && typeof window.APP_CONFIG === 'object' ? window.APP_CONFIG : {})
       });
 
+      const refreshButton = document.getElementById('refreshButton');
+      if (refreshButton) {
+        refreshButton.addEventListener('click', () => {
+          window.location.reload();
+        });
+      }
+
       const INVENTORY_ENDPOINT = APP_CONFIG.inventoryEndpoint;
       const GOLD_API = APP_CONFIG.goldPriceUrl;
       const PREMIUM = 30;
       const OUNCE_GRAMS = 32;
+      const SHARE_LOGO_URL = '../assets/logo-website-test.jpg';
 
       const categorySelect = document.getElementById('categoryFilter');
       const availabilitySelect = document.getElementById('availabilityFilter');
@@ -1551,7 +1600,6 @@
       const searchResultsEl = document.getElementById('inventorySearchResults');
       const searchLabel = document.querySelector('[data-i18n="searchLabel"]');
       const languageToggle = document.getElementById('languageToggle');
-      const navRefreshButton = document.getElementById('refreshButton');
       const filtersSection = document.getElementById('filtersSection');
       const resultsSection = document.getElementById('resultsSection');
       const itemDetailsDialog = document.getElementById('itemDetailsDialog');
@@ -2157,6 +2205,506 @@
         searchMatchCount: null,
         dataLoaded: false
       };
+
+      function drawRoundedRect(ctx, x, y, width, height, radius = 0) {
+        const effectiveRadius = Math.min(Math.max(Number(radius) || 0, 0), Math.min(width, height) / 2);
+        ctx.beginPath();
+        ctx.moveTo(x + effectiveRadius, y);
+        ctx.lineTo(x + width - effectiveRadius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + effectiveRadius);
+        ctx.lineTo(x + width, y + height - effectiveRadius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - effectiveRadius, y + height);
+        ctx.lineTo(x + effectiveRadius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - effectiveRadius);
+        ctx.lineTo(x, y + effectiveRadius);
+        ctx.quadraticCurveTo(x, y, x + effectiveRadius, y);
+        ctx.closePath();
+      }
+
+      function wrapText(ctx, text, maxWidth) {
+        const content = String(text ?? '').trim();
+        if (!content) {
+          return [];
+        }
+
+        const words = content.split(/\s+/);
+        const lines = [];
+        let currentLine = words.shift() || '';
+
+        for (const word of words) {
+          const testLine = `${currentLine} ${word}`.trim();
+          if (ctx.measureText(testLine).width <= maxWidth || !currentLine) {
+            currentLine = testLine;
+          } else {
+            lines.push(currentLine);
+            currentLine = word;
+          }
+        }
+
+        if (currentLine) {
+          lines.push(currentLine);
+        }
+
+        return lines;
+      }
+
+      function createShareFilename(row) {
+        const parts = [];
+        if (row.__name) parts.push(row.__name);
+        if (row.__sku) parts.push(`SKU ${row.__sku}`);
+        const base = normalizeDigits(parts.join(' ') || 'item').toLowerCase();
+        const slug = base.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'item';
+        return `${slug}.png`;
+      }
+
+      function createShareDetails(row) {
+        const details = [];
+        const addDetail = (label, value) => {
+          const normalized = String(value ?? '').trim();
+          if (!normalized) return;
+          if (/^not available$/i.test(normalized)) return;
+          details.push({ label, value: normalized });
+        };
+
+        const numberFormatter = new Intl.NumberFormat('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+
+        const priceLabel = row.__priceSource === 'sheet' ? 'Sheet price' : 'Estimated price';
+        let priceValue = '';
+        if (Number.isFinite(row.__price)) {
+          priceValue = `${numberFormatter.format(row.__price)} USD`;
+        } else if (row.__priceFallback) {
+          priceValue = row.__priceFallback;
+        }
+        addDetail(priceLabel, priceValue || 'Not available');
+
+        let weightValue = '';
+        if (Number.isFinite(row.__weight)) {
+          weightValue = `${numberFormatter.format(row.__weight)} g`;
+        } else if (row.__weightRaw) {
+          weightValue = row.__weightRaw;
+        }
+        addDetail('Weight', weightValue);
+
+        addDetail('Karat', row.__karat);
+
+        let availability = '';
+        if (row.__availabilityState === 'available') {
+          availability = 'Available';
+        } else if (row.__availabilityState === 'not-available') {
+          availability = 'Not available';
+        } else if (row.__availabilityRaw) {
+          availability = row.__availabilityRaw;
+        }
+        addDetail('Status', availability);
+
+        const activeGold = getActiveGoldPrice();
+        if (Number.isFinite(activeGold)) {
+          const label = isManualGoldActive() ? 'Manual gold base' : 'Gold base';
+          addDetail(label, `${activeGold.toFixed(2)} USD`);
+        }
+        const updatedStamp = isManualGoldActive() ? state.goldManualUpdatedAt : state.goldUpdatedAt;
+        addDetail('Updated', updatedStamp);
+        return details;
+      }
+
+      function createShareSummaryText(row) {
+        const lines = [];
+        const title = row.__name || (row.__sku ? `SKU ${row.__sku}` : 'Inventory item');
+        lines.push(title);
+        for (const detail of createShareDetails(row)) {
+          lines.push(`${detail.label}: ${detail.value}`);
+        }
+        if (row.__description) {
+          lines.push('');
+          lines.push(row.__description);
+        }
+        return lines.join('\n');
+      }
+
+      function triggerDownload(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = filename;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 5000);
+      }
+
+      function loadImageForShare(url, { timeout = 7000 } = {}) {
+        return new Promise((resolve) => {
+          const trimmed = String(url ?? '').trim();
+          const candidates = buildPhotoCandidateUrls(trimmed);
+          if (!candidates.length && trimmed) {
+            candidates.push(trimmed);
+          }
+          if (!candidates.length) {
+            resolve(null);
+            return;
+          }
+
+          const tryNext = () => {
+            const candidate = candidates.shift();
+            if (!candidate) {
+              resolve(null);
+              return;
+            }
+
+            const image = new Image();
+            let settled = false;
+            const finalize = (result) => {
+              if (settled) return;
+              settled = true;
+              clearTimeout(timer);
+              image.onload = null;
+              image.onerror = null;
+              if (result) {
+                resolve(result);
+              } else {
+                tryNext();
+              }
+            };
+
+            const timer = setTimeout(() => finalize(null), timeout);
+            image.crossOrigin = 'anonymous';
+            image.onload = () => finalize(image);
+            image.onerror = () => finalize(null);
+            image.src = candidate;
+          };
+
+          tryNext();
+        });
+      }
+
+      async function createShareCanvas(row, { omitPhoto = false } = {}) {
+        const width = 1080;
+        const height = 1350;
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          return null;
+        }
+
+        if (document.fonts && document.fonts.ready) {
+          try {
+            await document.fonts.ready;
+          } catch (error) {
+            console.warn('Share card fonts failed to load', error);
+          }
+        }
+
+        ctx.textBaseline = 'top';
+
+        const gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, '#fefaf0');
+        gradient.addColorStop(1, '#f4e2b8');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.save();
+        ctx.shadowColor = 'rgba(212, 175, 55, 0.28)';
+        ctx.shadowBlur = 60;
+        ctx.shadowOffsetY = 40;
+        drawRoundedRect(ctx, 60, 60, width - 120, height - 120, 48);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.94)';
+        ctx.fill();
+        ctx.restore();
+
+        const innerX = 110;
+        const innerY = 110;
+        const innerWidth = width - innerX * 2;
+        let cursorY = innerY;
+        const centerX = width / 2;
+
+        const logoImage = await loadImageForShare(SHARE_LOGO_URL, { timeout: 4000 });
+        const brandNameFont = '600 54px "Playfair Display", serif';
+        const taglineFont = '500 26px "Inter", sans-serif';
+        const brandNameLineHeight = 62;
+        const taglineLineHeight = 34;
+        const brandTextHeight = brandNameLineHeight + taglineLineHeight;
+        const brandBlockTop = cursorY;
+        let brandBlockHeight = brandTextHeight;
+        let logoDrawWidth = 0;
+        let logoDrawHeight = 0;
+
+        if (logoImage) {
+          const ratio = logoImage.width && logoImage.height ? logoImage.width / logoImage.height : 1;
+          const maxLogoWidth = Math.min(innerWidth * 0.3, 240);
+          const maxLogoHeight = 140;
+          logoDrawWidth = Math.max(1, maxLogoWidth);
+          logoDrawHeight = logoDrawWidth / (ratio || 1);
+          if (logoDrawHeight > maxLogoHeight) {
+            logoDrawHeight = maxLogoHeight;
+            logoDrawWidth = logoDrawHeight * (ratio || 1);
+          }
+          brandBlockHeight = Math.max(brandBlockHeight, logoDrawHeight);
+        }
+
+        const brandGap = logoDrawWidth > 0 ? 36 : 0;
+        const brandTextX = logoDrawWidth > 0 ? innerX + logoDrawWidth + brandGap : centerX;
+        const brandTextY = brandBlockTop + Math.max(0, (brandBlockHeight - brandTextHeight) / 2);
+
+        if (logoDrawWidth > 0 && logoImage) {
+          const logoY = brandBlockTop + (brandBlockHeight - logoDrawHeight) / 2;
+          ctx.drawImage(logoImage, innerX, logoY, logoDrawWidth, logoDrawHeight);
+          ctx.textAlign = 'left';
+        } else {
+          ctx.textAlign = 'center';
+        }
+
+        ctx.fillStyle = '#2C2C2C';
+        ctx.font = brandNameFont;
+        ctx.fillText('Ghandour Jewellery', brandTextX, brandTextY);
+
+        ctx.font = taglineFont;
+        ctx.fillStyle = '#8B7D6B';
+        ctx.fillText('Fine gold & bespoke designs', brandTextX, brandTextY + brandNameLineHeight);
+
+        cursorY = brandBlockTop + brandBlockHeight + 48;
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#2C2C2C';
+        cursorY += 12;
+
+        const title = row.__name || (row.__sku ? `SKU ${row.__sku}` : 'Inventory item');
+        ctx.font = '600 48px "Playfair Display", serif';
+        const titleLines = wrapText(ctx, title, innerWidth);
+        for (const line of titleLines) {
+          ctx.fillText(line, innerX, cursorY);
+          cursorY += 54;
+        }
+
+        if (row.__sku) {
+          ctx.font = '500 24px "Inter", sans-serif';
+          ctx.fillStyle = '#8B7D6B';
+          ctx.fillText(`SKU ${row.__sku}`, innerX, cursorY);
+          cursorY += 40;
+          ctx.fillStyle = '#2C2C2C';
+        }
+
+        const photoAreaHeight = 420;
+        const photoY = cursorY + 12;
+        const photoRadius = 36;
+
+        ctx.save();
+        drawRoundedRect(ctx, innerX, photoY, innerWidth, photoAreaHeight, photoRadius);
+        ctx.fillStyle = '#fdf7e5';
+        ctx.fill();
+        ctx.restore();
+
+        const itemImage = omitPhoto ? null : await loadImageForShare(row.__photoUrl, { timeout: 5000 });
+        if (itemImage) {
+          ctx.save();
+          drawRoundedRect(ctx, innerX, photoY, innerWidth, photoAreaHeight, photoRadius);
+          ctx.clip();
+          ctx.fillStyle = '#fdf7e5';
+          ctx.fillRect(innerX, photoY, innerWidth, photoAreaHeight);
+          const ratio = itemImage.width && itemImage.height ? itemImage.width / itemImage.height : 1;
+          let drawWidth = innerWidth;
+          let drawHeight = drawWidth / (ratio || 1);
+          if (drawHeight > photoAreaHeight) {
+            drawHeight = photoAreaHeight;
+            drawWidth = drawHeight * (ratio || 1);
+          }
+          const dx = innerX + (innerWidth - drawWidth) / 2;
+          const dy = photoY + (photoAreaHeight - drawHeight) / 2;
+          ctx.drawImage(itemImage, dx, dy, drawWidth, drawHeight);
+          ctx.restore();
+        } else {
+          ctx.save();
+          drawRoundedRect(ctx, innerX, photoY, innerWidth, photoAreaHeight, photoRadius);
+          ctx.clip();
+          ctx.fillStyle = '#fdf7e5';
+          ctx.fillRect(innerX, photoY, innerWidth, photoAreaHeight);
+          ctx.font = '500 28px "Inter", sans-serif';
+          ctx.fillStyle = '#8B7D6B';
+          ctx.textAlign = 'center';
+          ctx.fillText('Photo unavailable', centerX, photoY + photoAreaHeight / 2 - 16);
+          ctx.fillText('Contact us for more details', centerX, photoY + photoAreaHeight / 2 + 16);
+          ctx.restore();
+          ctx.textAlign = 'left';
+          ctx.fillStyle = '#2C2C2C';
+        }
+
+        cursorY = photoY + photoAreaHeight + 60;
+
+        const details = createShareDetails(row);
+        if (details.length) {
+          ctx.font = '600 34px "Playfair Display", serif';
+          ctx.fillStyle = '#2C2C2C';
+          ctx.fillText('Item details', innerX, cursorY);
+          cursorY += 46;
+
+          const columnCount = Math.min(2, Math.max(1, details.length));
+          const columnGap = columnCount > 1 ? 36 : 0;
+          const columnWidth = (innerWidth - columnGap * (columnCount - 1)) / columnCount;
+          const labelFont = '600 22px "Inter", sans-serif';
+          const valueFont = '600 28px "Playfair Display", serif';
+          const labelLineHeight = 26;
+          const valueLineHeight = 36;
+          const labelValueSpacing = 4;
+          const blockSpacing = 18;
+
+          const detailBlocks = details.map((detail) => {
+            ctx.font = labelFont;
+            const labelLines = wrapText(ctx, detail.label, columnWidth);
+            const labelHeight = Math.max(labelLines.length, 1) * labelLineHeight;
+
+            ctx.font = valueFont;
+            const valueLines = wrapText(ctx, detail.value, columnWidth);
+            const valueHeight = Math.max(valueLines.length, 1) * valueLineHeight;
+
+            return {
+              labelLines,
+              valueLines,
+              labelHeight,
+              valueHeight,
+              contentHeight: labelHeight + labelValueSpacing + valueHeight
+            };
+          });
+
+          const rows = Math.ceil(detailBlocks.length / columnCount);
+          let rowTop = cursorY;
+
+          for (let rowIndex = 0; rowIndex < rows; rowIndex += 1) {
+            let rowHeight = 0;
+
+            for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
+              const detailIndex = rowIndex + columnIndex * rows;
+              if (detailIndex >= detailBlocks.length) continue;
+
+              const block = detailBlocks[detailIndex];
+              const columnX = innerX + columnIndex * (columnWidth + columnGap);
+
+              ctx.font = labelFont;
+              ctx.fillStyle = '#8B7D6B';
+              block.labelLines.forEach((line, index) => {
+                ctx.fillText(line, columnX, rowTop + index * labelLineHeight);
+              });
+
+              const valueStart = rowTop + block.labelHeight + labelValueSpacing;
+              ctx.font = valueFont;
+              ctx.fillStyle = '#2C2C2C';
+              block.valueLines.forEach((line, index) => {
+                ctx.fillText(line, columnX, valueStart + index * valueLineHeight);
+              });
+
+              rowHeight = Math.max(rowHeight, block.contentHeight);
+            }
+
+            const nextRowTop = rowTop + rowHeight + (rowIndex < rows - 1 ? blockSpacing : 0);
+            rowTop = nextRowTop;
+          }
+
+          cursorY = rowTop + 6;
+        }
+
+        if (row.__description) {
+          ctx.font = '600 34px "Playfair Display", serif';
+          ctx.fillStyle = '#2C2C2C';
+          ctx.fillText('Description', innerX, cursorY);
+          cursorY += 44;
+          ctx.font = '400 28px "Inter", sans-serif';
+          ctx.fillStyle = '#4a4033';
+          const descriptionLines = wrapText(ctx, row.__description, innerWidth);
+          for (const line of descriptionLines) {
+            ctx.fillText(line, innerX, cursorY);
+            cursorY += 36;
+          }
+          cursorY += 10;
+        }
+
+        return canvas;
+      }
+
+      async function handleShare(row, button) {
+        if (!row) return;
+        let originalLabel = '';
+        if (button) {
+          originalLabel = button.textContent;
+          button.disabled = true;
+          button.textContent = 'Preparing…';
+        }
+
+        try {
+          const shareTitle = row.__name || 'Ghandour Jewellery item';
+          const shareText = createShareSummaryText(row);
+          const attempts = [false, true];
+          let blob = null;
+          let lastError = null;
+
+          for (const omitPhoto of attempts) {
+            try {
+              const canvas = await createShareCanvas(row, { omitPhoto });
+              if (!canvas) {
+                throw new Error('Unable to prepare share canvas');
+              }
+              const exported = await new Promise((resolve, reject) => {
+                canvas.toBlob((value) => {
+                  if (value) {
+                    resolve(value);
+                  } else {
+                    reject(new Error('Canvas export failed'));
+                  }
+                }, 'image/png', 0.95);
+              });
+              blob = exported;
+              break;
+            } catch (error) {
+              lastError = error;
+              if (!omitPhoto) {
+                console.warn('Share card export failed, retrying without item photo', error);
+                continue;
+              }
+            }
+          }
+
+          if (!blob) {
+            throw lastError || new Error('Unable to prepare share canvas');
+          }
+
+          const filename = createShareFilename(row);
+          let file = null;
+          if (typeof File === 'function') {
+            try {
+              file = new File([blob], filename, { type: 'image/png' });
+            } catch (error) {
+              console.warn('File construction failed for share payload', error);
+              file = null;
+            }
+          }
+
+          if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: shareTitle,
+              text: shareText
+            });
+          } else if (navigator.share) {
+            await navigator.share({
+              title: shareTitle,
+              text: shareText
+            });
+            triggerDownload(blob, filename);
+          } else {
+            triggerDownload(blob, filename);
+            window.alert('Share image saved. Send it via WhatsApp, email, or any preferred app.');
+          }
+        } catch (error) {
+          console.error('Share preparation failed:', error);
+          window.alert('Unable to prepare the share card right now. Please try again later.');
+        } finally {
+          if (button) {
+            button.disabled = false;
+            button.textContent = originalLabel || 'Share card';
+          }
+        }
+      }
 
       let highlightTimeout = null;
       let lastHighlightedCardId = null;
@@ -3125,6 +3673,18 @@
           body.appendChild(badgeRow);
         }
 
+        const actionsRow = document.createElement('div');
+        actionsRow.className = 'item-card__actions';
+        const shareButton = document.createElement('button');
+        shareButton.type = 'button';
+        shareButton.className = 'share-button';
+        shareButton.textContent = 'Share card';
+        shareButton.addEventListener('click', () => {
+          handleShare(row, shareButton);
+        });
+        actionsRow.appendChild(shareButton);
+        body.appendChild(actionsRow);
+
         card.appendChild(body);
 
         if (interactive) {
@@ -3419,11 +3979,6 @@
         if (languageToggle) {
           languageToggle.addEventListener('change', (event) => {
             applyLanguage(event.target.value);
-          });
-        }
-        if (navRefreshButton) {
-          navRefreshButton.addEventListener('click', () => {
-            window.location.reload();
           });
         }
         if (searchInput) {
