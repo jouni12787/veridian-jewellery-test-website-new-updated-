@@ -65,6 +65,11 @@
       --text: var(--charcoal);
       --muted: var(--warm-gray);
       --shadow: 0 18px 40px -24px rgba(37, 150, 190, 0.35);
+      --drawer-radius: clamp(22px, 6vw, 34px);
+      --drawer-space: clamp(18px, 5vw, 32px);
+      --drawer-gap: clamp(16px, 4vw, 26px);
+      --drawer-title-size: clamp(1.2rem, 1.4vw + 1rem, 1.65rem);
+      --drawer-body-size: clamp(0.95rem, 0.6vw + 0.92rem, 1.08rem);
     }
 
     html {
@@ -886,20 +891,20 @@
 
     .item-card__meta {
       display: grid;
-      gap: 12px;
-      font-size: 0.95rem;
+      gap: clamp(12px, 3vw, 18px);
+      font-size: clamp(0.92rem, 0.45vw + 0.88rem, 1rem);
       width: 100%;
     }
 
     .item-card__meta-row {
       display: grid;
-      gap: 8px;
+      gap: clamp(10px, 2.6vw, 14px);
     }
 
     .item-card__meta-entry {
       display: grid;
       grid-template-columns: max-content minmax(0, 1fr);
-      gap: 8px;
+      gap: clamp(8px, 2vw, 12px);
       align-items: baseline;
       width: 100%;
     }
@@ -907,11 +912,12 @@
     .item-card__meta-label {
       color: var(--muted);
       font-weight: 600;
+      font-size: clamp(0.88rem, 0.35vw + 0.85rem, 0.98rem);
     }
 
     .item-card__meta-label::after {
       content: ':';
-      margin-left: 4px;
+      margin-inline-start: 4px;
       color: rgba(139, 125, 107, 0.7);
     }
 
@@ -919,6 +925,7 @@
       justify-self: start;
       color: var(--accent-dark);
       font-weight: 600;
+      font-size: var(--drawer-body-size);
       text-align: start;
       word-break: break-word;
     }
@@ -1104,10 +1111,11 @@
 
     .item-details-dialog__surface {
       position: relative;
-      width: min(540px, 100%);
-      max-height: min(90vh, 720px);
-      overflow: hidden auto;
-      border-radius: 30px;
+      width: min(100%, 720px);
+      max-height: 90vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      border-radius: var(--drawer-radius);
       border: 1px solid rgba(37, 150, 190, 0.3);
       border-inline-end: 2px solid rgba(37, 150, 190, 0.48);
       background:
@@ -1117,9 +1125,9 @@
         0 40px 70px -35px rgba(37, 150, 190, 0.6),
         20px 0 36px -28px rgba(37, 150, 190, 0.5),
         inset 0 0 0 1px rgba(255, 255, 255, 0.45);
-      padding: clamp(20px, 4vw, 32px);
-      display: grid;
-      gap: clamp(18px, 3vw, 26px);
+      padding: var(--drawer-space);
+      display: flex;
+      scrollbar-gutter: stable both-edges;
     }
 
     .item-details-dialog__surface::after {
@@ -1134,20 +1142,43 @@
       opacity: 0.8;
     }
 
+    .item-details-dialog__layout {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: var(--drawer-gap);
+      width: 100%;
+      font-size: var(--drawer-body-size);
+    }
+
+    .item-details-dialog__header {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(12px, 3vw, 22px);
+    }
+
+    .item-details-dialog__title {
+      margin: 0;
+      font-size: var(--drawer-title-size);
+      font-family: 'Playfair Display', serif;
+      color: var(--accent-dark);
+      line-height: 1.25;
+      text-align: start;
+    }
+
     .item-details-dialog__close {
-      position: absolute;
-      top: 16px;
-      inset-inline-end: 16px;
       border: none;
       background: rgba(255, 255, 255, 0.92);
       border-radius: 999px;
-      padding: 8px 16px;
-      font-size: 0.9rem;
+      padding: clamp(8px, 2vw, 12px) clamp(16px, 4vw, 22px);
+      font-size: clamp(0.9rem, 0.5vw + 0.86rem, 1.02rem);
       font-weight: 600;
       color: var(--accent-dark);
       cursor: pointer;
       box-shadow: 0 14px 32px -20px rgba(37, 150, 190, 0.45);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      margin-inline-start: auto;
+      flex-shrink: 0;
     }
 
     .item-details-dialog__close:hover {
@@ -1162,12 +1193,16 @@
 
     .item-details-dialog__body {
       display: grid;
+      gap: var(--drawer-gap);
     }
 
     .item-details-dialog__body .item-card {
       box-shadow: none;
       border: 1px solid rgba(37, 150, 190, 0.28);
       background: rgba(255, 255, 255, 0.98);
+      border-radius: clamp(18px, 4vw, 26px);
+      padding: clamp(18px, 4vw, 28px);
+      gap: clamp(16px, 4vw, 24px);
     }
 
     .item-details-dialog__body .item-card__media {
@@ -1176,15 +1211,27 @@
       justify-content: center;
       aspect-ratio: auto;
       max-height: min(65vh, 460px);
-      padding: 10px;
+      padding: clamp(12px, 4vw, 20px);
       background: rgba(37, 150, 190, 0.04);
+      border-radius: clamp(18px, 4vw, 24px);
+      overflow: hidden;
     }
 
     .item-details-dialog__body .item-card__photo {
+      display: block;
       width: 100%;
+      max-width: 100%;
       height: auto;
       max-height: 100%;
       object-fit: contain;
+      border-radius: clamp(16px, 4vw, 22px);
+    }
+
+    .item-details-dialog__body .item-card__actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: clamp(10px, 3vw, 16px);
+      width: 100%;
     }
 
     .item-details-dialog__body .item-card:hover {
@@ -1194,22 +1241,45 @@
 
     @media (max-width: 480px) {
       .item-details-dialog__surface {
-        width: min(540px, calc(100% - 32px));
-        margin-inline: 16px;
+        margin-inline: clamp(12px, 4vw, 18px);
         padding: clamp(16px, 5vw, 24px);
       }
 
-      .item-details-dialog__body .item-card__media {
-        overflow: visible;
-        padding: clamp(8px, 4vw, 14px);
-        border-radius: 22px;
+      .item-details-dialog__header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: clamp(10px, 3vw, 16px);
       }
 
-      .item-details-dialog__body .item-card__photo {
-        width: auto;
-        max-width: 100%;
-        object-fit: contain;
-        margin-inline: auto;
+      .item-details-dialog__close {
+        width: 100%;
+      }
+
+      .item-details-dialog__body .item-card__media {
+        padding: clamp(10px, 5vw, 18px);
+      }
+    }
+
+    @media (min-width: 480px) {
+      .item-details-dialog__surface {
+        padding: calc(var(--drawer-space) + 6px);
+      }
+
+      .item-details-dialog__body .item-card {
+        padding: calc(var(--drawer-space) + 4px);
+      }
+    }
+
+    @media (min-width: 768px) {
+      .item-details-dialog__body .item-card__actions {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+      }
+
+      .item-details-dialog__body .item-card__meta-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: clamp(18px, 4vw, 26px);
       }
     }
 
@@ -1264,6 +1334,16 @@
     }
     body.rtl .item-card__sku {
       justify-content: center;
+    }
+
+    body.rtl .item-details-dialog__header {
+      flex-direction: row-reverse;
+      align-items: center;
+    }
+
+    body.rtl .item-details-dialog__close {
+      margin-inline-end: auto;
+      margin-inline-start: 0;
     }
 
     @media (max-width: 1100px) {
@@ -1569,11 +1649,15 @@
     aria-labelledby="itemDetailsHeading"
   >
     <div class="item-details-dialog__surface" role="document">
-      <h2 class="sr-only" id="itemDetailsHeading" data-i18n="detailsHeading">Item details</h2>
-      <button type="button" class="item-details-dialog__close" id="itemDetailsClose" data-i18n="detailsClose">
-        Close details
-      </button>
-      <div class="item-details-dialog__body" id="itemDetailsContainer"></div>
+      <div class="item-details-dialog__layout">
+        <div class="item-details-dialog__header">
+          <h2 class="item-details-dialog__title" id="itemDetailsHeading" data-i18n="detailsHeading">Item details</h2>
+          <button type="button" class="item-details-dialog__close" id="itemDetailsClose" data-i18n="detailsClose">
+            Close details
+          </button>
+        </div>
+        <div class="item-details-dialog__body" id="itemDetailsContainer"></div>
+      </div>
     </div>
   </div>
 
